@@ -1,0 +1,32 @@
+name: mobile_apps_recan
+description: "ReCan - circular economy platform for can collection and drop stations."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.5
+
+dependencies:
+  confetti: ^0.8.0
+  cupertino_icons: ^1.0.8
+  fl_chart: ^1.2.0
+  flutter:
+    sdk: flutter
+  flutter_map: ^8.3.2
+  google_fonts: ^8.1.0
+  latlong2: ^0.10.1
+  mobile_scanner: ^7.4.2
+  permission_handler: ^13.0.2
+  qr_flutter: ^4.1.0
+  shared_preferences: ^2.5.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^11.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
