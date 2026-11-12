@@ -51,4 +51,26 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(ApiConfig.tokenKey, _mockToken);
   }
+
+  static Future<void> register({
+    required String username,
+    required String email,
+    required String phone,
+    required String password,
+  }) async {
+    if (username.isEmpty ||
+        email.isEmpty ||
+        phone.isEmpty ||
+        password.isEmpty) {
+      throw AuthException(
+        tr('Semua kolom wajib diisi.', 'All fields are required.'),
+      );
+    }
+    MockStore.currentUsername = username;
+    MockStore.userEmail = email;
+    MockStore.userPhone = phone;
+    token = _mockToken;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(ApiConfig.tokenKey, _mockToken);
+  }
 }

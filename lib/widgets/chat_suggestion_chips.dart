@@ -32,7 +32,7 @@ class _ChatSuggestionChipsState extends State<ChatSuggestionChips> {
 
     return Container(
       decoration: const BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.surface,
         boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
@@ -162,7 +162,7 @@ class _SuggestionChip extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       opacity: isEnabled ? 1 : 0.5,
       child: Material(
-        color: AppColors.white,
+        color: AppColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: const BorderSide(color: AppColors.primarySoft, width: 1.5),

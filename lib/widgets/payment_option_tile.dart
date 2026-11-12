@@ -33,7 +33,7 @@ class PaymentOptionTile extends StatelessWidget {
         color: enabled
             ? (active
                   ? AppColors.primarySoft.withValues(alpha: 0.3)
-                  : AppColors.white)
+                  : AppColors.surface)
             : AppColors.border,
         borderRadius: BorderRadius.circular(12),
         clipBehavior: Clip.antiAlias,

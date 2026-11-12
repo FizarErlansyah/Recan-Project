@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/circle_icon_button.dart';
 
@@ -26,7 +27,7 @@ class ParallaxCoverAppBar extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       expandedHeight: expandedHeight,
-      backgroundColor: AppColors.textPrimary,
+      backgroundColor: AppColors.scrim,
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
@@ -35,7 +36,7 @@ class ParallaxCoverAppBar extends StatelessWidget {
         padding: const EdgeInsets.only(left: 16),
         child: Center(
           child: CircleIconButton(
-            icon: Icons.arrow_back_rounded,
+            icon: materialIcon(Icons.arrow_back_rounded),
             tooltip: tr('Kembali', 'Back'),
             onTap: () => Navigator.of(context).pop(),
           ),
@@ -54,7 +55,7 @@ class ParallaxCoverAppBar extends StatelessWidget {
               FlexibleSpaceBar(background: RepaintBoundary(child: cover)),
               IgnorePointer(
                 child: ColoredBox(
-                  color: AppColors.textPrimary.withValues(alpha: collapse),
+                  color: AppColors.scrim.withValues(alpha: collapse),
                 ),
               ),
               Positioned(

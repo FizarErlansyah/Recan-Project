@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_text_styles.dart';
@@ -8,8 +9,9 @@ class AppTheme {
 
   static const double radius = 16;
   static const double controlRadius = 12;
+  static const double fieldRadius = 16;
 
-  static ThemeData get lightTheme {
+  static ThemeData get theme {
     const scheme = ColorScheme.light(
       primary: AppColors.primary,
       primaryContainer: AppColors.primarySoft,
@@ -38,12 +40,12 @@ class AppTheme {
     const buttonPadding = EdgeInsets.symmetric(horizontal: 24, vertical: 14);
     final buttonText = textTheme.titleMedium;
 
-    OutlineInputBorder inputBorder(Color color, {double width = 1}) {
+    // Resting fields rely on the muted fill alone; an outline appears only for
+    // focus and error so users always see which field is active or invalid.
+    OutlineInputBorder fieldBorder([BorderSide side = BorderSide.none]) {
       return OutlineInputBorder(
-        borderRadius: BorderRadius.circular(controlRadius),
-        borderSide: color == AppColors.transparent
-            ? BorderSide.none
-            : BorderSide(color: color, width: width),
+        borderSide: side,
+        borderRadius: BorderRadius.circular(fieldRadius),
       );
     }
 
@@ -68,6 +70,7 @@ class AppTheme {
         centerTitle: true,
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
         titleTextStyle: textTheme.titleLarge,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       cardTheme: CardThemeData(
         color: AppColors.surface,
@@ -123,12 +126,12 @@ class AppTheme {
         fillColor: AppColors.surfaceMuted,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
-          vertical: 14,
+          vertical: 18,
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(
           color: AppColors.textTertiary,
         ),
-        labelStyle: textTheme.bodyMedium?.copyWith(
+        labelStyle: textTheme.bodyLarge?.copyWith(
           color: AppColors.textSecondary,
         ),
         floatingLabelStyle: textTheme.bodySmall?.copyWith(
@@ -136,12 +139,18 @@ class AppTheme {
         ),
         prefixIconColor: AppColors.textSecondary,
         suffixIconColor: AppColors.textSecondary,
-        border: inputBorder(AppColors.transparent),
-        enabledBorder: inputBorder(AppColors.transparent),
-        disabledBorder: inputBorder(AppColors.transparent),
-        focusedBorder: inputBorder(AppColors.primary, width: 1.5),
-        errorBorder: inputBorder(AppColors.danger),
-        focusedErrorBorder: inputBorder(AppColors.danger, width: 1.5),
+        border: fieldBorder(),
+        enabledBorder: fieldBorder(),
+        disabledBorder: fieldBorder(),
+        focusedBorder: fieldBorder(
+          const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+        errorBorder: fieldBorder(
+          const BorderSide(color: AppColors.danger, width: 1.5),
+        ),
+        focusedErrorBorder: fieldBorder(
+          const BorderSide(color: AppColors.danger, width: 1.5),
+        ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.surface,
@@ -205,7 +214,7 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.textPrimary,
+        backgroundColor: AppColors.scrim,
         elevation: 0,
         contentTextStyle: textTheme.bodyMedium?.copyWith(
           color: AppColors.white,

@@ -9,7 +9,7 @@ class DashboardSkeleton extends StatelessWidget {
 
   Widget _card({required double height, double? width}) => DecoratedBox(
     decoration: BoxDecoration(
-      color: AppColors.white,
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(12),
     ),
     child: ShimmerBox(width: width, height: height),

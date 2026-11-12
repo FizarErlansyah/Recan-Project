@@ -22,6 +22,14 @@ class EditProfilPage extends StatefulWidget {
 }
 
 class _EditProfilPageState extends State<EditProfilPage> {
+  static const List<Color> _avatarColors = [
+    AppColors.primary,
+    AppColors.sage,
+    AppColors.clay,
+    AppColors.sand,
+    AppColors.primaryDeep,
+  ];
+
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController = TextEditingController(
     text: widget.profile.name,
@@ -29,11 +37,16 @@ class _EditProfilPageState extends State<EditProfilPage> {
   late final TextEditingController _emailController = TextEditingController(
     text: widget.profile.email,
   );
+  late final TextEditingController _phoneController = TextEditingController(
+    text: widget.profile.phone,
+  );
+  late Color _avatarColor = _avatarColors.first;
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -43,6 +56,7 @@ class _EditProfilPageState extends State<EditProfilPage> {
     await ProfileService.updateProfile(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
+      phone: _phoneController.text.trim(),
     );
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
@@ -51,6 +65,18 @@ class _EditProfilPageState extends State<EditProfilPage> {
       messenger,
       tr('Profil berhasil diperbarui', 'Profile updated successfully'),
     );
+  }
+
+  Future<void> _pickAvatarColor() async {
+    final picked = await showModalBottomSheet<Color>(
+      context: context,
+      builder: (sheetContext) => _AvatarColorSheet(
+        initials: widget.profile.initials,
+        colors: _avatarColors,
+        selected: _avatarColor,
+      ),
+    );
+    if (picked != null) setState(() => _avatarColor = picked);
   }
 
   String? _validateName(String? value) {
@@ -69,6 +95,13 @@ class _EditProfilPageState extends State<EditProfilPage> {
     return null;
   }
 
+  String? _validatePhone(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return tr('Nomor telepon wajib diisi', 'Phone number is required');
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +110,11 @@ class _EditProfilPageState extends State<EditProfilPage> {
         padding: const EdgeInsets.all(24),
         children: [
           Center(
-            child: ProfileAvatar(initials: widget.profile.initials, size: 104),
+            child: _AvatarPicker(
+              initials: widget.profile.initials,
+              color: _avatarColor,
+              onTap: _pickAvatarColor,
+            ),
           ),
           const SizedBox(height: 32),
           Form(
@@ -97,13 +134,24 @@ class _EditProfilPageState extends State<EditProfilPage> {
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (_) => _save(),
+                  textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     labelText: 'Email',
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
                   validator: _validateEmail,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _save(),
+                  decoration: InputDecoration(
+                    labelText: tr('Nomor Telepon', 'Phone Number'),
+                    prefixIcon: const Icon(Icons.call_outlined),
+                  ),
+                  validator: _validatePhone,
                 ),
               ],
             ),
@@ -121,6 +169,116 @@ class _EditProfilPageState extends State<EditProfilPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AvatarPicker extends StatelessWidget {
+  const new({required this.initials, required this.color, required this.onTap});
+
+  final String initials;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        ProfileAvatar(initials: initials, size: 104, color: color),
+        Positioned(
+          right: 0,
+          bottom: 0,
+          child: Material(
+            color: AppColors.textPrimary,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
+              child: const SizedBox(
+                width: 36,
+                height: 36,
+                child: Icon(
+                  Icons.photo_camera_rounded,
+                  size: 18,
+                  color: AppColors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AvatarColorSheet extends StatelessWidget {
+  const new({
+    required this.initials,
+    required this.colors,
+    required this.selected,
+  });
+
+  final String initials;
+  final List<Color> colors;
+  final Color selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tr('Pilih Warna Avatar', 'Choose Avatar Color'),
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              tr(
+                'Pratinjau foto profil belum tersedia, pilih warna sebagai gantinya.',
+                "Photo upload isn't available yet, pick a color instead.",
+              ),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (final color in colors)
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(color),
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                        border: Border.all(
+                          color: color == selected
+                              ? AppColors.textPrimary
+                              : AppColors.transparent,
+                          width: 3,
+                        ),
+                      ),
+                      child: color == selected
+                          ? const Icon(
+                              Icons.check_rounded,
+                              color: AppColors.white,
+                              size: 20,
+                            )
+                          : null,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

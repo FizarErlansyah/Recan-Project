@@ -34,39 +34,11 @@ class MockStore {
   static String userEmail = 'mahasiswa@upj.ac.id';
   static int points = initialPoints;
   static int streakDays = 5;
-  static double depositedKg = 5.7;
-  static int userTotalCans = 30;
-  static int userTodayCans = 10;
+  static double depositedKg = 0;
+  static int userTotalCans = 0;
+  static int userTodayCans = 0;
 
-  static final List<ActivityTransaction> activities = [
-    ActivityTransaction(
-      transactionId: 'REC-8X92A',
-      type: ActivityType.deposit,
-      title: 'Setor 10 Kaleng',
-      titleEn: 'Dropped 10 Cans',
-      timestamp: DateTime.now().subtract(const Duration(hours: 3)),
-      points: 250,
-      weightKg: 0.14,
-    ),
-    ActivityTransaction(
-      transactionId: 'REC-4K71M',
-      type: ActivityType.redeem,
-      title: 'Tukar Miniatur Mobil Klasik',
-      titleEn: 'Redeemed Classic Car Miniature',
-      timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      points: -500,
-      weightKg: 0,
-    ),
-    ActivityTransaction(
-      transactionId: 'REC-2B58Q',
-      type: ActivityType.deposit,
-      title: 'Setor 20 Kaleng',
-      titleEn: 'Dropped 20 Cans',
-      timestamp: DateTime.now().subtract(const Duration(days: 3)),
-      points: 500,
-      weightKg: 0.28,
-    ),
-  ];
+  static final List<ActivityTransaction> activities = [];
 
   static final List<DailyQuest> quests = [
     const DailyQuest(
@@ -498,9 +470,14 @@ class MockStore {
     ];
   }
 
-  static void updateProfile({required String name, required String email}) {
+  static void updateProfile({
+    required String name,
+    required String email,
+    required String phone,
+  }) {
     currentUsername = name;
     userEmail = email;
+    userPhone = phone;
   }
 
   static void recordDeposit(int cans) {

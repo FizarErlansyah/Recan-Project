@@ -117,7 +117,7 @@ class _Illustration extends StatelessWidget {
         fit: BoxFit.contain,
         errorBuilder: (_, _, _) => DecoratedBox(
           decoration: BoxDecoration(
-            color: AppColors.white.withValues(alpha: 0.6),
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(32),
             boxShadow: const [
               BoxShadow(

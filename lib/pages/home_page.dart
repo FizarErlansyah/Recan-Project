@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/features/auth/presentation/login_page.dart';
 import 'package:mobile_apps_recan/pages/aktivitas_page.dart';
 import 'package:mobile_apps_recan/pages/beranda_page.dart';
 import 'package:mobile_apps_recan/pages/katalog_page.dart';
-import 'package:mobile_apps_recan/pages/login_page.dart';
 import 'package:mobile_apps_recan/pages/profil_page.dart';
+import 'package:mobile_apps_recan/pages/scan_qr_page.dart';
 import 'package:mobile_apps_recan/services/auth_service.dart';
 import 'package:mobile_apps_recan/services/home_navigation.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/curved_nav_bar.dart';
+import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/main_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
   const new({super.key});
@@ -18,28 +22,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<CurvedNavItem> get _items => [
-    CurvedNavItem(
-      icon: Icons.home_outlined,
-      selectedIcon: Icons.home_rounded,
+  List<MainNavItem> get _items => [
+    MainNavItem(
+      icon: hugeIcon(HugeIcons.strokeRoundedHome01),
+      selectedIcon: hugeIcon(HugeIcons.strokeRoundedHome01),
       label: tr('Beranda', 'Home'),
     ),
-    CurvedNavItem(
-      icon: Icons.shopping_cart_outlined,
-      selectedIcon: Icons.shopping_cart_rounded,
+    MainNavItem(
+      icon: hugeIcon(HugeIcons.strokeRoundedShoppingCart01),
+      selectedIcon: hugeIcon(HugeIcons.strokeRoundedShoppingCart01),
       label: tr('Katalog', 'Catalog'),
     ),
-    CurvedNavItem(
-      icon: Icons.receipt_long_outlined,
-      selectedIcon: Icons.receipt_long_rounded,
+    MainNavItem(
+      icon: hugeIcon(HugeIcons.strokeRoundedReceiptText),
+      selectedIcon: hugeIcon(HugeIcons.strokeRoundedReceiptText),
       label: tr('Aktivitas', 'Activity'),
     ),
-    CurvedNavItem(
-      icon: Icons.person_outline_rounded,
-      selectedIcon: Icons.person_rounded,
+    MainNavItem(
+      icon: hugeIcon(HugeIcons.strokeRoundedUser),
+      selectedIcon: hugeIcon(HugeIcons.strokeRoundedUser),
       label: tr('Profil', 'Profile'),
     ),
   ];
+
+  void _openScan() {
+    Navigator.of(context).push(FadePageRoute<void>(page: const ScanQrPage()));
+  }
 
   int _currentIndex = 0;
 
@@ -83,6 +91,7 @@ class _HomePageState extends State<HomePage> {
           key: const ValueKey('beranda'),
           onLogout: _logout,
           onSelectTab: _selectTab,
+          onScan: _openScan,
         );
       case 1:
         return KatalogPage(key: const ValueKey('katalog'), onLogout: _logout);
@@ -106,7 +115,7 @@ class _HomePageState extends State<HomePage> {
           duration: const Duration(milliseconds: 250),
           child: _buildTab(),
         ),
-        bottomNavigationBar: CurvedNavBar(
+        bottomNavigationBar: MainNavBar(
           items: _items,
           currentIndex: _currentIndex,
           onTap: _selectTab,

@@ -137,7 +137,7 @@ class CarbonLineChart extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     AppColors.primarySoft.withValues(alpha: 0.4),
-                    AppColors.textPrimary.withValues(alpha: 0),
+                    AppColors.scrim.withValues(alpha: 0),
                   ],
                 ),
               ),

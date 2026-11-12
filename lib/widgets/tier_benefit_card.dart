@@ -28,7 +28,7 @@ class TierBenefitCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isCurrent
             ? AppColors.primarySoft.withValues(alpha: 0.3)
-            : AppColors.white,
+            : AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: AppShadows.soft,
       ),

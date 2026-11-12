@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/pages/drop_session_page.dart';
 import 'package:mobile_apps_recan/services/camera_permission_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -73,7 +74,7 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.textPrimary,
+      backgroundColor: AppColors.scrim,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -84,7 +85,7 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: CircleIconButton(
-                  icon: Icons.close_rounded,
+                  icon: materialIcon(Icons.close_rounded),
                   tooltip: tr('Tutup', 'Close'),
                   onTap: () => Navigator.of(context).pop(),
                 ),

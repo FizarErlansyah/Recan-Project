@@ -21,12 +21,12 @@ class ReCanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(radius),
         boxShadow: AppShadows.soft,
       ),
       child: Material(
-        color: AppColors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(radius),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

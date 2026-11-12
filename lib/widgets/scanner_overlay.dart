@@ -42,7 +42,7 @@ class _OverlayPainter extends CustomPainter {
     canvas
       ..drawPath(
         scrim,
-        Paint()..color = AppColors.textPrimary.withValues(alpha: 0.72),
+        Paint()..color = AppColors.scrim.withValues(alpha: 0.72),
       )
       ..drawRRect(
         window,

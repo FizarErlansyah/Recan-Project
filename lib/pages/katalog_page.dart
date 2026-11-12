@@ -162,7 +162,7 @@ class _CraftTabState extends State<_CraftTab> {
             Expanded(
               child: RefreshIndicator(
                 color: AppColors.primary,
-                backgroundColor: AppColors.white,
+                backgroundColor: AppColors.surface,
                 onRefresh: reload,
                 child: GridView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),

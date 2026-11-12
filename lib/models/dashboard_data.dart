@@ -139,24 +139,6 @@ class UpcycleProduct {
   );
 }
 
-class ImpactStats {
-  const new({
-    required this.totalKg,
-    required this.carbonKg,
-    required this.userKg,
-  });
-
-  static const ImpactStats dummy = ImpactStats(
-    totalKg: 1240.5,
-    carbonKg: 1860,
-    userKg: 5.7,
-  );
-
-  final double totalKg;
-  final double carbonKg;
-  final double userKg;
-}
-
 class DashboardData {
   const new({
     required this.user,

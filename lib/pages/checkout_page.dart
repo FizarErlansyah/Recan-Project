@@ -418,7 +418,7 @@ class _ConfirmBar extends StatelessWidget {
 
     return Container(
       decoration: const BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.surface,
         boxShadow: [
           BoxShadow(
             color: AppColors.shadow,

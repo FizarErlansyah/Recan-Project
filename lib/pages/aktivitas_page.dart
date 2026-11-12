@@ -63,7 +63,7 @@ class AktivitasPage extends StatelessWidget {
                 }
                 return RefreshIndicator(
                   color: AppColors.primary,
-                  backgroundColor: AppColors.white,
+                  backgroundColor: AppColors.surface,
                   onRefresh: reload,
                   child: ActivityHistoryList(transactions: transactions),
                 );

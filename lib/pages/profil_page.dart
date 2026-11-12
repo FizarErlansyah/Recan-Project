@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/features/profile/presentation/widgets/leaderboard_section.dart';
+import 'package:mobile_apps_recan/features/profile/presentation/widgets/payment_methods_section.dart';
+import 'package:mobile_apps_recan/features/profile/presentation/widgets/tier_and_voucher_section.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/about_recan_page.dart';
 import 'package:mobile_apps_recan/pages/edit_profil_page.dart';
@@ -14,12 +17,8 @@ import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/account_header.dart';
 import 'package:mobile_apps_recan/widgets/async_view.dart';
-import 'package:mobile_apps_recan/widgets/leaderboard_tile.dart';
 import 'package:mobile_apps_recan/widgets/page_skeletons.dart';
-import 'package:mobile_apps_recan/widgets/payment_method_section.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
-import 'package:mobile_apps_recan/widgets/profile_summary_cards.dart';
-import 'package:mobile_apps_recan/widgets/recan_card.dart';
 import 'package:mobile_apps_recan/widgets/settings_sheets.dart';
 import 'package:mobile_apps_recan/widgets/settings_tile.dart';
 
@@ -32,7 +31,6 @@ class ProfilPage extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           tr('Keluar dari ReCan?', 'Sign out of ReCan?'),
           style: Theme.of(dialogContext).textTheme.titleLarge,
@@ -71,20 +69,20 @@ class ProfilPage extends StatelessWidget {
         refreshOn: DataRefresh.revision,
         builder: (context, overview, reload) => RefreshIndicator(
           color: AppColors.primary,
-          backgroundColor: AppColors.white,
+          backgroundColor: AppColors.surface,
           onRefresh: reload,
           child: ListView(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
             children: [
               AccountHeader(profile: overview.profile),
               const SizedBox(height: 24),
-              ProfileSummaryCards(
+              TierAndVoucherSection(
                 points: overview.profile.points,
                 onTierTap: () =>
                     TierInfoPage.open(context, overview.profile.points),
               ),
               const SizedBox(height: 32),
-              PaymentMethodSection(
+              PaymentMethodsSection(
                 balanceRupiah:
                     overview.profile.points * PointsHeader.rupiahPerPoint,
                 gopayConnected: overview.profile.gopayConnected,
@@ -100,7 +98,7 @@ class ProfilPage extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 32),
-              _LeaderboardSection(entries: overview.leaderboard),
+              LeaderboardSection(entries: overview.leaderboard),
               const SizedBox(height: 32),
               _SettingsSection(
                 onEditProfile: () =>
@@ -116,43 +114,6 @@ class ProfilPage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _LeaderboardSection extends StatelessWidget {
-  const new({required this.entries});
-
-  final List<LeaderboardEntry> entries;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          tr('Papan Peringkat Kampus', 'Campus Leaderboard'),
-          style: textTheme.titleLarge,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          tr('Top Pahlawan Lingkungan', 'Top Environmental Heroes'),
-          style: textTheme.bodySmall,
-        ),
-        const SizedBox(height: 12),
-        ReCanCard(
-          radius: 16,
-          padding: const EdgeInsets.all(8),
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: entries.length,
-            itemBuilder: (_, index) => LeaderboardTile(entry: entries[index]),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -191,9 +152,8 @@ class _SettingsSection extends StatelessWidget {
       children: [
         Text(tr('Pengaturan', 'Settings'), style: textTheme.titleLarge),
         const SizedBox(height: 12),
-        ReCanCard(
-          radius: 16,
-          padding: EdgeInsets.zero,
+        Card(
+          clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
               SettingsTile(

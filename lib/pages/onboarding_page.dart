@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/pages/login_page.dart';
+import 'package:mobile_apps_recan/features/auth/presentation/login_page.dart';
 import 'package:mobile_apps_recan/services/onboarding_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
@@ -96,7 +96,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             colors: [
               AppColors.sandSoft,
               AppColors.primarySoft,
-              AppColors.white,
+              AppColors.background,
             ],
             stops: [0, 0.55, 1],
           ),
@@ -154,7 +154,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: FilledButton(
                     onPressed: _next,
                     style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.textPrimary,
+                      backgroundColor: AppColors.primary,
                       minimumSize: const Size.fromHeight(56),
                       shape: const StadiumBorder(),
                     ),

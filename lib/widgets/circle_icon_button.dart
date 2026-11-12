@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 
 class CircleIconButton extends StatelessWidget {
   const new({
@@ -10,7 +11,7 @@ class CircleIconButton extends StatelessWidget {
     super.key,
   });
 
-  final IconData icon;
+  final AppIconBuilder icon;
   final String tooltip;
   final VoidCallback onTap;
 
@@ -19,7 +20,7 @@ class CircleIconButton extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: AppColors.textPrimary.withValues(alpha: 0.6),
+        color: AppColors.scrim.withValues(alpha: 0.6),
         shape: const CircleBorder(),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -27,7 +28,7 @@ class CircleIconButton extends StatelessWidget {
           child: SizedBox(
             width: 48,
             height: 48,
-            child: Icon(icon, color: AppColors.white),
+            child: icon(color: AppColors.white, size: 24),
           ),
         ),
       ),

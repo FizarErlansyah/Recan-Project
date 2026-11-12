@@ -31,7 +31,7 @@ class VoucherTicketCard extends StatelessWidget {
 
     return PhysicalShape(
       clipper: clipper,
-      color: AppColors.white,
+      color: AppColors.surface,
       elevation: 4,
       shadowColor: AppColors.shadowStrong,
       child: SizedBox(

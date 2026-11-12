@@ -38,7 +38,7 @@ class ReCanFormField extends StatelessWidget {
       onFieldSubmitted: onSubmitted,
       obscureText: obscureText,
       textCapitalization: textCapitalization,
-      style: textTheme.bodyMedium,
+      style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, size: 20),

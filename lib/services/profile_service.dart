@@ -13,8 +13,9 @@ class ProfileService {
   static Future<void> updateProfile({
     required String name,
     required String email,
+    required String phone,
   }) {
-    MockStore.updateProfile(name: name, email: email);
+    MockStore.updateProfile(name: name, email: email, phone: phone);
     DataRefresh.notifyChanged();
     return SynchronousFuture(null);
   }

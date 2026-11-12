@@ -125,7 +125,7 @@ class _Receipt extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: Container(
         width: double.infinity,
-        color: AppColors.white,
+        color: AppColors.surface,
         child: Column(
           children: [
             Container(
@@ -135,7 +135,7 @@ class _Receipt extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [AppColors.primarySoft, AppColors.white],
+                  colors: [AppColors.primarySoft, AppColors.surface],
                 ),
               ),
               child: Column(

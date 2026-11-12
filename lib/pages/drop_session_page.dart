@@ -87,7 +87,7 @@ class _DropSessionPageState extends State<DropSessionPage> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.textPrimary,
+      backgroundColor: AppColors.scrim,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),

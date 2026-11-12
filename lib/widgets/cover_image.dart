@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 
 class CoverImage extends StatelessWidget {
-  const new({
+  new({
     required this.url,
     super.key,
-    this.placeholderIcon = Icons.recycling_rounded,
+    AppIconBuilder? placeholderIcon,
     this.placeholderSize = 24,
-  });
+  }) : placeholderIcon = placeholderIcon ?? _defaultPlaceholderIcon;
+
+  static final AppIconBuilder _defaultPlaceholderIcon = hugeIcon(
+    HugeIcons.strokeRoundedRecycle01,
+  );
 
   final String? url;
-  final IconData placeholderIcon;
+  final AppIconBuilder placeholderIcon;
   final double placeholderSize;
 
   Widget _placeholder() => ColoredBox(
     color: AppColors.primarySoft,
     child: Center(
-      child: Icon(
-        placeholderIcon,
-        size: placeholderSize,
-        color: AppColors.primary,
-      ),
+      child: placeholderIcon(color: AppColors.primary, size: placeholderSize),
     ),
   );
 

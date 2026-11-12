@@ -171,11 +171,13 @@ class EducationCatalog {
         'Setiap produk punya jejak karbon, yaitu jumlah gas rumah kaca yang dihasilkan sepanjang hidupnya. Untuk aluminium, sebagian besar jejak itu muncul saat penambangan dan peleburan bijih mentah.',
         'Ketika kaleng bekas didaur ulang, tahap-tahap berat itu dilewati. Karena itu, tiap kaleng yang kamu setor di ReCan secara nyata mengurangi emisi dibandingkan jika kaleng itu dibuang.',
         'Di Beranda kamu bisa memantau grafik dampak karbon dan melihat berapa kilogram emisi yang sudah kamu hemat. Angka itu bertambah setiap kali kamu menyelesaikan satu sesi setoran.',
+        'Berdasarkan data SIPSN 2025, komposisi sampah nasional didominasi oleh Sisa Makanan (40,24%), disusul Plastik (20,21%), Kayu/Ranting (12,96%), Kertas/Karton (10,74%), Lainnya (6,94%), Logam (3,02%), dan Kaca (2,27%). Meskipun logam (termasuk kaleng) hanya 3,02%, kaleng membutuhkan waktu 80 hingga 200 tahun untuk terurai secara alami dan karatnya dapat mencemari tanah.',
       ],
       paragraphsEn: const [
         'Every product has a carbon footprint, the amount of greenhouse gases produced over its life. For aluminum, most of that footprint comes from mining and smelting raw ore.',
         'When used cans are recycled, those heavy stages are skipped. That is why every can you drop at ReCan genuinely reduces emissions compared with throwing it away.',
         'On the Home page you can follow the carbon impact chart and see how many kilograms of emissions you have saved. The number grows every time you finish a deposit session.',
+        'According to 2025 SIPSN data, national waste composition is dominated by food waste (40.24%), followed by plastic (20.21%), wood/twigs (12.96%), paper/cardboard (10.74%), other (6.94%), metal (3.02%), and glass (2.27%). Even though metal (including cans) is only 3.02%, a can still takes 80 to 200 years to decompose naturally, and its rust can contaminate the soil.',
       ],
       insightId: 'Setiap kaleng yang disetor di ReCan dihitung menghemat sekitar 0,13 kg emisi karbon.',
       insightEn: 'Every can dropped at ReCan is counted as saving about 0.13 kg of carbon emissions.',

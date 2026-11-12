@@ -14,7 +14,7 @@ class ActivityDetailSheet extends StatelessWidget {
   ) {
     return showModalBottomSheet<void>(
       context: context,
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.surface,
       showDragHandle: true,
       isScrollControlled: true,
       constraints: BoxConstraints(

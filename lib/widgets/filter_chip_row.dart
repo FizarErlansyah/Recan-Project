@@ -52,7 +52,7 @@ class _FilterChipPill extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
-        color: selected ? AppColors.primary : AppColors.white,
+        color: selected ? AppColors.primary : AppColors.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: selected ? AppColors.primary : AppColors.border,

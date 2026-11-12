@@ -149,13 +149,24 @@ class AiChatService {
         'Environmental impact of can waste',
       ),
       answer: tr(
-        'Satu kaleng butuh 50 - 200 tahun untuk terurai. Mendaur ulang '
-            'aluminium menghemat hingga 95% energi, dan setiap kaleng yang '
-            'kamu setor di ReCan dihitung menghemat sekitar 0,13 kg emisi '
-            'karbon.',
-        'A single can takes 50 - 200 years to decompose. Recycling aluminum '
-            'saves up to 95% of the energy, and every can you drop at ReCan '
-            'is counted as saving about 0.13 kg of carbon emissions.',
+        'Satu kaleng butuh 80 hingga 200 tahun untuk terurai secara alami, '
+            'dan karatnya bisa mencemari tanah. Berdasarkan data SIPSN 2025, '
+            'komposisi sampah nasional didominasi Sisa Makanan (40,24%), '
+            'Plastik (20,21%), Kayu/Ranting (12,96%), Kertas/Karton '
+            '(10,74%), Lainnya (6,94%), Logam (3,02%), dan Kaca (2,27%) — '
+            'logam termasuk kaleng memang porsinya kecil, tapi dampaknya '
+            'bertahan paling lama. Mendaur ulang aluminium menghemat hingga '
+            '95% energi, dan tiap kaleng yang kamu setor di ReCan dihitung '
+            'menghemat sekitar 0,13 kg emisi karbon.',
+        'A single can takes 80 to 200 years to decompose naturally, and its '
+            'rust can contaminate the soil. According to 2025 SIPSN data, '
+            'national waste composition is dominated by food waste '
+            '(40.24%), plastic (20.21%), wood/twigs (12.96%), '
+            'paper/cardboard (10.74%), other (6.94%), metal (3.02%), and '
+            'glass (2.27%) — metal including cans is a small share, but it '
+            'lingers the longest. Recycling aluminum saves up to 95% of the '
+            'energy, and every can you drop at ReCan is counted as saving '
+            'about 0.13 kg of carbon emissions.',
       ),
       keywords: [
         'dampak',
@@ -165,6 +176,9 @@ class AiChatService {
         'karbon',
         'carbon',
         'limbah',
+        'sipsn',
+        'sampah',
+        'waste',
       ],
     ),
     ChatTopic(

@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 
 class ProfileAvatar extends StatelessWidget {
-  const new({required this.initials, super.key, this.size = 88});
+  const new({
+    required this.initials,
+    super.key,
+    this.size = 88,
+    this.color = AppColors.primary,
+  });
 
   final String initials;
   final double size;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +22,7 @@ class ProfileAvatar extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.primary,
+        color: color,
         border: Border.all(color: AppColors.primarySoft, width: 4),
       ),
       child: Text(

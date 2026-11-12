@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/features/auth/presentation/login_page.dart';
 import 'package:mobile_apps_recan/pages/home_page.dart';
-import 'package:mobile_apps_recan/pages/login_page.dart';
 import 'package:mobile_apps_recan/pages/onboarding_page.dart';
 import 'package:mobile_apps_recan/services/auth_service.dart';
 import 'package:mobile_apps_recan/services/onboarding_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/recan_logo.dart';
 
 class SplashPage extends StatefulWidget {
   const new({super.key});
@@ -79,18 +80,9 @@ class _SplashPageState extends State<SplashPage>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 96,
-                  height: 96,
-                  decoration: BoxDecoration(
-                    color: AppColors.primarySoft,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(
-                    Icons.recycling_rounded,
-                    size: 56,
-                    color: AppColors.primary,
-                  ),
+                const ReCanLogo(
+                  size: 112,
+                  asset: 'assets/images/recan_brandmak_white.png',
                 ),
                 const SizedBox(height: 24),
                 Text(

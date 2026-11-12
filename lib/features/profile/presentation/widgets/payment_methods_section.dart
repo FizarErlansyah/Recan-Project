@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/core/theme/app_shadows.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 
-class PaymentMethodSection extends StatelessWidget {
+class PaymentMethodsSection extends StatelessWidget {
   const new({
     required this.balanceRupiah,
     required this.gopayConnected,
@@ -32,11 +31,9 @@ class PaymentMethodSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: cardHeight + 24,
+          height: cardHeight,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            clipBehavior: Clip.none,
-            padding: const EdgeInsets.only(bottom: 24),
             children: [
               _PaymentCard(
                 icon: Icons.account_balance_wallet_rounded,
@@ -80,46 +77,57 @@ class _PaymentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      width: PaymentMethodSection.cardWidth,
-      height: PaymentMethodSection.cardHeight,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppShadows.soft,
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+    return SizedBox(
+      width: PaymentMethodsSection.cardWidth,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.primarySoft,
-                  borderRadius: BorderRadius.circular(12),
+              _PaymentCardTitle(icon: icon, title: title),
+              if (action == null)
+                Text(subtitle, style: textTheme.headlineSmall)
+              else
+                Row(
+                  children: [
+                    Expanded(child: Text(subtitle, style: textTheme.bodySmall)),
+                    action!,
+                  ],
                 ),
-                child: Icon(icon, size: 20, color: AppColors.primary),
-              ),
-              const SizedBox(width: 12),
-              Expanded(child: Text(title, style: textTheme.titleMedium)),
             ],
           ),
-          if (action == null)
-            Text(subtitle, style: textTheme.headlineSmall)
-          else
-            Row(
-              children: [
-                Expanded(child: Text(subtitle, style: textTheme.bodySmall)),
-                action!,
-              ],
-            ),
-        ],
+        ),
       ),
+    );
+  }
+}
+
+class _PaymentCardTitle extends StatelessWidget {
+  const new({required this.icon, required this.title});
+
+  final IconData icon;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: AppColors.primarySoft,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, size: 20, color: AppColors.primary),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+        ),
+      ],
     );
   }
 }
@@ -132,25 +140,16 @@ class _ConnectButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 48,
-      child: FilledButton(
-        onPressed: connected ? null : onPressed,
-        style: FilledButton.styleFrom(
-          minimumSize: const Size(48, 48),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          backgroundColor: AppColors.primary,
-          disabledBackgroundColor: AppColors.successSoft,
-          shape: const StadiumBorder(),
-        ),
-        child: connected
-            ? const Icon(Icons.check_rounded, color: AppColors.success)
-            : Text(
-                tr('Hubungkan', 'Connect'),
-                style: Theme.of(context).textTheme.labelLarge
-                    ?.copyWith(color: AppColors.white),
-              ),
+    return FilledButton(
+      onPressed: connected ? null : onPressed,
+      style: FilledButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        disabledBackgroundColor: AppColors.successSoft,
+        shape: const StadiumBorder(),
       ),
+      child: connected
+          ? const Icon(Icons.check_rounded, color: AppColors.success)
+          : Text(tr('Hubungkan', 'Connect')),
     );
   }
 }

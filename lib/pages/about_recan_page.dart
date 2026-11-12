@@ -125,7 +125,7 @@ class _ProblemCard extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  '50 – 200',
+                  '80 – 200',
                   style: textTheme.headlineMedium?.copyWith(
                     color: AppColors.danger,
                   ),
@@ -134,8 +134,8 @@ class _ProblemCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     tr(
-                      'tahun waktu yang dibutuhkan satu kaleng untuk terurai di alam.',
-                      'years for a single can to decompose in nature.',
+                      'tahun waktu yang dibutuhkan satu kaleng untuk terurai secara alami.',
+                      'years for a single can to decompose naturally.',
                     ),
                     style: textTheme.bodyMedium,
                   ),
@@ -155,6 +155,26 @@ class _ProblemCard extends StatelessWidget {
                   'for decades to centuries. Yet aluminum can be recycled '
                   'again and again without losing quality, saving up to 95% '
                   'of the energy needed to make new metal.',
+            ),
+            style: textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            tr(
+              'Berdasarkan data SIPSN 2025, komposisi sampah nasional '
+                  'didominasi oleh Sisa Makanan (40,24%), disusul Plastik '
+                  '(20,21%), Kayu/Ranting (12,96%), Kertas/Karton (10,74%), '
+                  'Lainnya (6,94%), Logam (3,02%), dan Kaca (2,27%). '
+                  'Meskipun logam (termasuk kaleng) hanya 3,02%, kaleng '
+                  'membutuhkan waktu 80 hingga 200 tahun untuk terurai '
+                  'secara alami dan karatnya dapat mencemari tanah.',
+              'According to 2025 SIPSN data, national waste composition is '
+                  'dominated by food waste (40.24%), followed by plastic '
+                  '(20.21%), wood/twigs (12.96%), paper/cardboard (10.74%), '
+                  'other (6.94%), metal (3.02%), and glass (2.27%). Even '
+                  'though metal (including cans) is only 3.02%, a can still '
+                  'takes 80 to 200 years to decompose naturally, and its '
+                  'rust can contaminate the soil.',
             ),
             style: textTheme.bodyMedium,
           ),

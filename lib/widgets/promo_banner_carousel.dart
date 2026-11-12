@@ -11,22 +11,22 @@ class PromoBanner {
     required this.subtitle,
     required this.icon,
     required this.colors,
-    required this.foreground,
     required this.onTap,
+    required this.imageUrl,
   });
 
   final String title;
   final String subtitle;
   final IconData icon;
   final List<Color> colors;
-  final Color foreground;
   final VoidCallback onTap;
+  final String imageUrl;
 }
 
 class PromoBannerCarousel extends StatefulWidget {
   const new({required this.banners, super.key});
 
-  static const double height = 144;
+  static const double height = 184;
   static const int virtualItemCount = 60;
   static const int virtualStartPage = 30;
   static const int recenterEdge = 5;
@@ -170,33 +170,35 @@ class _BannerCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: AppShadows.soft,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: banner.colors,
-        ),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Material(
         color: AppColors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: banner.onTap,
           child: Stack(
+            fit: StackFit.expand,
             children: [
-              Positioned(
-                right: -16,
-                bottom: -16,
-                child: Icon(
-                  banner.icon,
-                  size: 112,
-                  color: banner.foreground.withValues(alpha: 0.18),
+              Image.network(
+                banner.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => _fallbackBackground(),
+                loadingBuilder: (_, child, progress) =>
+                    progress == null ? child : _fallbackBackground(),
+              ),
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Color(0x99000000), Color(0x00000000)],
+                  ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -204,7 +206,7 @@ class _BannerCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.headlineSmall?.copyWith(
-                        color: banner.foreground,
+                        color: AppColors.white,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -213,7 +215,7 @@ class _BannerCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(
-                        color: banner.foreground.withValues(alpha: 0.9),
+                        color: AppColors.white.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -221,6 +223,18 @@ class _BannerCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _fallbackBackground() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: banner.colors,
         ),
       ),
     );

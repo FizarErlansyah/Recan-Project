@@ -89,7 +89,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     final related = EducationService.related(article);
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -145,6 +145,10 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                 ),
                 const SizedBox(height: 24),
                 Text(paragraphs[2], style: bodyStyle),
+                for (final paragraph in paragraphs.skip(3)) ...[
+                  const SizedBox(height: 24),
+                  Text(paragraph, style: bodyStyle),
+                ],
                 const SizedBox(height: 32),
                 HelpfulBonusCard(
                   key: ValueKey(article.id),
