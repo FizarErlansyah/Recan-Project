@@ -1,44 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/widgets/can_placeholder.dart';
 
 class CoverImage extends StatelessWidget {
-  new({
-    required this.url,
-    super.key,
-    AppIconBuilder? placeholderIcon,
-    this.placeholderSize = 24,
-  }) : placeholderIcon = placeholderIcon ?? _defaultPlaceholderIcon;
-
-  static final AppIconBuilder _defaultPlaceholderIcon = hugeIcon(
-    HugeIcons.strokeRoundedRecycle01,
-  );
+  const new({required this.url, required this.seed, super.key});
 
   final String? url;
-  final AppIconBuilder placeholderIcon;
-  final double placeholderSize;
 
-  Widget _placeholder() => ColoredBox(
-    color: AppColors.primarySoft,
-    child: Center(
-      child: placeholderIcon(color: AppColors.primary, size: placeholderSize),
-    ),
-  );
+  /// Picks the placeholder tint so neighbouring products look distinct.
+  final int seed;
 
   @override
   Widget build(BuildContext context) {
     final imageUrl = url;
-    if (imageUrl == null) return _placeholder();
+    if (imageUrl == null) return CanPlaceholder(seed: seed);
     return Image.network(
       imageUrl,
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
-      errorBuilder: (_, _, _) => _placeholder(),
+      errorBuilder: (_, _, _) => CanPlaceholder(seed: seed),
       loadingBuilder: (_, child, progress) =>
-          progress == null ? child : _placeholder(),
+          progress == null ? child : CanPlaceholder(seed: seed),
     );
   }
 }

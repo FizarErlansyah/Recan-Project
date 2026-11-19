@@ -53,7 +53,7 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Hero(
                     tag: heroTag(product),
-                    child: CoverImage(url: product.imageUrl),
+                    child: CoverImage(url: product.imageUrl, seed: product.id),
                   ),
                   Positioned(
                     top: 6,

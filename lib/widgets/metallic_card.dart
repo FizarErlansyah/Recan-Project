@@ -12,21 +12,23 @@ class MetallicCard extends StatelessWidget {
     this.onTap,
     this.padding = const EdgeInsets.all(20),
     this.radius = 20,
+    this.colors = const [AppColors.primary, AppColors.primaryDark],
   });
 
   final Widget child;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry padding;
   final double radius;
+  final List<Color> colors;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primaryDark],
+          colors: colors,
         ),
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(

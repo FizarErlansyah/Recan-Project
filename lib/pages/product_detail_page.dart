@@ -61,7 +61,7 @@ class ProductDetailPage extends StatelessWidget {
             title: product.name,
             cover: Hero(
               tag: ProductCard.heroTag(product),
-              child: CoverImage(url: product.imageUrl, placeholderSize: 72),
+              child: CoverImage(url: product.imageUrl, seed: product.id),
             ),
           ),
           SliverPadding(

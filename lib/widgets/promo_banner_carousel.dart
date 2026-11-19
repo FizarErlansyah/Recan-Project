@@ -3,21 +3,23 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 
 class PromoBanner {
   const new({
     required this.title,
     required this.subtitle,
+    required this.icon,
     required this.colors,
     required this.onTap,
-    required this.imageUrl,
   });
 
   final String title;
   final String subtitle;
+  final AppIconBuilder icon;
   final List<Color> colors;
   final VoidCallback onTap;
-  final String imageUrl;
 }
 
 class PromoBannerCarousel extends StatefulWidget {
@@ -156,82 +158,67 @@ class _BannerDot extends StatelessWidget {
 class _BannerCard extends StatelessWidget {
   const new({required this.banner});
 
+  static const double _watermarkSize = 148;
+
+  final PromoBanner banner;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: PromoBannerCarousel.height,
+      child: MetallicCard(
+        radius: 16,
+        colors: banner.colors,
+        onTap: banner.onTap,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              right: -28,
+              top: -20,
+              child: Transform.rotate(
+                angle: -0.18,
+                child: banner.icon(
+                  color: AppColors.white.withValues(alpha: 0.10),
+                  size: _watermarkSize,
+                ),
+              ),
+            ),
+            _BannerText(banner: banner),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BannerText extends StatelessWidget {
+  const new({required this.banner});
+
   final PromoBanner banner;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      width: double.infinity,
-      height: PromoBannerCarousel.height,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAlias,
-      child: Material(
-        color: AppColors.transparent,
-        child: InkWell(
-          onTap: banner.onTap,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.network(
-                banner.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _fallbackBackground(),
-                loadingBuilder: (_, child, progress) =>
-                    progress == null ? child : _fallbackBackground(),
-              ),
-              const DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [Color(0x99000000), Color(0x00000000)],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      banner.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.headlineSmall?.copyWith(
-                        color: AppColors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      banner.subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: AppColors.white.withValues(alpha: 0.9),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          banner.title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: textTheme.headlineSmall?.copyWith(color: AppColors.white),
         ),
-      ),
-    );
-  }
-
-  Widget _fallbackBackground() {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: banner.colors,
+        const SizedBox(height: 8),
+        Text(
+          banner.subtitle,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: textTheme.bodyMedium?.copyWith(color: AppColors.silverLight),
         ),
-      ),
+      ],
     );
   }
 }

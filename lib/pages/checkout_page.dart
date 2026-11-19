@@ -323,7 +323,7 @@ class _OrderSummary extends StatelessWidget {
                 child: SizedBox(
                   width: _imageSize,
                   height: _imageSize,
-                  child: CoverImage(url: product.imageUrl),
+                  child: CoverImage(url: product.imageUrl, seed: product.id),
                 ),
               ),
               const SizedBox(width: 12),
