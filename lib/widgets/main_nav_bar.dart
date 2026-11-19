@@ -187,6 +187,8 @@ class _SelectorBubble extends StatelessWidget {
     return Transform.translate(
       offset: Offset(centerX - MainNavBar.bubbleSize / 2, lifted),
       child: Transform.scale(
+        // Anchored at the top so the stretch grows into the bar, never above it.
+        alignment: Alignment.topCenter,
         scaleX: 1 - 0.04 * arc,
         scaleY: 1 + 0.06 * arc,
         child: Container(

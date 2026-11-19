@@ -96,6 +96,31 @@ void main() {
       expect(haptics, ['HapticFeedbackType.selectionClick']);
     });
 
+    testWidgets('arcs upward mid-hop without leaving the bar bounds', (
+      tester,
+    ) async {
+      await pumpNav(tester);
+      final bubble = find.byWidgetPredicate(
+        (w) =>
+            w is Container &&
+            w.constraints?.maxWidth == MainNavBar.bubbleSize &&
+            w.constraints?.maxHeight == MainNavBar.bubbleSize,
+      );
+      final barTop = tester.getRect(find.byType(MainNavBar)).top;
+      final restTop = tester.getRect(bubble).top;
+
+      await tester.tap(find.text('Katalog'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 150));
+      final apexTop = tester.getRect(bubble).top;
+
+      expect(restTop - apexTop, closeTo(MainNavBar.lift, 0.5));
+      expect(apexTop, greaterThanOrEqualTo(barTop));
+
+      await tester.pumpAndSettle();
+      expect(tester.getRect(bubble).top, closeTo(restTop, 0.01));
+    });
+
     testWidgets('keeps the hop headroom inside its own bounds', (tester) async {
       await pumpNav(tester);
 
