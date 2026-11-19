@@ -22,6 +22,9 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text('Masuk'));
+    await tester.pumpAndSettle();
+
     final fields = find.byType(TextFormField);
     await tester.enterText(fields.at(0), 'Tester');
     await tester.enterText(fields.at(1), 'tester@upj.ac.id');
@@ -36,7 +39,7 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.byType(BerandaPage), findsOneWidget);
     expect(find.byType(PromoBannerCarousel), findsOneWidget);
-    expect(find.text('Tester'), findsWidgets);
+    expect(find.text('Hai Tester'), findsOneWidget);
 
     for (var cycle = 0; cycle < 20; cycle++) {
       for (var i = 0; i < 42; i++) {

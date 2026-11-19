@@ -9,13 +9,20 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
 
-  testWidgets('Returning user without token lands on login page', (
+  testWidgets('Returning user without token lands on auth landing', (
     tester,
   ) async {
     SharedPreferences.setMockInitialValues({'onboarding_completed': true});
 
     await tester.pumpWidget(const ReCanApp());
     await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Selamat datang di ReCan'), findsOneWidget);
+    expect(find.text('Masuk'), findsOneWidget);
+    expect(find.text('Daftar'), findsOneWidget);
+
+    await tester.tap(find.text('Masuk'));
     await tester.pumpAndSettle();
 
     expect(find.text('Username'), findsOneWidget);
