@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/utils/haptics.dart';
 
 /// Visual spec shared by every mutually exclusive, full-width switch in the
 /// app (quest period, carbon range, catalog tabs) so they read as one control.
@@ -89,7 +90,10 @@ class SegmentedPills<T> extends StatelessWidget {
               child: _Segment(
                 label: labelOf(value),
                 active: value == selected,
-                onTap: () => onSelected(value),
+                onTap: () {
+                  if (value != selected) Haptics.selection();
+                  onSelected(value);
+                },
               ),
             ),
         ],

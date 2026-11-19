@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/utils/haptics.dart';
+import 'package:mobile_apps_recan/widgets/pressable.dart';
 
 class MainNavItem {
   const new({
@@ -23,8 +25,15 @@ class MainNavBar extends StatefulWidget {
   });
 
   static const double barHeight = 64;
-  static const double overhang = 28;
   static const double bubbleSize = 54;
+
+  /// Apex of the selector hop. The widget reserves this much headroom above
+  /// the resting bubble, so the arc is never cut by the bar bounds.
+  static const double lift = 12;
+  static const double _bubbleRest = 28;
+
+  /// Space above the bar: the resting overhang plus the hop headroom.
+  static const double overhang = _bubbleRest + lift;
 
   final List<MainNavItem> items;
   final int currentIndex;
@@ -34,30 +43,49 @@ class MainNavBar extends StatefulWidget {
   State<MainNavBar> createState() => _MainNavBarState();
 }
 
-class _MainNavBarState extends State<MainNavBar>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
+class _MainNavBarState extends State<MainNavBar> with TickerProviderStateMixin {
+  static const Duration _travel = Duration(milliseconds: 300);
+
+  // Horizontal travel and the hop are separate controllers: retargeting while
+  // the bubble is mid-air only restarts the hop from an equivalent height, so
+  // rapid taps never make the bubble snap down.
+  late final AnimationController _slide = AnimationController(
     vsync: this,
     upperBound: (widget.items.length - 1).toDouble(),
     value: widget.currentIndex.toDouble(),
+  );
+  late final AnimationController _hop = AnimationController(
+    vsync: this,
+    duration: _travel,
+    value: 1,
   );
 
   @override
   void didUpdateWidget(MainNavBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentIndex != widget.currentIndex) {
-      _controller.animateTo(
-        widget.currentIndex.toDouble(),
-        duration: const Duration(milliseconds: 380),
-        curve: Curves.easeOutCubic,
-      );
+    if (oldWidget.currentIndex == widget.currentIndex) return;
+    final target = widget.currentIndex.toDouble();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _slide.value = target;
+      _hop.value = 1;
+      return;
     }
+    _slide.animateTo(target, duration: _travel, curve: Curves.easeInOut);
+    final phase = _hop.value;
+    _hop.forward(from: phase >= 1 ? 0 : (phase > 0.5 ? 1 - phase : phase));
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _slide.dispose();
+    _hop.dispose();
     super.dispose();
+  }
+
+  void _select(int index) {
+    if (index == widget.currentIndex) return;
+    Haptics.selection();
+    widget.onTap(index);
   }
 
   @override
@@ -72,9 +100,9 @@ class _MainNavBarState extends State<MainNavBar>
           final itemWidth = constraints.maxWidth / count;
 
           return AnimatedBuilder(
-            animation: _controller,
+            animation: Listenable.merge([_slide, _hop]),
             builder: (context, _) {
-              final centerX = _controller.value * itemWidth + itemWidth / 2;
+              final centerX = _slide.value * itemWidth + itemWidth / 2;
 
               return Stack(
                 clipBehavior: Clip.none,
@@ -106,36 +134,21 @@ class _MainNavBarState extends State<MainNavBar>
                             child: _NavButton(
                               item: widget.items[i],
                               selected: widget.currentIndex == i,
-                              onTap: () => widget.onTap(i),
+                              onTap: () => _select(i),
                             ),
                           ),
                       ],
                     ),
                   ),
                   Positioned(
-                    left: centerX - MainNavBar.bubbleSize / 2,
+                    left: 0,
                     top: 0,
                     child: IgnorePointer(
-                      child: Container(
-                        width: MainNavBar.bubbleSize,
-                        height: MainNavBar.bubbleSize,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primary,
-                        ),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 220),
-                          transitionBuilder: (child, animation) =>
-                              ScaleTransition(scale: animation, child: child),
-                          child: KeyedSubtree(
-                            key: ValueKey(widget.currentIndex),
-                            child: widget.items[widget.currentIndex]
-                                .selectedIcon(
-                                  color: AppColors.background,
-                                  size: 22,
-                                ),
-                          ),
-                        ),
+                      child: _SelectorBubble(
+                        centerX: centerX,
+                        hop: _hop.value,
+                        item: widget.items[widget.currentIndex],
+                        index: widget.currentIndex,
                       ),
                     ),
                   ),
@@ -144,6 +157,56 @@ class _MainNavBarState extends State<MainNavBar>
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class _SelectorBubble extends StatelessWidget {
+  const new({
+    required this.centerX,
+    required this.hop,
+    required this.item,
+    required this.index,
+  });
+
+  final double centerX;
+
+  /// 0 to 1 across one hop; 1 is also the resting value.
+  final double hop;
+  final MainNavItem item;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    // 4t(1-t) is a parabola peaking at 1 mid-hop. A slight stretch while
+    // airborne sells the jump without squashing the glyph.
+    final arc = 4 * hop * (1 - hop);
+    final lifted = MainNavBar.lift * (1 - arc);
+
+    return Transform.translate(
+      offset: Offset(centerX - MainNavBar.bubbleSize / 2, lifted),
+      child: Transform.scale(
+        scaleX: 1 - 0.04 * arc,
+        scaleY: 1 + 0.06 * arc,
+        child: Container(
+          width: MainNavBar.bubbleSize,
+          height: MainNavBar.bubbleSize,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.primary,
+          ),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) =>
+                ScaleTransition(scale: animation, child: child),
+            child: KeyedSubtree(
+              key: ValueKey(index),
+              child: item.selectedIcon(color: AppColors.background, size: 22),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -162,29 +225,34 @@ class _NavButton extends StatelessWidget {
       button: true,
       selected: selected,
       label: item.label,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: selected ? 0 : 1,
-                child: item.icon(color: AppColors.textTertiary, size: 22),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                item.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: selected ? AppColors.primary : AppColors.textTertiary,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+      child: Pressable(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: selected ? 0 : 1,
+                  child: item.icon(color: AppColors.textTertiary, size: 22),
                 ),
-              ),
-            ],
+                const SizedBox(height: 4),
+                Text(
+                  item.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: selected
+                        ? AppColors.primary
+                        : AppColors.textTertiary,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

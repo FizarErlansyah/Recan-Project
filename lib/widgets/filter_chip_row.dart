@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/utils/haptics.dart';
 
 class FilterChipRow extends StatelessWidget {
   const new({
@@ -32,7 +33,10 @@ class FilterChipRow extends StatelessWidget {
               _FilterChipPill(
                 label: labels[i],
                 selected: i == selectedIndex,
-                onTap: () => onSelected(i),
+                onTap: () {
+                  if (i != selectedIndex) Haptics.selection();
+                  onSelected(i);
+                },
               ),
             ],
           ],

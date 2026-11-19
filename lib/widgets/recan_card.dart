@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
+import 'package:mobile_apps_recan/widgets/pressable.dart';
 
 class ReCanCard extends StatelessWidget {
   const new({
@@ -19,15 +20,18 @@ class ReCanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: AppDecorations.card(radius: radius),
-      child: Material(
-        color: AppColors.transparent,
-        borderRadius: BorderRadius.circular(radius),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(padding: padding, child: child),
+    return Pressable(
+      enabled: onTap != null,
+      child: DecoratedBox(
+        decoration: AppDecorations.card(radius: radius),
+        child: Material(
+          color: AppColors.transparent,
+          borderRadius: BorderRadius.circular(radius),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(padding: padding, child: child),
+          ),
         ),
       ),
     );

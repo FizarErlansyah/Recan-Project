@@ -7,8 +7,10 @@ import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/ai_ask_pill.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
+import 'package:mobile_apps_recan/widgets/count_up.dart';
 import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
+import 'package:mobile_apps_recan/widgets/pressable.dart';
 import 'package:mobile_apps_recan/widgets/pull_up_overlap.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
@@ -247,16 +249,13 @@ class _PointsValue extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
       children: [
-        TweenAnimationBuilder<int>(
-          tween: IntTween(begin: 0, end: points),
-          duration: const Duration(milliseconds: 700),
-          curve: Curves.easeOutCubic,
-          builder: (context, value, _) => Text(
-            PointsHeader.formatNumber(value),
-            style: textTheme.displaySmall?.copyWith(
-              color: AppColors.white,
-              fontWeight: FontWeight.w800,
-            ),
+        CountUp(
+          value: points.toDouble(),
+          memoryKey: 'hero.points',
+          format: (value) => PointsHeader.formatNumber(value.round()),
+          style: textTheme.displaySmall?.copyWith(
+            color: AppColors.white,
+            fontWeight: FontWeight.w800,
           ),
         ),
         const SizedBox(width: 8),
@@ -287,6 +286,7 @@ class _MetricsRow extends StatelessWidget {
             target: cans.toDouble(),
             format: (value) => PointsHeader.formatNumber(value.round()),
             label: tr('Setoran Kaleng', 'Cans Deposited'),
+            memoryKey: 'hero.cans',
           ),
         ),
         const _SilverRule.vertical(),
@@ -296,6 +296,7 @@ class _MetricsRow extends StatelessWidget {
             target: weightKg,
             format: (value) => '${CarbonLineChart.formatNumber(value)} kg',
             label: tr('Berat', 'Weight'),
+            memoryKey: 'hero.weight',
           ),
         ),
         const _SilverRule.vertical(),
@@ -305,6 +306,7 @@ class _MetricsRow extends StatelessWidget {
             target: carbonKg,
             format: CarbonLineChart.formatKg,
             label: tr('Karbon Dicegah', 'Carbon Prevented'),
+            memoryKey: 'hero.carbon',
           ),
         ),
       ],
@@ -338,22 +340,25 @@ class _ScanButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primaryDeep,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: AppColors.silverLight.withValues(alpha: 0.4)),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Center(
-            child: hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(
-              color: AppColors.white,
-              size: 22,
+    return Pressable(
+      haptic: PressHaptic.light,
+      child: Material(
+        color: AppColors.primaryDeep,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: AppColors.silverLight.withValues(alpha: 0.4)),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Center(
+              child: hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(
+                color: AppColors.white,
+                size: 22,
+              ),
             ),
           ),
         ),
@@ -368,12 +373,14 @@ class _Metric extends StatelessWidget {
     required this.target,
     required this.format,
     required this.label,
+    required this.memoryKey,
   });
 
   final AppIconBuilder icon;
   final double target;
   final String Function(double value) format;
   final String label;
+  final String memoryKey;
 
   @override
   Widget build(BuildContext context) {
@@ -383,18 +390,13 @@ class _Metric extends StatelessWidget {
       children: [
         icon(color: AppColors.silverLight, size: 18),
         const SizedBox(height: 6),
-        TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0, end: target),
-          duration: const Duration(milliseconds: 700),
-          curve: Curves.easeOutCubic,
-          builder: (context, value, _) => Text(
-            format(value),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.titleSmall?.copyWith(
-              color: AppColors.white,
-              fontWeight: FontWeight.w700,
-            ),
+        CountUp(
+          value: target,
+          memoryKey: memoryKey,
+          format: format,
+          style: textTheme.titleSmall?.copyWith(
+            color: AppColors.white,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 2),

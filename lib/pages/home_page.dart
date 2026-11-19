@@ -14,6 +14,7 @@ import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/main_nav_bar.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
+import 'package:mobile_apps_recan/widgets/tab_slot.dart';
 
 class HomePage extends StatefulWidget {
   const new({super.key});
@@ -105,15 +106,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Tabs build on first visit and then stay alive, so scroll position, loaded
-  // data and carousel state survive a tab switch. TickerMode stops animations
-  // in the tabs that are offstage.
+  // data and carousel state survive a tab switch. Each slot crossfades and
+  // goes offstage once hidden, so only the active tab is painted or hit.
   Widget _buildTabs() {
-    return IndexedStack(
-      index: _currentIndex,
+    return Stack(
+      fit: StackFit.expand,
       children: [
         for (var i = 0; i < _items.length; i++)
-          TickerMode(
-            enabled: i == _currentIndex,
+          TabSlot(
+            active: i == _currentIndex,
             child: _visited.contains(i)
                 ? _buildTab(i)
                 : const SizedBox.shrink(),

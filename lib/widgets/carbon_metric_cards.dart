@@ -6,6 +6,7 @@ import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
+import 'package:mobile_apps_recan/widgets/count_up.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 
 /// Bento layout: one wide tile for the headline metric, two half tiles for
@@ -24,7 +25,9 @@ class CarbonMetricCards extends StatelessWidget {
       children: [
         _MetricTile(
           icon: hugeIcon(HugeIcons.strokeRoundedLeaf01),
-          value: CarbonLineChart.formatNumber(impact.totalCarbonKg),
+          value: impact.totalCarbonKg,
+          format: CarbonLineChart.formatNumber,
+          memoryKey: 'carbon.kg',
           label: tr('Karbon Diselamatkan (kg CO₂e)', 'Carbon Saved (kg CO₂e)'),
           emphasis: true,
         ),
@@ -36,7 +39,9 @@ class CarbonMetricCards extends StatelessWidget {
               Expanded(
                 child: _MetricTile(
                   icon: hugeIcon(HugeIcons.strokeRoundedRecycle01),
-                  value: PointsHeader.formatNumber(impact.totalCans),
+                  value: impact.totalCans.toDouble(),
+                  format: (value) => PointsHeader.formatNumber(value.round()),
+                  memoryKey: 'carbon.cans',
                   label: tr('Kaleng Terkumpul', 'Cans Collected'),
                 ),
               ),
@@ -44,7 +49,9 @@ class CarbonMetricCards extends StatelessWidget {
               Expanded(
                 child: _MetricTile(
                   icon: hugeIcon(HugeIcons.strokeRoundedTarget01),
-                  value: '${impact.targetPercent}%',
+                  value: impact.targetPercent.toDouble(),
+                  format: (value) => '${value.round()}%',
+                  memoryKey: 'carbon.target',
                   label: tr(
                     'Target Kampus Hijau UPJ',
                     'UPJ Green Campus Target',
@@ -64,13 +71,17 @@ class _MetricTile extends StatelessWidget {
   const new({
     required this.icon,
     required this.value,
+    required this.format,
+    required this.memoryKey,
     required this.label,
     this.emphasis = false,
     this.progress,
   });
 
   final AppIconBuilder icon;
-  final String value;
+  final double value;
+  final String Function(double value) format;
+  final String memoryKey;
   final String label;
   final bool emphasis;
   final double? progress;
@@ -80,6 +91,8 @@ class _MetricTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final text = _TileText(
       value: value,
+      format: format,
+      memoryKey: memoryKey,
       label: label,
       valueStyle: emphasis ? textTheme.headlineMedium : textTheme.titleLarge,
       progress: progress,
@@ -111,12 +124,16 @@ class _MetricTile extends StatelessWidget {
 class _TileText extends StatelessWidget {
   const new({
     required this.value,
+    required this.format,
+    required this.memoryKey,
     required this.label,
     required this.valueStyle,
     required this.progress,
   });
 
-  final String value;
+  final double value;
+  final String Function(double value) format;
+  final String memoryKey;
   final String label;
   final TextStyle? valueStyle;
   final double? progress;
@@ -129,16 +146,14 @@ class _TileText extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 250),
-          child: FittedBox(
-            key: ValueKey(value),
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              style: valueStyle?.copyWith(fontWeight: FontWeight.w800),
-            ),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: CountUp(
+            value: value,
+            format: format,
+            memoryKey: memoryKey,
+            style: valueStyle?.copyWith(fontWeight: FontWeight.w800),
           ),
         ),
         const SizedBox(height: 2),

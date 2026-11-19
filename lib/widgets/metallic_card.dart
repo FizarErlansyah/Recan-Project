@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/widgets/pressable.dart';
 
 /// Membership-card surface: emerald gradient, silver hairline border and a
 /// faint diagonal sheen. Shared by the balance card and the tier card so both
@@ -23,27 +24,30 @@ class MetallicCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: colors,
+    return Pressable(
+      enabled: onTap != null,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: colors,
+          ),
+          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(
+            color: AppColors.silverLight.withValues(alpha: 0.42),
+          ),
         ),
-        borderRadius: BorderRadius.circular(radius),
-        border: Border.all(
-          color: AppColors.silverLight.withValues(alpha: 0.42),
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(radius - 1),
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkWell(
-            onTap: onTap,
-            child: CustomPaint(
-              painter: const _SheenPainter(),
-              child: Padding(padding: padding, child: child),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(radius - 1),
+          child: Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: onTap,
+              child: CustomPaint(
+                painter: const _SheenPainter(),
+                child: Padding(padding: padding, child: child),
+              ),
             ),
           ),
         ),
