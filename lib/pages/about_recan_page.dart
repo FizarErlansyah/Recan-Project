@@ -241,7 +241,7 @@ class _SdgChip extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelMedium
-            ?.copyWith(color: AppColors.primaryDark),
+            ?.copyWith(color: context.palette.accent),
       ),
     );
   }

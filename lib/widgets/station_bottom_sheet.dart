@@ -63,7 +63,7 @@ class StationBottomSheet extends StatelessWidget {
                   style: textTheme.titleMedium?.copyWith(
                     color: almostFull
                         ? context.palette.danger
-                        : AppColors.primaryDark,
+                        : context.palette.accent,
                   ),
                 ),
               ],

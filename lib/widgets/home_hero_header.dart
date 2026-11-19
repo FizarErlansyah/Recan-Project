@@ -278,7 +278,10 @@ class _MetricsRow extends StatelessWidget {
     final weightKg = cans * DropSessionSummary.gramsPerCan / 1000;
     final carbonKg = cans * DropSessionSummary.carbonKgPerCan;
 
+    // Top-aligned so a label that wraps to two lines never lifts its icon
+    // and value out of line with the neighbouring metrics.
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: _Metric(

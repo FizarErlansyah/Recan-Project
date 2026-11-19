@@ -77,12 +77,12 @@ class TierBenefitCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 2),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
                   child: HugeIcon(
                     icon: AppIcons.check,
                     size: 16,
-                    color: AppColors.primaryDark,
+                    color: context.palette.accent,
                   ),
                 ),
                 const SizedBox(width: 8),

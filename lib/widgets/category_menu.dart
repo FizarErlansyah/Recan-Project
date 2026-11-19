@@ -22,6 +22,7 @@ class CategoryMenu extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (final entry in entries) ...[
             Expanded(child: _CategoryButton(entry: entry)),
