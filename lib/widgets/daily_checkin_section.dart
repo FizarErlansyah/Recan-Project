@@ -178,7 +178,7 @@ class _CoinSlot extends StatelessWidget {
           child: HugeIcon(
             icon: isClaimed ? AppIcons.check : AppIcons.coins,
             size: isToday ? 24 : 18,
-            color: isClaimed ? AppColors.success : AppColors.white,
+            color: isClaimed ? context.palette.success : AppColors.white,
           ),
         ),
         const SizedBox(height: 8),

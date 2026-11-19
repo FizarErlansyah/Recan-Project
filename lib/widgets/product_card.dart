@@ -22,9 +22,18 @@ class ProductCard extends StatelessWidget {
 
   static const double _textBlockHeight = 64;
 
+  // The text block is mostly text, but its chip and paddings do not scale, so
+  // the growth is weighted; at 1.3x the plain difference clipped the price.
+  static const double _growthWeight = 1.6;
+  static const double _probeSize = 14;
+
+  // Measured on body-sized text: Android 14 scales large sizes less than
+  // small ones, so scaling the 64dp block itself would under-count.
   static double heightOf(BuildContext context) {
-    final scaledText = MediaQuery.textScalerOf(context).scale(_textBlockHeight);
-    return height + (scaledText - _textBlockHeight).clamp(0, 72);
+    final factor =
+        MediaQuery.textScalerOf(context).scale(_probeSize) / _probeSize;
+    final growth = _textBlockHeight * (factor - 1) * _growthWeight;
+    return height + growth.clamp(0, 140);
   }
 
   static String heroTag(UpcycleProduct product) => 'product-${product.id}';

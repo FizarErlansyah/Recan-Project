@@ -222,7 +222,7 @@ class _StatusPill extends StatelessWidget {
       child: Text(
         tr('Berhasil', 'Success'),
         style: Theme.of(context).textTheme.labelMedium
-            ?.copyWith(color: AppColors.success),
+            ?.copyWith(color: context.palette.success),
       ),
     );
   }

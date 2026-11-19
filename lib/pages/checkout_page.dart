@@ -349,7 +349,7 @@ class _OrderSummary extends StatelessWidget {
                             ),
                       style: textTheme.bodySmall?.copyWith(
                         color: soldOut
-                            ? AppColors.danger
+                            ? context.palette.danger
                             : context.palette.textSecondary,
                       ),
                     ),

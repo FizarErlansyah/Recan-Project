@@ -58,7 +58,7 @@ class KatalogPage extends StatelessWidget {
               labels: [
                 tr('Kriya ReCan', 'ReCan Crafts'),
                 'E-Wallet',
-                tr('Voucher Diskon', 'Vouchers'),
+                tr('Voucher', 'Vouchers'),
               ],
             ),
             const SizedBox(height: 16),

@@ -79,7 +79,7 @@ class ActivityDetailSheet extends StatelessWidget {
                     _DetailRow(
                       label: 'Status',
                       value: transaction.statusLabel,
-                      valueColor: AppColors.success,
+                      valueColor: context.palette.success,
                     ),
                     if (transaction.isDeposit)
                       _DetailRow(

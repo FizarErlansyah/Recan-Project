@@ -4,6 +4,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/demo/presentation/demo_tools_sheet.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/info_section_card.dart';
@@ -70,18 +71,21 @@ class _HeroCard extends StatelessWidget {
             style: textTheme.bodyMedium?.copyWith(color: AppColors.primarySoft),
           ),
           const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppColors.white.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              tr(
-                'Versi ${SettingsSheets.appVersion}',
-                'Version ${SettingsSheets.appVersion}',
+          GestureDetector(
+            onLongPress: () => DemoToolsSheet.show(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.white.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
               ),
-              style: textTheme.labelMedium?.copyWith(color: AppColors.white),
+              child: Text(
+                tr(
+                  'Versi ${SettingsSheets.appVersion}',
+                  'Version ${SettingsSheets.appVersion}',
+                ),
+                style: textTheme.labelMedium?.copyWith(color: AppColors.white),
+              ),
             ),
           ),
         ],
@@ -115,7 +119,7 @@ class _ProblemCard extends StatelessWidget {
                 Text(
                   '80 – 200',
                   style: textTheme.headlineMedium?.copyWith(
-                    color: AppColors.danger,
+                    color: context.palette.danger,
                   ),
                 ),
                 const SizedBox(width: 12),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -165,7 +164,7 @@ class _GoPayStatus extends StatelessWidget {
         const SizedBox(height: 8),
         if (connected)
           hugeIcon(HugeIcons.strokeRoundedTick02)(
-            color: AppColors.success,
+            color: context.palette.success,
             size: 24,
           )
         else
@@ -178,7 +177,10 @@ class _GoPayStatus extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 shape: const StadiumBorder(),
               ),
-              child: Text(tr('Hubungkan', 'Connect')),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(tr('Hubungkan', 'Connect')),
+              ),
             ),
           ),
       ],

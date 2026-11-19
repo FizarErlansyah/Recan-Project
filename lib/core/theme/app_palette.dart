@@ -24,6 +24,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.goldText,
     required this.successSoft,
     required this.dangerSoft,
+    required this.danger,
+    required this.success,
   });
 
   static const AppPalette light = AppPalette(
@@ -40,6 +42,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
     goldText: AppColors.goldDeep,
     successSoft: AppColors.successSoft,
     dangerSoft: AppColors.dangerSoft,
+    danger: AppColors.danger,
+    success: AppColors.success,
   );
 
   // Graphite with a green undertone instead of pure black, so the emerald
@@ -58,6 +62,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
     goldText: Color(0xFFD4B06A),
     successSoft: Color(0xFF14352A),
     dangerSoft: Color(0xFF3A1E1B),
+    danger: Color(0xFFE57D72),
+    success: Color(0xFF5CC7A0),
   );
 
   final Color background;
@@ -80,6 +86,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color successSoft;
   final Color dangerSoft;
 
+  /// Error red for text and icons; fills use the fixed [AppColors.danger].
+  final Color danger;
+
+  /// Confirmation green for text and icons.
+  final Color success;
+
   @override
   AppPalette copyWith({
     Color? background,
@@ -95,6 +107,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
     Color? goldText,
     Color? successSoft,
     Color? dangerSoft,
+    Color? danger,
+    Color? success,
   }) {
     return AppPalette(
       background: background ?? this.background,
@@ -110,6 +124,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
       goldText: goldText ?? this.goldText,
       successSoft: successSoft ?? this.successSoft,
       dangerSoft: dangerSoft ?? this.dangerSoft,
+      danger: danger ?? this.danger,
+      success: success ?? this.success,
     );
   }
 
@@ -130,6 +146,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
       goldText: Color.lerp(goldText, other.goldText, t)!,
       successSoft: Color.lerp(successSoft, other.successSoft, t)!,
       dangerSoft: Color.lerp(dangerSoft, other.dangerSoft, t)!,
+      danger: Color.lerp(danger, other.danger, t)!,
+      success: Color.lerp(success, other.success, t)!,
     );
   }
 }

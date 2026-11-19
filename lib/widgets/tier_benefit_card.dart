@@ -66,9 +66,9 @@ class TierBenefitCard extends StatelessWidget {
               if (isCurrent)
                 _StatusChip(label: tr('Tier kamu', 'Your tier'))
               else if (isReached)
-                const HugeIcon(
+                HugeIcon(
                   icon: AppIcons.checkCircle,
-                  color: AppColors.success,
+                  color: context.palette.success,
                 ),
             ],
           ),

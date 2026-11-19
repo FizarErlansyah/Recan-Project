@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
@@ -105,7 +104,7 @@ class _Details extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final soldOut = product.stock <= 0;
     final stockColor = soldOut
-        ? AppColors.danger
+        ? context.palette.danger
         : context.palette.textSecondary;
     final bodyStyle = textTheme.bodyMedium?.copyWith(
       color: context.palette.textSecondary,

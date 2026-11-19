@@ -402,7 +402,7 @@ class _Metric extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          maxLines: 1,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
           style: textTheme.labelSmall?.copyWith(color: AppColors.silverLight),

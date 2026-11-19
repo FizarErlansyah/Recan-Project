@@ -62,7 +62,7 @@ class StationBottomSheet extends StatelessWidget {
                   '${station.capacityPercent}%',
                   style: textTheme.titleMedium?.copyWith(
                     color: almostFull
-                        ? AppColors.danger
+                        ? context.palette.danger
                         : AppColors.primaryDark,
                   ),
                 ),
@@ -81,7 +81,9 @@ class StationBottomSheet extends StatelessWidget {
                   'Hampir penuh, pertimbangkan station lain.',
                   'Almost full, consider another station.',
                 ),
-                style: textTheme.bodySmall?.copyWith(color: AppColors.danger),
+                style: textTheme.bodySmall?.copyWith(
+                  color: context.palette.danger,
+                ),
               ),
             ],
             const SizedBox(height: 24),

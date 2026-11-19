@@ -18,6 +18,7 @@ class MockStore {
   const new _();
 
   static const int initialPoints = 0;
+  static const int demoPointsGrant = 25000;
   static const int _userId = 1;
   static const String _idAlphabet = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
   static final Random _random = Random();
@@ -510,6 +511,22 @@ class MockStore {
       if (quest.isClaimed || quest.metric != metric) continue;
       quests[i] = quest.withProgress(quest.progress + amount);
     }
+  }
+
+  static void grantDemoPoints() {
+    points += demoPointsGrant;
+  }
+
+  /// Back to the first-run Zero State: no points, history, owned vouchers or
+  /// deposited cans. Quest progress is left alone; it never leaves zero state
+  /// by itself and resetting it would need a second copy of the seed data.
+  static void resetDemoState() {
+    points = initialPoints;
+    depositedKg = 0;
+    userTotalCans = 0;
+    userTodayCans = 0;
+    activities.clear();
+    ownedVouchers.clear();
   }
 
   static bool claimCheckIn() {

@@ -56,8 +56,9 @@ class _CategoryButton extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   entry.label,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                   style: textTheme.labelMedium,
                 ),
               ],

@@ -39,7 +39,7 @@ class AppTheme {
       onSurface: palette.textPrimary,
       onSurfaceVariant: palette.textSecondary,
       surfaceContainerHighest: palette.surfaceMuted,
-      error: AppColors.danger,
+      error: palette.danger,
       outline: palette.border,
       outlineVariant: palette.border,
       shadow: AppColors.shadowStrong,
