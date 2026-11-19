@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
 import 'package:mobile_apps_recan/pages/drop_session_page.dart';
 import 'package:mobile_apps_recan/services/station_service.dart';
@@ -42,7 +44,7 @@ class DropStationMapPage extends StatelessWidget {
         builder: (context, stations, _) {
           if (stations.isEmpty) {
             return EmptyState(
-              icon: Icons.location_off_rounded,
+              icon: hugeIcon(HugeIcons.strokeRoundedLocationOffline01),
               title: tr('Belum ada station', 'No stations yet'),
               message: tr(
                 'Drop station belum tersedia di area kamu.',

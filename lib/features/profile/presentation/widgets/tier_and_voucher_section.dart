@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
+import 'package:mobile_apps_recan/widgets/tier_style.dart';
 
 class TierAndVoucherSection extends StatelessWidget {
   const new({required this.points, required this.onTierTap, super.key});
 
   static const double height = 128;
+  static const double _gap = 12;
 
   final int points;
   final VoidCallback onTierTap;
@@ -19,10 +24,11 @@ class TierAndVoucherSection extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
+            flex: 3,
             child: _TierCard(points: points, onTap: onTierTap),
           ),
-          const SizedBox(width: 16),
-          const Expanded(child: _VoucherCard()),
+          const SizedBox(width: _gap),
+          const Expanded(flex: 2, child: _VoucherCard()),
         ],
       ),
     );
@@ -35,46 +41,29 @@ class _TierCard extends StatelessWidget {
   final int points;
   final VoidCallback onTap;
 
-  // Metallic hues are tier identity, so they only tint the badge and border;
-  // the card body stays on the shared light surface.
-  static Color _accentOf(MemberTier tier) => switch (tier.rank) {
-    0 => AppColors.bronze,
-    1 => AppColors.silver,
-    _ => AppColors.goldDeep,
-  };
-
   @override
   Widget build(BuildContext context) {
     final tier = MemberTier.of(points);
-    final accent = _accentOf(tier);
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: accent.withValues(alpha: 0.45)),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: _TierCardBody(tier: tier, accent: accent, points: points),
-        ),
-      ),
+    return MetallicCard(
+      radius: 16,
+      padding: const EdgeInsets.all(16),
+      onTap: onTap,
+      child: _TierCardBody(tier: tier, points: points),
     );
   }
 }
 
 class _TierCardBody extends StatelessWidget {
-  const new({required this.tier, required this.accent, required this.points});
+  const new({required this.tier, required this.points});
 
   final MemberTier tier;
-  final Color accent;
   final int points;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final accent = TierStyle.onDarkFor(tier);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,29 +71,53 @@ class _TierCardBody extends StatelessWidget {
       children: [
         Row(
           children: [
-            _IconBadge(icon: Icons.workspace_premium_rounded, color: accent),
+            _TierMedal(accent: accent),
             const Spacer(),
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: AppColors.textTertiary,
+            hugeIcon(HugeIcons.strokeRoundedArrowRight01)(
+              color: AppColors.silverLight,
+              size: 20,
             ),
           ],
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(tier.name, style: textTheme.headlineSmall),
+            Text(
+              tier.name,
+              style: textTheme.headlineSmall?.copyWith(color: AppColors.white),
+            ),
             const SizedBox(height: 2),
             Text(
               tr(
                 '${PointsHeader.formatNumber(points)} poin',
                 '${PointsHeader.formatNumber(points)} points',
               ),
-              style: textTheme.bodySmall,
+              style: textTheme.labelLarge?.copyWith(color: AppColors.goldLight),
             ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class _TierMedal extends StatelessWidget {
+  const new({required this.accent});
+
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 36,
+      height: 36,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.primaryDeep.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: accent.withValues(alpha: 0.7)),
+      ),
+      child: hugeIcon(HugeIcons.strokeRoundedMedal01)(color: accent, size: 20),
     );
   }
 }
@@ -123,44 +136,35 @@ class _VoucherCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const _IconBadge(
-              icon: Icons.confirmation_number_rounded,
-              color: AppColors.primary,
+            Container(
+              width: 36,
+              height: 36,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.primarySoft,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: hugeIcon(HugeIcons.strokeRoundedTicket01)(
+                color: AppColors.primary,
+                size: 20,
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  tr('Voucher Saya', 'My Voucher'),
-                  style: textTheme.titleMedium,
-                ),
+                Text('0', style: textTheme.headlineSmall),
                 const SizedBox(height: 2),
-                Text(tr('0 Aktif', '0 Active'), style: textTheme.bodySmall),
+                Text(
+                  tr('Voucher Aktif', 'Active Vouchers'),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.bodySmall,
+                ),
               ],
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _IconBadge extends StatelessWidget {
-  const new({required this.icon, required this.color});
-
-  final IconData icon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Icon(icon, size: 20, color: color),
     );
   }
 }

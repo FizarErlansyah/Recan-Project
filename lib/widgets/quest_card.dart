@@ -27,7 +27,7 @@ class _QuestCardState extends State<QuestCard> {
   static const List<Color> _confettiColors = [
     AppColors.primarySoft,
     AppColors.primary,
-    AppColors.clay,
+    AppColors.goldLight,
     AppColors.gold,
   ];
 

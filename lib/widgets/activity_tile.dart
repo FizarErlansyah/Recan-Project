@@ -70,6 +70,7 @@ class ActivityTile extends StatelessWidget {
                           transaction.amountLabel,
                           style: textTheme.titleSmall?.copyWith(
                             color: transaction.amountColor,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         const SizedBox(height: 4),

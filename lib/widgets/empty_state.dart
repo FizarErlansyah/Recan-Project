@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 
 class EmptyState extends StatelessWidget {
   const new({
@@ -10,7 +12,7 @@ class EmptyState extends StatelessWidget {
     super.key,
   });
 
-  final IconData icon;
+  final AppIconBuilder icon;
   final String title;
   final String message;
 
@@ -27,11 +29,9 @@ class EmptyState extends StatelessWidget {
             Container(
               width: 80,
               height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.primarySoft,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(icon, size: 36, color: AppColors.primary),
+              alignment: Alignment.center,
+              decoration: AppDecorations.card(color: AppColors.primarySoft),
+              child: icon(color: AppColors.primary, size: 36),
             ),
             const SizedBox(height: 16),
             Text(title, style: textTheme.titleLarge),

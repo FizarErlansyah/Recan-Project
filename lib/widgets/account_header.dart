@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/core/theme/app_shadows.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/widgets/profile_avatar.dart';
@@ -19,11 +21,7 @@ class AccountHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppShadows.soft,
-      ),
+      decoration: AppDecorations.card(),
       child: Row(
         children: [
           ProfileAvatar(initials: profile.initials, size: 72),
@@ -77,7 +75,7 @@ class _TierBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(tier.emoji, style: Theme.of(context).textTheme.labelLarge),
+          hugeIcon(HugeIcons.strokeRoundedMedal01)(color: color, size: 14),
           const SizedBox(width: 4),
           Text(
             '${tier.name.toUpperCase()} MEMBER',

@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/pages/drop_session_page.dart';
 import 'package:mobile_apps_recan/services/camera_permission_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/circle_icon_button.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/frosted_glass.dart';
 import 'package:mobile_apps_recan/widgets/scanner_overlay.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -82,13 +83,10 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: CircleIconButton(
-                  icon: materialIcon(Icons.close_rounded),
-                  tooltip: tr('Tutup', 'Close'),
-                  onTap: () => Navigator.of(context).pop(),
-                ),
+              child: _TopBar(
+                scanner: _scanner,
+                showFlash: _access == CameraAccess.granted,
+                onBack: () => Navigator.of(context).pop(),
               ),
             ),
           ),
@@ -116,7 +114,141 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
         ),
         const ScannerOverlay(),
         const _Instruction(),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: _ZoomPanel(scanner: _scanner),
+            ),
+          ),
+        ),
       ],
+    );
+  }
+}
+
+class _TopBar extends StatelessWidget {
+  const new({
+    required this.scanner,
+    required this.showFlash,
+    required this.onBack,
+  });
+
+  final MobileScannerController scanner;
+  final bool showFlash;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GlassIconButton(
+          icon: hugeIcon(HugeIcons.strokeRoundedArrowLeft01)(
+            color: AppColors.white,
+            size: 24,
+          ),
+          tooltip: tr('Kembali', 'Back'),
+          onTap: onBack,
+        ),
+        if (showFlash) _FlashButton(scanner: scanner),
+      ],
+    );
+  }
+}
+
+class _FlashButton extends StatelessWidget {
+  const new({required this.scanner});
+
+  final MobileScannerController scanner;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<MobileScannerState>(
+      valueListenable: scanner,
+      builder: (context, state, _) {
+        final torch = state.torchState;
+        final on = torch == TorchState.on;
+        final available = torch != TorchState.unavailable;
+        final icon = on
+            ? HugeIcons.strokeRoundedFlash
+            : HugeIcons.strokeRoundedFlashOff;
+        return GlassIconButton(
+          active: on,
+          icon: hugeIcon(icon)(
+            color: available ? AppColors.white : AppColors.silver,
+            size: 24,
+          ),
+          tooltip: on
+              ? tr('Matikan flash', 'Flash off')
+              : tr('Nyalakan flash', 'Flash on'),
+          onTap: available ? () => unawaited(scanner.toggleTorch()) : null,
+        );
+      },
+    );
+  }
+}
+
+class _ZoomPanel extends StatefulWidget {
+  const new({required this.scanner});
+
+  final MobileScannerController scanner;
+
+  @override
+  State<_ZoomPanel> createState() => _ZoomPanelState();
+}
+
+class _ZoomPanelState extends State<_ZoomPanel> {
+  double _zoom = 0;
+
+  Future<void> _apply(double value) async {
+    setState(() => _zoom = value);
+    try {
+      await widget.scanner.setZoomScale(value);
+    } on MobileScannerException {
+      // Dragging can start before the camera finishes initializing; the next
+      // slider tick applies the zoom, so a dropped call is harmless.
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FrostedGlass(
+      radius: 20,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      // Slider fills any bounded height, so the row must be pinned or the
+      // glass panel stretches over the whole viewfinder.
+      child: SizedBox(
+        height: 56,
+        child: Row(
+          children: [
+            hugeIcon(HugeIcons.strokeRoundedZoomOutArea)(
+              color: AppColors.white,
+              size: 22,
+            ),
+            Expanded(
+              child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: AppColors.sageLight,
+                  inactiveTrackColor: AppColors.white.withValues(alpha: 0.28),
+                  thumbColor: AppColors.white,
+                  overlayColor: AppColors.white.withValues(alpha: 0.12),
+                ),
+                child: Slider(
+                  value: _zoom,
+                  onChanged: (value) => unawaited(_apply(value)),
+                ),
+              ),
+            ),
+            hugeIcon(HugeIcons.strokeRoundedZoomInArea)(
+              color: AppColors.white,
+              size: 22,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -134,16 +266,35 @@ class _Instruction extends StatelessWidget {
         return Stack(
           children: [
             Positioned(
-              top: window.bottom + 24,
+              top: window.bottom + 36,
               left: 24,
               right: 24,
-              child: Text(
-                tr(
-                  'Arahkan ke QR Code di Drop Station',
-                  'Point at the QR Code on the Drop Station',
+              child: FrostedGlass(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-                textAlign: TextAlign.center,
-                style: textTheme.titleMedium?.copyWith(color: AppColors.white),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    hugeIcon(HugeIcons.strokeRoundedQrCode)(
+                      color: AppColors.sageLight,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 12),
+                    Flexible(
+                      child: Text(
+                        tr(
+                          'Arahkan ke QR Code di Drop Station',
+                          'Point at the QR Code on the Drop Station',
+                        ),
+                        style: textTheme.titleMedium?.copyWith(
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -169,10 +320,9 @@ class _PermissionDenied extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.no_photography_rounded,
-              size: 48,
+            hugeIcon(HugeIcons.strokeRoundedCameraOff01)(
               color: AppColors.primarySoft,
+              size: 48,
             ),
             const SizedBox(height: 16),
             Text(

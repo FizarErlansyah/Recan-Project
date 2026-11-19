@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/pages/product_detail_page.dart';
 import 'package:mobile_apps_recan/services/data_refresh.dart';
@@ -80,22 +83,19 @@ class _CatalogTabBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
         padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: AppColors.primarySoft.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(16),
-        ),
+        decoration: AppDecorations.card(),
         child: TabBar(
           dividerColor: AppColors.transparent,
           indicatorSize: TabBarIndicatorSize.tab,
-          splashBorderRadius: BorderRadius.circular(16),
+          splashBorderRadius: BorderRadius.circular(12),
           labelColor: AppColors.white,
-          unselectedLabelColor: AppColors.primary,
+          unselectedLabelColor: AppColors.textSecondary,
           labelPadding: EdgeInsets.zero,
           labelStyle: textTheme.titleSmall,
           unselectedLabelStyle: textTheme.titleSmall,
           indicator: BoxDecoration(
             color: AppColors.primary,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           tabs: [
             Tab(height: 44, text: tr('Kriya ReCan', 'ReCan Crafts')),
@@ -142,7 +142,7 @@ class _CraftTabState extends State<_CraftTab> {
       builder: (context, products, reload) {
         if (products.isEmpty) {
           return EmptyState(
-            icon: Icons.shopping_bag_outlined,
+            icon: hugeIcon(HugeIcons.strokeRoundedShoppingBag01),
             title: tr('Belum ada produk', 'No products yet'),
             message: tr(
               'Produk daur ulang akan segera tersedia.',

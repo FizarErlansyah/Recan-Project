@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
 import 'package:mobile_apps_recan/services/analytics_service.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
@@ -180,15 +182,11 @@ class _ChartCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.scrim,
+        color: AppColors.primaryDeep,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+          color: AppColors.silverLight.withValues(alpha: 0.28),
+        ),
       ),
       child: child,
     );
@@ -239,10 +237,9 @@ class _ChartMessage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.insights_rounded,
+          hugeIcon(HugeIcons.strokeRoundedAnalyticsUp)(
+            color: AppColors.silverLight,
             size: 40,
-            color: AppColors.primarySoft,
           ),
           const SizedBox(height: 16),
           Text(

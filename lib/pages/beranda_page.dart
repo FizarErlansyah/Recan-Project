@@ -136,7 +136,7 @@ class _Content extends StatelessWidget {
                   'Drop cans now and feel the difference',
                 ),
                 icon: Icons.bolt_rounded,
-                colors: const [AppColors.sand, AppColors.clay],
+                colors: const [AppColors.gold, AppColors.goldDeep],
                 imageUrl: 'https://picsum.photos/seed/recan-weekend/800/420',
                 onTap: () =>
                     Navigator.of(context)
@@ -177,7 +177,7 @@ class _Content extends StatelessWidget {
                   'Drop daily, save carbon, become an Eco-Hero',
                 ),
                 icon: Icons.eco_rounded,
-                colors: const [AppColors.clayDark, AppColors.clay],
+                colors: const [AppColors.slateDeep, AppColors.slate],
                 imageUrl: 'https://picsum.photos/seed/recan-zero-emisi/800/420',
                 onTap: () => onSelectTab(3),
               ),

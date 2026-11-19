@@ -16,8 +16,8 @@ class ProductCard extends StatelessWidget {
   });
 
   static const double width = 148;
-  static const double height = 208;
-  static const double _imageHeight = 96;
+  static const double height = 216;
+  static const double _imageHeight = 104;
 
   static const double _textBlockHeight = 64;
 

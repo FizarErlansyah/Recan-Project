@@ -16,7 +16,6 @@ class EducationCard extends StatelessWidget {
     final category = article.category;
 
     return ReCanCard(
-      radius: 16,
       onTap: onTap,
       child: Row(
         children: [
@@ -39,10 +38,13 @@ class EducationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  category.label,
+                  category.label.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: textTheme.labelMedium?.copyWith(color: AppColors.sage),
+                  style: textTheme.labelSmall?.copyWith(
+                    color: AppColors.primary,
+                    letterSpacing: 0.8,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(

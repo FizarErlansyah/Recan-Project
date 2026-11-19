@@ -21,7 +21,7 @@ enum EducationCategory {
   List<Color> get gradient => switch (this) {
     about => const [AppColors.primary, AppColors.primaryDark],
     importance => const [AppColors.primaryDark, AppColors.sage],
-    impact => const [AppColors.sand, AppColors.clay],
+    impact => const [AppColors.slate, AppColors.slateDeep],
   };
 }
 

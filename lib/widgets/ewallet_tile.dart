@@ -22,7 +22,6 @@ class EWalletTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return ReCanCard(
-      radius: 16,
       child: Row(
         children: [
           Container(

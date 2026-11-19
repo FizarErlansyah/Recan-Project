@@ -23,7 +23,7 @@ class _HelpfulBonusCardState extends State<HelpfulBonusCard> {
   static const List<Color> _confettiColors = [
     AppColors.primarySoft,
     AppColors.primary,
-    AppColors.clay,
+    AppColors.goldLight,
     AppColors.gold,
   ];
 
@@ -98,9 +98,10 @@ class _HelpfulBonusCardState extends State<HelpfulBonusCard> {
                   onPressed: _claimed ? null : _claim,
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(52),
-                    backgroundColor: AppColors.primary,
-                    disabledBackgroundColor: AppColors.successSoft,
-                    disabledForegroundColor: AppColors.success,
+                    backgroundColor: AppColors.gold,
+                    foregroundColor: AppColors.primaryDeep,
+                    disabledBackgroundColor: AppColors.goldSoft,
+                    disabledForegroundColor: AppColors.goldDeep,
                     shape: const StadiumBorder(),
                   ),
                   icon: Icon(
@@ -119,7 +120,11 @@ class _HelpfulBonusCardState extends State<HelpfulBonusCard> {
                               'Yes, helpful! +$bonus Points',
                             ),
                       key: ValueKey(_claimed),
-                      style: textTheme.labelLarge,
+                      style: textTheme.labelLarge?.copyWith(
+                        color: _claimed
+                            ? AppColors.goldDeep
+                            : AppColors.primaryDeep,
+                      ),
                     ),
                   ),
                 ),

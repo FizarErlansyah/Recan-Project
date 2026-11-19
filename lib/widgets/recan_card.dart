@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/core/theme/app_shadows.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 
 class ReCanCard extends StatelessWidget {
   const new({
@@ -9,7 +9,7 @@ class ReCanCard extends StatelessWidget {
     super.key,
     this.onTap,
     this.padding = const EdgeInsets.all(16),
-    this.radius = 12,
+    this.radius = AppDecorations.radius,
   });
 
   final Widget child;
@@ -19,14 +19,10 @@ class ReCanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(radius),
-        boxShadow: AppShadows.soft,
-      ),
+    return DecoratedBox(
+      decoration: AppDecorations.card(radius: radius),
       child: Material(
-        color: AppColors.surface,
+        color: AppColors.transparent,
         borderRadius: BorderRadius.circular(radius),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

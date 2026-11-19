@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/core/theme/app_shadows.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
 
 class CarbonRangeChips extends StatelessWidget {
@@ -56,7 +55,7 @@ class _Segment extends StatelessWidget {
         decoration: BoxDecoration(
           color: active ? AppColors.surface : AppColors.transparent,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: active ? AppShadows.soft : null,
+          border: active ? Border.all(color: AppColors.border) : null,
         ),
         child: Text(
           label,

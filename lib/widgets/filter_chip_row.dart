@@ -18,20 +18,25 @@ class FilterChipRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: padding,
-      child: Row(
-        children: [
-          for (var i = 0; i < labels.length; i++) ...[
-            if (i > 0) const SizedBox(width: 8),
-            _FilterChipPill(
-              label: labels[i],
-              selected: i == selectedIndex,
-              onTap: () => onSelected(i),
-            ),
+    // SingleChildScrollView shrink-wraps its child, so without a full-width
+    // box a parent Column would center the chips instead of left-aligning.
+    return SizedBox(
+      width: double.infinity,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: padding,
+        child: Row(
+          children: [
+            for (var i = 0; i < labels.length; i++) ...[
+              if (i > 0) const SizedBox(width: 8),
+              _FilterChipPill(
+                label: labels[i],
+                selected: i == selectedIndex,
+                onTap: () => onSelected(i),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

@@ -23,7 +23,7 @@ class _DropSuccessPageState extends State<DropSuccessPage> {
   static const List<Color> _confettiColors = [
     AppColors.primarySoft,
     AppColors.primary,
-    AppColors.clay,
+    AppColors.goldLight,
     AppColors.white,
   ];
 

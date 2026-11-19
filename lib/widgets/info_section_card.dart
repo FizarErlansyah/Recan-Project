@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/core/theme/app_shadows.dart';
 
 class InfoSectionCard extends StatelessWidget {
   const new({
@@ -28,7 +27,6 @@ class InfoSectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: AppShadows.soft,
         border: Border.all(color: AppColors.border),
       ),
       child: Column(

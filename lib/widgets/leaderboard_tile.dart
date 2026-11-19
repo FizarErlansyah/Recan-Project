@@ -11,9 +11,9 @@ class LeaderboardTile extends StatelessWidget {
   Color? get _medalColor {
     switch (entry.rank) {
       case 1:
-        return AppColors.goldDeep;
+        return AppColors.gold;
       case 2:
-        return AppColors.silver;
+        return AppColors.silverLight;
       case 3:
         return AppColors.bronze;
       default:
@@ -83,7 +83,11 @@ class _RankBadge extends StatelessWidget {
       child: Text(
         '$rank',
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: color == null ? AppColors.textSecondary : AppColors.white,
+          color: switch (rank) {
+            1 || 2 => AppColors.primaryDeep,
+            3 => AppColors.white,
+            _ => AppColors.textSecondary,
+          },
         ),
       ),
     );

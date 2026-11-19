@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/services/activity_service.dart';
 import 'package:mobile_apps_recan/services/data_refresh.dart';
@@ -53,7 +55,7 @@ class AktivitasPage extends StatelessWidget {
               builder: (context, transactions, reload) {
                 if (transactions.isEmpty) {
                   return EmptyState(
-                    icon: Icons.receipt_long_outlined,
+                    icon: hugeIcon(HugeIcons.strokeRoundedInvoice01),
                     title: tr('Belum ada aktivitas', 'No activity yet'),
                     message: tr(
                       'Setoran kaleng dan penukaran poinmu akan muncul di sini.',

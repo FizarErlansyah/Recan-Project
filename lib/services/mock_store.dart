@@ -251,7 +251,7 @@ class MockStore {
       descriptionEn: 'Valid for every menu at the UPJ Canteen.',
       pointsCost: 500,
       icon: Icons.restaurant_rounded,
-      colors: [AppColors.sand, AppColors.clay],
+      colors: [AppColors.gold, AppColors.goldDeep],
     ),
     const Voucher(
       id: 2,

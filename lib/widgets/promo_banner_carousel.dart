@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/core/theme/app_shadows.dart';
 
 class PromoBanner {
   const new({
@@ -167,10 +166,7 @@ class _BannerCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: PromoBannerCarousel.height,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppShadows.soft,
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAlias,
       child: Material(
         color: AppColors.transparent,

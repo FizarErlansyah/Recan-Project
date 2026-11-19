@@ -84,7 +84,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     final paragraphs = article.paragraphs;
     final bodyStyle = textTheme.bodyLarge?.copyWith(
       color: AppColors.textPrimary,
-      height: 1.7,
+      height: 1.6,
     );
     final related = EducationService.related(article);
 
@@ -124,7 +124,13 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
             padding: const EdgeInsets.all(24),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                Text(article.title, style: textTheme.headlineMedium),
+                Text(
+                  article.title,
+                  style: textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    height: 1.2,
+                  ),
+                ),
                 const SizedBox(height: 16),
                 _MetaRow(article: article),
                 const SizedBox(height: 24),
@@ -134,7 +140,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                 const SizedBox(height: 24),
                 InsightBox(
                   text: article.insight,
-                  accent: category.gradient.last,
+                  accent: category.gradient.first,
                 ),
                 const SizedBox(height: 24),
                 Text(paragraphs[1], style: bodyStyle),

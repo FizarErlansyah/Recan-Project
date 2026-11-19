@@ -7,6 +7,7 @@ import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/ai_ask_pill.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
+import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 
 class HomeHeroHeader extends StatelessWidget {
@@ -180,114 +181,150 @@ class _BalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final weightKg = cans * DropSessionSummary.gramsPerCan / 1000;
-    final carbonKg = cans * DropSessionSummary.carbonKgPerCan;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.sage, AppColors.primary],
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
+    return MetallicCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      tr('Saldo Tersedia', 'Available Balance'),
-                      style: textTheme.labelLarge?.copyWith(
-                        color: AppColors.white.withValues(alpha: 0.78),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        TweenAnimationBuilder<int>(
-                          tween: IntTween(begin: 0, end: points),
-                          duration: const Duration(milliseconds: 700),
-                          curve: Curves.easeOutCubic,
-                          builder: (context, value, _) => Text(
-                            PointsHeader.formatNumber(value),
-                            style: textTheme.displaySmall?.copyWith(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          tr('Poin', 'Points'),
-                          style: textTheme.titleMedium?.copyWith(
-                            color: AppColors.white.withValues(alpha: 0.78),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              _ScanButton(onTap: onScan),
-            ],
-          ),
+          _BalanceRow(points: points, onScan: onScan),
           const SizedBox(height: 20),
-          Container(height: 1, color: AppColors.white.withValues(alpha: 0.18)),
+          const _SilverRule.horizontal(),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _Metric(
-                  icon: hugeIcon(HugeIcons.strokeRoundedRecycle01),
-                  target: cans.toDouble(),
-                  format: (value) => PointsHeader.formatNumber(value.round()),
-                  label: tr('Setoran Kaleng', 'Cans Deposited'),
-                ),
-              ),
-              _divider(),
-              Expanded(
-                child: _Metric(
-                  icon: hugeIcon(HugeIcons.strokeRoundedWeightScale),
-                  target: weightKg,
-                  format: (value) =>
-                      '${CarbonLineChart.formatNumber(value)} kg',
-                  label: tr('Berat', 'Weight'),
-                ),
-              ),
-              _divider(),
-              Expanded(
-                child: _Metric(
-                  icon: hugeIcon(HugeIcons.strokeRoundedLeaf01),
-                  target: carbonKg,
-                  format: CarbonLineChart.formatKg,
-                  label: tr('Karbon Dicegah', 'Carbon Prevented'),
-                ),
-              ),
-            ],
-          ),
+          _MetricsRow(cans: cans),
         ],
       ),
     );
   }
+}
 
-  Widget _divider() => Container(
-    width: 1,
-    height: 40,
-    margin: const EdgeInsets.symmetric(horizontal: 8),
-    color: AppColors.white.withValues(alpha: 0.18),
-  );
+class _BalanceRow extends StatelessWidget {
+  const new({required this.points, required this.onScan});
+
+  final int points;
+  final VoidCallback onScan;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                tr('Saldo Tersedia', 'Available Balance'),
+                style: textTheme.labelLarge?.copyWith(
+                  color: AppColors.silverLight,
+                ),
+              ),
+              const SizedBox(height: 8),
+              _PointsValue(points: points),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        _ScanButton(onTap: onScan),
+      ],
+    );
+  }
+}
+
+class _PointsValue extends StatelessWidget {
+  const new({required this.points});
+
+  final int points;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        TweenAnimationBuilder<int>(
+          tween: IntTween(begin: 0, end: points),
+          duration: const Duration(milliseconds: 700),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, _) => Text(
+            PointsHeader.formatNumber(value),
+            style: textTheme.displaySmall?.copyWith(
+              color: AppColors.white,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          tr('Poin', 'Points'),
+          style: textTheme.titleMedium?.copyWith(color: AppColors.goldLight),
+        ),
+      ],
+    );
+  }
+}
+
+class _MetricsRow extends StatelessWidget {
+  const new({required this.cans});
+
+  final int cans;
+
+  @override
+  Widget build(BuildContext context) {
+    final weightKg = cans * DropSessionSummary.gramsPerCan / 1000;
+    final carbonKg = cans * DropSessionSummary.carbonKgPerCan;
+
+    return Row(
+      children: [
+        Expanded(
+          child: _Metric(
+            icon: hugeIcon(HugeIcons.strokeRoundedRecycle01),
+            target: cans.toDouble(),
+            format: (value) => PointsHeader.formatNumber(value.round()),
+            label: tr('Setoran Kaleng', 'Cans Deposited'),
+          ),
+        ),
+        const _SilverRule.vertical(),
+        Expanded(
+          child: _Metric(
+            icon: hugeIcon(HugeIcons.strokeRoundedWeightScale),
+            target: weightKg,
+            format: (value) => '${CarbonLineChart.formatNumber(value)} kg',
+            label: tr('Berat', 'Weight'),
+          ),
+        ),
+        const _SilverRule.vertical(),
+        Expanded(
+          child: _Metric(
+            icon: hugeIcon(HugeIcons.strokeRoundedLeaf01),
+            target: carbonKg,
+            format: CarbonLineChart.formatKg,
+            label: tr('Karbon Dicegah', 'Carbon Prevented'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SilverRule extends StatelessWidget {
+  const new horizontal() : isVertical = false;
+  const new vertical() : isVertical = true;
+
+  final bool isVertical;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = AppColors.silverLight.withValues(alpha: 0.22);
+    if (!isVertical) return Container(height: 1, color: color);
+    return Container(
+      width: 1,
+      height: 40,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      color: color,
+    );
+  }
 }
 
 class _ScanButton extends StatelessWidget {
@@ -299,16 +336,21 @@ class _ScanButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.primaryDeep,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: AppColors.silverLight.withValues(alpha: 0.4)),
+      ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: SizedBox(
-          width: 38,
-          height: 38,
-          child: hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(
-            color: AppColors.white,
-            size: 21,
+          width: 44,
+          height: 44,
+          child: Center(
+            child: hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(
+              color: AppColors.white,
+              size: 22,
+            ),
           ),
         ),
       ),
@@ -335,7 +377,7 @@ class _Metric extends StatelessWidget {
 
     return Column(
       children: [
-        icon(color: AppColors.white, size: 18),
+        icon(color: AppColors.silverLight, size: 18),
         const SizedBox(height: 6),
         TweenAnimationBuilder<double>(
           tween: Tween(begin: 0, end: target),
@@ -357,9 +399,7 @@ class _Metric extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          style: textTheme.labelSmall?.copyWith(
-            color: AppColors.white.withValues(alpha: 0.78),
-          ),
+          style: textTheme.labelSmall?.copyWith(color: AppColors.silverLight),
         ),
       ],
     );
