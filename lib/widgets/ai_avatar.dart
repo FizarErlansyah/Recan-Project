@@ -20,14 +20,7 @@ class AiAvatar extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [AppColors.primary, AppColors.primaryDark],
         ),
-        border: Border.all(color: AppColors.primarySoft, width: 1.5),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowStrong,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: AppColors.silverLight, width: 1.5),
       ),
       child: Text(
         'AI',

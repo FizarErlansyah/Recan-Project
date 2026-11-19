@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -132,17 +135,7 @@ class _ReceiptPaper extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowStrong,
-            blurRadius: 24,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
+      decoration: AppDecorations.card(),
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
@@ -308,7 +301,11 @@ class _ActionButtons extends StatelessWidget {
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: onSaveReceipt,
-            icon: const Icon(Icons.download_rounded, color: AppColors.primary),
+            icon: const HugeIcon(
+              icon: AppIcons.download,
+              color: AppColors.primary,
+              size: 20,
+            ),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(52),
               backgroundColor: AppColors.primarySoft.withValues(alpha: 0.35),

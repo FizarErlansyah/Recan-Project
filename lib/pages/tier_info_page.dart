@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/capsule_progress_bar.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:mobile_apps_recan/widgets/tier_benefit_card.dart';
 import 'package:mobile_apps_recan/widgets/tier_style.dart';
@@ -80,24 +83,8 @@ class _TierHeader extends StatelessWidget {
                 'points to reach ${tier.nextName}',
           );
 
-    return Container(
-      width: double.infinity,
+    return MetallicCard(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primaryDark],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowStrong,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
       child: Column(
         children: [
           TweenAnimationBuilder<double>(
@@ -114,16 +101,14 @@ class _TierHeader extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: color, width: 2),
               ),
-              child: Icon(
-                Icons.workspace_premium_rounded,
-                size: 56,
-                color: color,
+              child: Center(
+                child: HugeIcon(icon: AppIcons.medal, size: 52, color: color),
               ),
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            '${tier.name} Member ${tier.emoji}',
+            '${tier.name} Member',
             style: textTheme.headlineSmall?.copyWith(color: AppColors.white),
           ),
           const SizedBox(height: 4),

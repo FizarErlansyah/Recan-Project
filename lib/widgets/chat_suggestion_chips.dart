@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/chat_topic.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
@@ -33,13 +35,7 @@ class _ChatSuggestionChipsState extends State<ChatSuggestionChips> {
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 12,
-            offset: Offset(0, -4),
-          ),
-        ],
+        border: Border(top: BorderSide(color: AppColors.border)),
       ),
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: Column(
@@ -53,7 +49,7 @@ class _ChatSuggestionChipsState extends State<ChatSuggestionChips> {
               children: [
                 _CategoryTab(
                   label: tr('Semua', 'All'),
-                  icon: Icons.apps_rounded,
+                  icon: AppIcons.apps,
                   active: _category == null,
                   onTap: () => setState(() => _category = null),
                 ),
@@ -106,7 +102,7 @@ class _CategoryTab extends StatelessWidget {
   });
 
   final String label;
-  final IconData icon;
+  final IconGlyph icon;
   final bool active;
   final VoidCallback onTap;
 
@@ -132,7 +128,7 @@ class _CategoryTab extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 16, color: foreground),
+                HugeIcon(icon: icon, size: 18, color: foreground),
                 const SizedBox(width: 8),
                 Text(
                   label,

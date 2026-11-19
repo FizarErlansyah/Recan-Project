@@ -9,9 +9,9 @@ import 'package:mobile_apps_recan/services/data_refresh.dart';
 import 'package:mobile_apps_recan/services/gamification_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/period_tab_pills.dart';
 import 'package:mobile_apps_recan/widgets/quest_card.dart';
 import 'package:mobile_apps_recan/widgets/section_header.dart';
+import 'package:mobile_apps_recan/widgets/segmented_pills.dart';
 import 'package:mobile_apps_recan/widgets/shimmer.dart';
 
 class DailyQuestSection extends StatefulWidget {
@@ -125,8 +125,10 @@ class _DailyQuestSectionState extends State<DailyQuestSection> {
               }
               return Column(
                 children: [
-                  PeriodTabPills(
+                  SegmentedPills<QuestPeriod>(
+                    values: QuestPeriod.values,
                     selected: _period,
+                    labelOf: (period) => period.label,
                     onSelected: (value) => setState(() => _period = value),
                   ),
                   const SizedBox(height: 16),

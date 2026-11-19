@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
@@ -74,7 +76,10 @@ class _LanguageRow extends StatelessWidget {
           children: [
             Expanded(child: Text(label, style: textTheme.bodyMedium)),
             if (selected)
-              const Icon(Icons.check_circle_rounded, color: AppColors.success),
+              const HugeIcon(
+                icon: AppIcons.checkCircle,
+                color: AppColors.success,
+              ),
           ],
         ),
       ),

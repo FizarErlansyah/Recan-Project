@@ -106,7 +106,6 @@ class HomeHeroHeader extends StatelessWidget {
                 _curveDepth + _greenExtraHeight,
               ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(

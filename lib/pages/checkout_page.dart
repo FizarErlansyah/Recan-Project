@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/checkout_success_page.dart';
@@ -19,14 +20,14 @@ import 'package:mobile_apps_recan/widgets/recan_card.dart';
 import 'package:mobile_apps_recan/widgets/recan_text_field.dart';
 
 enum PaymentMethod {
-  points(Icons.toll_rounded),
-  qris(Icons.qr_code_2_rounded),
-  gopay(Icons.account_balance_wallet_rounded),
-  bankTransfer(Icons.account_balance_rounded);
+  points(AppIcons.coins),
+  qris(AppIcons.qr),
+  gopay(AppIcons.wallet),
+  bankTransfer(AppIcons.bank);
 
   new(this.icon);
 
-  final IconData icon;
+  final IconGlyph icon;
 
   String get title => switch (this) {
     PaymentMethod.points => 'ReCan Points',
@@ -197,7 +198,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             : 'Rp ${PointsHeader.formatNumber(_totalRupiah)}';
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Checkout')),
+          appBar: AppBar(title: Text(tr('Pembayaran', 'Checkout'))),
           body: ListView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.all(24),
@@ -231,7 +232,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   'Contoh: Gedung A Lt. 2, UPJ Bintaro',
                   'Example: Building A, 2nd Floor, UPJ Bintaro',
                 ),
-                icon: Icons.location_on_outlined,
+                icon: AppIcons.location,
                 maxLines: 3,
                 enabled: !_isSubmitting,
                 errorText: _addressError,
@@ -250,7 +251,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   'Pesan untuk penjual (opsional)',
                   'Message for the seller (optional)',
                 ),
-                icon: Icons.edit_note_rounded,
+                icon: AppIcons.notes,
                 maxLines: 2,
                 enabled: !_isSubmitting,
               ),
@@ -419,13 +420,7 @@ class _ConfirmBar extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 8,
-            offset: Offset(0, -2),
-          ),
-        ],
+        border: Border(top: BorderSide(color: AppColors.border)),
       ),
       child: SafeArea(
         top: false,

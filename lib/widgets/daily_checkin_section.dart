@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/gamification_service.dart';
@@ -105,8 +107,8 @@ class _CheckInCard extends StatelessWidget {
             child: FilledButton(
               onPressed: claimed ? null : onClaim,
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.success,
-                disabledBackgroundColor: AppColors.border,
+                backgroundColor: AppColors.gold,
+                disabledBackgroundColor: AppColors.goldSoft,
                 shape: const StadiumBorder(),
               ),
               child: Text(
@@ -117,7 +119,7 @@ class _CheckInCard extends StatelessWidget {
                         'Claim +${checkIn.todayReward} Points',
                       ),
                 style: textTheme.labelLarge?.copyWith(
-                  color: claimed ? AppColors.textSecondary : AppColors.white,
+                  color: claimed ? AppColors.goldDeep : AppColors.primaryDeep,
                 ),
               ),
             ),
@@ -149,6 +151,7 @@ class _CoinSlot extends StatelessWidget {
           duration: const Duration(milliseconds: 250),
           width: isToday ? 44 : 36,
           height: isToday ? 44 : 36,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isClaimed ? AppColors.successSoft : null,
@@ -169,8 +172,8 @@ class _CoinSlot extends StatelessWidget {
                   ]
                 : null,
           ),
-          child: Icon(
-            isClaimed ? Icons.check_rounded : Icons.toll_rounded,
+          child: HugeIcon(
+            icon: isClaimed ? AppIcons.check : AppIcons.coins,
             size: isToday ? 24 : 18,
             color: isClaimed ? AppColors.success : AppColors.white,
           ),

@@ -17,9 +17,19 @@ class StationTrackingSection extends StatelessWidget {
   final VoidCallback onLogout;
 
   static const double mapHeight = 200;
+  static const int _previewCount = 2;
+  static const int _unknownDistance = 1 << 30;
   static const String _tileUrl =
       'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
   static const String _userAgentPackage = 'com.example.mobile_apps_recan';
+
+  // The full list lives behind "Lihat Semua"; Beranda shows only what is near.
+  List<DropStation> get _nearest {
+    int meters(DropStation s) => s.distanceMeters ?? _unknownDistance;
+    final sorted = [...stations]
+      ..sort((a, b) => meters(a).compareTo(meters(b)));
+    return sorted.take(_previewCount).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +48,7 @@ class StationTrackingSection extends StatelessWidget {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: _StationPanel(stations: stations, onLogout: onLogout),
+          child: _StationPanel(stations: _nearest, onLogout: onLogout),
         ),
       ],
     );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/capsule_progress_bar.dart';
@@ -86,7 +88,7 @@ class StationBottomSheet extends StatelessWidget {
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: onDeposit,
-                icon: const Icon(Icons.recycling_rounded),
+                icon: const HugeIcon(icon: AppIcons.recycle, size: 20),
                 label: Text(
                   tr('Setor di Station Ini', 'Deposit at This Station'),
                 ),

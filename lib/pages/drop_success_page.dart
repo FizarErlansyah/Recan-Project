@@ -4,7 +4,9 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/animated_check.dart';
@@ -160,19 +162,19 @@ class _Receipt extends StatelessWidget {
               child: Column(
                 children: [
                   _DetailRow(
-                    icon: Icons.recycling_rounded,
+                    icon: AppIcons.recycle,
                     label: tr('Total Kaleng', 'Total Cans'),
                     value: '${summary.cans}',
                   ),
                   const Divider(color: AppColors.border, height: 24),
                   _DetailRow(
-                    icon: Icons.toll_rounded,
+                    icon: AppIcons.coins,
                     label: tr('Poin Didapat', 'Points Earned'),
                     value: '+${summary.points}',
                   ),
                   const Divider(color: AppColors.border, height: 24),
                   _DetailRow(
-                    icon: Icons.eco_rounded,
+                    icon: AppIcons.eco,
                     label: tr('Dampak Karbon', 'Carbon Impact'),
                     value: '-${summary.carbonKg.toStringAsFixed(2)} kg CO2',
                   ),
@@ -189,7 +191,7 @@ class _Receipt extends StatelessWidget {
 class _DetailRow extends StatelessWidget {
   const new({required this.icon, required this.label, required this.value});
 
-  final IconData icon;
+  final IconGlyph icon;
   final String label;
   final String value;
 
@@ -199,7 +201,7 @@ class _DetailRow extends StatelessWidget {
 
     return Row(
       children: [
-        Icon(icon, size: 20, color: AppColors.primary),
+        HugeIcon(icon: icon, size: 20, color: AppColors.primary),
         const SizedBox(width: 12),
         Expanded(child: Text(label, style: textTheme.bodyMedium)),
         Text(value, style: textTheme.titleMedium),

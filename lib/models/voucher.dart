@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class Voucher {
@@ -20,7 +21,7 @@ class Voucher {
   final String descriptionId;
   final String descriptionEn;
   final int pointsCost;
-  final IconData icon;
+  final IconGlyph icon;
   final List<Color> colors;
 
   String get title => tr(titleId, titleEn);

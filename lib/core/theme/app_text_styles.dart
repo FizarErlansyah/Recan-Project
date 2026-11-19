@@ -60,7 +60,7 @@ class AppTextStyles {
     bodyMedium: _style(13, FontWeight.w400, height: 1.5),
     bodySmall: _style(11, FontWeight.w400, color: AppColors.textSecondary),
     labelLarge: _style(12, FontWeight.w600, letterSpacing: 0.1),
-    labelMedium: _style(11, FontWeight.w600, letterSpacing: 0.2),
-    labelSmall: _style(10, FontWeight.w600, letterSpacing: 0.3),
+    labelMedium: _style(12, FontWeight.w600, letterSpacing: 0.2),
+    labelSmall: _style(11, FontWeight.w600, letterSpacing: 0.2),
   );
 }

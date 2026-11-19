@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class ErrorState extends StatelessWidget {
@@ -32,10 +34,12 @@ class ErrorState extends StatelessWidget {
                 color: AppColors.primarySoft,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.wifi_off_rounded,
-                size: 40,
-                color: AppColors.primary,
+              child: const Center(
+                child: HugeIcon(
+                  icon: AppIcons.offline,
+                  size: 40,
+                  color: AppColors.primary,
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -52,7 +56,7 @@ class ErrorState extends StatelessWidget {
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
+              icon: const HugeIcon(icon: AppIcons.refresh, size: 20),
               label: Text(actionLabel ?? tr('Coba Lagi', 'Try Again')),
             ),
           ],

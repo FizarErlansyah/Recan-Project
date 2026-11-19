@@ -154,29 +154,6 @@ class _Content extends StatelessWidget {
                 colors: const [AppColors.primaryDark, AppColors.sage],
                 onTap: () => EdukasiPage.open(context),
               ),
-              PromoBanner(
-                title: tr(
-                  'Tukar Poin Jadi Saldo E-Wallet',
-                  'Turn Points Into E-Wallet Balance',
-                ),
-                subtitle: tr(
-                  'GoPay, OVO, dan DANA mulai Rp 20.000',
-                  'GoPay, OVO, and DANA from Rp 20,000',
-                ),
-                icon: hugeIcon(HugeIcons.strokeRoundedWallet01),
-                colors: const [AppColors.slate, AppColors.slateDeep],
-                onTap: () => onSelectTab(1),
-              ),
-              PromoBanner(
-                title: tr('Tantangan Bebas Emisi', 'Zero-Emission Challenge'),
-                subtitle: tr(
-                  'Setor tiap hari, hemat karbon, raih Eco-Hero',
-                  'Drop daily, save carbon, become an Eco-Hero',
-                ),
-                icon: hugeIcon(HugeIcons.strokeRoundedLeaf01),
-                colors: const [AppColors.primaryDeep, AppColors.primary],
-                onTap: () => onSelectTab(3),
-              ),
             ],
           ),
           const SizedBox(height: 24),
@@ -184,8 +161,6 @@ class _Content extends StatelessWidget {
             stations: data.dropStations,
             onLogout: onLogout,
           ),
-          const SizedBox(height: 24),
-          CarbonAnalyticsSection(onUnauthorized: onLogout),
           const SizedBox(height: 24),
           SectionHeader(
             title: tr('Katalog Daur Ulang', 'Recycling Catalog'),
@@ -210,7 +185,9 @@ class _Content extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
+          CarbonAnalyticsSection(onUnauthorized: onLogout),
+          const SizedBox(height: 24),
           SectionHeader(
             title: tr('Edukasi ReCan', 'ReCan Education'),
             subtitle: tr(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/widgets/field_glyph.dart';
 
 class ReCanFormField extends StatelessWidget {
   const new({
@@ -17,7 +19,7 @@ class ReCanFormField extends StatelessWidget {
 
   final TextEditingController controller;
   final String label;
-  final IconData icon;
+  final IconGlyph icon;
   final FormFieldValidator<String>? validator;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
@@ -41,7 +43,7 @@ class ReCanFormField extends StatelessWidget {
       style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, size: 20),
+        prefixIcon: FieldGlyph(icon: icon),
         suffixIcon: suffix,
       ),
     );

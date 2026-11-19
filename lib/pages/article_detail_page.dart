@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/education_article.dart';
 import 'package:mobile_apps_recan/services/education_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
@@ -97,21 +99,31 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
             expandedHeight: ArticleDetailPage._expandedHeight,
             backgroundColor: category.gradient.first,
             foregroundColor: AppColors.white,
+            iconTheme: const IconThemeData(color: AppColors.white),
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
             actions: [
               IconButton(
                 tooltip: tr('Simpan artikel', 'Save article'),
                 constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                icon: Icon(
-                  _bookmarked
-                      ? Icons.bookmark_rounded
-                      : Icons.bookmark_border_rounded,
+                icon: HugeIcon(
+                  icon: AppIcons.bookmark,
+                  color: AppColors.white,
+                  size: 22,
+                  strokeWidth: _bookmarked ? 2.6 : 1.5,
                 ),
                 onPressed: _toggleBookmark,
               ),
               IconButton(
                 tooltip: tr('Bagikan', 'Share'),
                 constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                icon: const Icon(Icons.share_rounded),
+                icon: const HugeIcon(
+                  icon: AppIcons.share,
+                  color: AppColors.white,
+                  size: 22,
+                ),
                 onPressed: _share,
               ),
               const SizedBox(width: 8),
@@ -209,8 +221,8 @@ class _ArticleHero extends StatelessWidget {
           Positioned(
             right: -24,
             top: 40,
-            child: Icon(
-              category.icon,
+            child: HugeIcon(
+              icon: category.icon,
               size: 200,
               color: AppColors.white.withValues(alpha: 0.18),
             ),
@@ -227,7 +239,11 @@ class _ArticleHero extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(category.icon, color: AppColors.white, size: 16),
+                  HugeIcon(
+                    icon: category.icon,
+                    color: AppColors.white,
+                    size: 16,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     category.label,
@@ -263,8 +279,8 @@ class _MetaRow extends StatelessWidget {
             shape: BoxShape.circle,
             color: AppColors.primary,
           ),
-          child: const Icon(
-            Icons.biotech_rounded,
+          child: const HugeIcon(
+            icon: AppIcons.science,
             color: AppColors.white,
             size: 20,
           ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 
 class ReCanLogo extends StatelessWidget {
   const new({
@@ -40,8 +42,8 @@ class _BrandBadgeFallback extends StatelessWidget {
         color: AppColors.primarySoft,
         borderRadius: BorderRadius.circular(size / 4),
       ),
-      child: Icon(
-        Icons.recycling_rounded,
+      child: HugeIcon(
+        icon: AppIcons.recycle,
         size: size / 2,
         color: AppColors.primary,
       ),

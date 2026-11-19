@@ -3,7 +3,6 @@ import 'package:mobile_apps_recan/utils/localization.dart';
 class MemberTier {
   const new({
     required this.name,
-    required this.emoji,
     required this._rangeLabel,
     required this._rangeLabelEn,
     required this._benefits,
@@ -14,7 +13,6 @@ class MemberTier {
 
   static const MemberTier bronze = MemberTier(
     name: 'Bronze',
-    emoji: '🥉',
     rangeLabel: 'Kurang dari 1.000 Poin',
     rangeLabelEn: 'Less than 1,000 Points',
     benefits: [
@@ -30,7 +28,6 @@ class MemberTier {
   );
   static const MemberTier silver = MemberTier(
     name: 'Silver',
-    emoji: '🥈',
     rangeLabel: '1.000 - 5.000 Poin',
     rangeLabelEn: '1,000 - 5,000 Points',
     benefits: ['Diskon redeem 5%', 'Misi Harian ekstra'],
@@ -40,7 +37,6 @@ class MemberTier {
   );
   static const MemberTier gold = MemberTier(
     name: 'Gold',
-    emoji: '🥇',
     rangeLabel: 'Lebih dari 5.000 Poin',
     rangeLabelEn: 'More than 5,000 Points',
     benefits: [
@@ -56,7 +52,6 @@ class MemberTier {
   static const List<MemberTier> all = [bronze, silver, gold];
 
   final String name;
-  final String emoji;
   final String _rangeLabel;
   final String _rangeLabelEn;
   final List<String> _benefits;

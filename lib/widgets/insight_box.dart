@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class InsightBox extends StatelessWidget {
@@ -26,7 +28,7 @@ class InsightBox extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb_rounded, color: accent, size: 20),
+              HugeIcon(icon: AppIcons.idea, color: accent, size: 20),
               const SizedBox(width: 8),
               Text(
                 tr('Wawasan Interaktif', 'Interactive Insight'),

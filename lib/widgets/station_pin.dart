@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
 
 class StationPin extends StatelessWidget {
@@ -12,34 +14,12 @@ class StationPin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fill = station.isAlmostFull
-        ? AppColors.danger
-        : AppColors.primarySoft;
+    final color = station.isAlmostFull ? AppColors.danger : AppColors.primary;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          const Icon(
-            Icons.location_on_rounded,
-            size: size,
-            color: AppColors.primary,
-            shadows: [
-              Shadow(
-                color: AppColors.shadowStrong,
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 3),
-            child: Icon(Icons.location_on_rounded, size: size - 6, color: fill),
-          ),
-        ],
-      ),
+      child: HugeIcon(icon: AppIcons.location, size: size, color: color),
     );
   }
 }

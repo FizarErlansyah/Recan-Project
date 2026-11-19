@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/education_article.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/recan_card.dart';
@@ -30,7 +32,13 @@ class EducationCard extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(category.icon, color: AppColors.white, size: 32),
+            child: Center(
+              child: HugeIcon(
+                icon: category.icon,
+                color: AppColors.white,
+                size: 32,
+              ),
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -63,9 +71,9 @@ class EducationCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(
-                      Icons.schedule_rounded,
-                      size: 12,
+                    const HugeIcon(
+                      icon: AppIcons.clock,
+                      size: 14,
                       color: AppColors.textSecondary,
                     ),
                     const SizedBox(width: 4),

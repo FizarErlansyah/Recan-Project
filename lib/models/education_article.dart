@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 enum EducationCategory {
-  about(Icons.recycling_rounded),
-  importance(Icons.autorenew_rounded),
-  impact(Icons.public_rounded);
+  about(AppIcons.recycle),
+  importance(AppIcons.autorenew),
+  impact(AppIcons.globe);
 
   new(this.icon);
 
-  final IconData icon;
+  final IconGlyph icon;
 
   String get label => switch (this) {
     about => tr('Tentang ReCan', 'About ReCan'),

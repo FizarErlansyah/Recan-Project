@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/ewallet_option.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
@@ -31,9 +33,8 @@ class EWalletTile extends StatelessWidget {
               color: AppColors.primarySoft,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(
-              Icons.account_balance_wallet_rounded,
-              color: AppColors.primary,
+            child: const Center(
+              child: HugeIcon(icon: AppIcons.wallet, color: AppColors.primary),
             ),
           ),
           const SizedBox(width: 16),

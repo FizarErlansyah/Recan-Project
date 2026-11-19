@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/info_section_card.dart';
+import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 import 'package:mobile_apps_recan/widgets/recan_logo.dart';
 import 'package:mobile_apps_recan/widgets/settings_sheets.dart';
 import 'package:mobile_apps_recan/widgets/team_member_tile.dart';
@@ -46,24 +49,8 @@ class _HeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      width: double.infinity,
+    return MetallicCard(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primaryDark],
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowStrong,
-            blurRadius: 24,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
       child: Column(
         children: [
           const ReCanLogo(size: 88),
@@ -110,7 +97,7 @@ class _ProblemCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return InfoSectionCard(
-      icon: Icons.warning_amber_rounded,
+      icon: AppIcons.warning,
       title: tr('Masalah Limbah Kaleng', 'The Can Waste Problem'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,7 +179,7 @@ class _VisionCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return InfoSectionCard(
-      icon: Icons.autorenew_rounded,
+      icon: AppIcons.autorenew,
       title: tr('Visi Ekonomi Sirkular', 'Circular Economy Vision'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,13 +248,13 @@ class _PillarsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InfoSectionCard(
-      icon: Icons.handshake_rounded,
+      icon: AppIcons.collaboration,
       title: tr('3 Pilar Kolaborasi', '3 Pillars of Collaboration'),
       subtitle: tr('Lintas disiplin ilmu UPJ', 'Across UPJ disciplines'),
       child: Column(
         children: [
           _PillarRow(
-            icon: Icons.phone_android_rounded,
+            icon: AppIcons.smartphone,
             title: tr('Sistem Informasi', 'Information Systems'),
             description: tr(
               'Aplikasi mobile dan gamifikasi poin, misi, serta tier member.',
@@ -277,7 +264,7 @@ class _PillarsCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _PillarRow(
-            icon: Icons.architecture_rounded,
+            icon: AppIcons.architecture,
             title: tr('Arsitektur', 'Architecture'),
             description: tr(
               'Desain Modular Drop Station yang mudah dipasang di titik kampus.',
@@ -287,7 +274,7 @@ class _PillarsCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _PillarRow(
-            icon: Icons.palette_rounded,
+            icon: AppIcons.design,
             title: tr('DKV', 'Visual Communication Design'),
             description: tr(
               'Identitas visual ReCan dan kriya upcycling dari kaleng bekas.',
@@ -307,7 +294,7 @@ class _PillarRow extends StatelessWidget {
     required this.description,
   });
 
-  final IconData icon;
+  final IconGlyph icon;
   final String title;
   final String description;
 
@@ -325,7 +312,9 @@ class _PillarRow extends StatelessWidget {
             color: AppColors.primary,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: AppColors.white),
+          child: Center(
+            child: HugeIcon(icon: icon, color: AppColors.white),
+          ),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -355,7 +344,7 @@ class _TeamCard extends StatelessWidget {
     );
 
     return InfoSectionCard(
-      icon: Icons.groups_rounded,
+      icon: AppIcons.team,
       title: tr('Tim Pengembang Proyek', 'Project Development Team'),
       subtitle: tr(
         'Kelompok 8 - Fakultas Teknologi dan Desain UPJ',

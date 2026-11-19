@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
@@ -28,19 +30,19 @@ class DropEstimateCard extends StatelessWidget {
       child: Column(
         children: [
           _EstimateRow(
-            icon: Icons.toll_rounded,
+            icon: AppIcons.coins,
             label: tr('Estimasi Poin Didapat', 'Estimated Points Earned'),
             value: '+${PointsHeader.formatNumber(summary.points)}',
           ),
           const SizedBox(height: 12),
           _EstimateRow(
-            icon: Icons.scale_rounded,
+            icon: AppIcons.weight,
             label: tr('Estimasi Berat Kaleng', 'Estimated Can Weight'),
             value: formatWeight(summary.grams),
           ),
           const SizedBox(height: 12),
           _EstimateRow(
-            icon: Icons.eco_rounded,
+            icon: AppIcons.eco,
             label: tr('Estimasi Karbon Diselamatkan', 'Estimated Carbon Saved'),
             value: '${summary.carbonKg.toStringAsFixed(2)} kg CO₂',
           ),
@@ -53,7 +55,7 @@ class DropEstimateCard extends StatelessWidget {
 class _EstimateRow extends StatelessWidget {
   const new({required this.icon, required this.label, required this.value});
 
-  final IconData icon;
+  final IconGlyph icon;
   final String label;
   final String value;
 
@@ -63,7 +65,7 @@ class _EstimateRow extends StatelessWidget {
 
     return Row(
       children: [
-        Icon(icon, size: 20, color: AppColors.primarySoft),
+        HugeIcon(icon: icon, size: 20, color: AppColors.primarySoft),
         const SizedBox(width: 12),
         Expanded(
           child: Text(

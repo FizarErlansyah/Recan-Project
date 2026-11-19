@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/tier_style.dart';
@@ -45,17 +47,16 @@ class TierBenefitCard extends StatelessWidget {
                   color: color.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.workspace_premium_rounded, color: color),
+                child: Center(
+                  child: HugeIcon(icon: AppIcons.medal, color: color),
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${tier.name} ${tier.emoji}',
-                      style: textTheme.titleMedium,
-                    ),
+                    Text(tier.name, style: textTheme.titleMedium),
                     const SizedBox(height: 4),
                     Text(tier.rangeLabel, style: textTheme.bodySmall),
                   ],
@@ -64,8 +65,8 @@ class TierBenefitCard extends StatelessWidget {
               if (isCurrent)
                 _StatusChip(label: tr('Tier kamu', 'Your tier'))
               else if (isReached)
-                const Icon(
-                  Icons.check_circle_rounded,
+                const HugeIcon(
+                  icon: AppIcons.checkCircle,
                   color: AppColors.success,
                 ),
             ],
@@ -77,8 +78,8 @@ class TierBenefitCard extends StatelessWidget {
               children: [
                 const Padding(
                   padding: EdgeInsets.only(top: 2),
-                  child: Icon(
-                    Icons.check_rounded,
+                  child: HugeIcon(
+                    icon: AppIcons.check,
                     size: 16,
                     color: AppColors.primaryDark,
                   ),

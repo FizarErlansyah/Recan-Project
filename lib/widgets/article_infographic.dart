@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/education_article.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
@@ -29,8 +31,8 @@ class ArticleInfographic extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.bar_chart_rounded,
+              const HugeIcon(
+                icon: AppIcons.chart,
                 color: AppColors.white,
                 size: 20,
               ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/pages/product_detail_page.dart';
@@ -14,6 +13,7 @@ import 'package:mobile_apps_recan/widgets/ewallet_catalog_view.dart';
 import 'package:mobile_apps_recan/widgets/filter_chip_row.dart';
 import 'package:mobile_apps_recan/widgets/page_skeletons.dart';
 import 'package:mobile_apps_recan/widgets/product_card.dart';
+import 'package:mobile_apps_recan/widgets/segmented_pills.dart';
 import 'package:mobile_apps_recan/widgets/voucher_catalog_view.dart';
 
 class KatalogPage extends StatelessWidget {
@@ -54,7 +54,13 @@ class KatalogPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const _CatalogTabBar(),
+            SegmentedTabBar(
+              labels: [
+                tr('Kriya ReCan', 'ReCan Crafts'),
+                'E-Wallet',
+                tr('Voucher Diskon', 'Vouchers'),
+              ],
+            ),
             const SizedBox(height: 16),
             Expanded(
               child: TabBarView(
@@ -65,42 +71,6 @@ class KatalogPage extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CatalogTabBar extends StatelessWidget {
-  const new();
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: AppDecorations.card(),
-        child: TabBar(
-          dividerColor: AppColors.transparent,
-          indicatorSize: TabBarIndicatorSize.tab,
-          splashBorderRadius: BorderRadius.circular(12),
-          labelColor: AppColors.white,
-          unselectedLabelColor: AppColors.textSecondary,
-          labelPadding: EdgeInsets.zero,
-          labelStyle: textTheme.titleSmall,
-          unselectedLabelStyle: textTheme.titleSmall,
-          indicator: BoxDecoration(
-            color: AppColors.primary,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          tabs: [
-            Tab(height: 44, text: tr('Kriya ReCan', 'ReCan Crafts')),
-            const Tab(height: 44, text: 'E-Wallet'),
-            Tab(height: 44, text: tr('Voucher Diskon', 'Vouchers')),
           ],
         ),
       ),

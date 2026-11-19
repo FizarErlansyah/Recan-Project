@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 
 class SettingsTile extends StatelessWidget {
   const new({
@@ -11,7 +13,7 @@ class SettingsTile extends StatelessWidget {
     this.destructive = false,
   });
 
-  final IconData icon;
+  final IconGlyph icon;
   final String label;
   final VoidCallback onTap;
   final bool destructive;
@@ -28,9 +30,9 @@ class SettingsTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              Icon(
-                icon,
-                size: 20,
+              HugeIcon(
+                icon: icon,
+                size: 22,
                 color: destructive ? AppColors.danger : AppColors.primary,
               ),
               const SizedBox(width: 16),
@@ -42,8 +44,9 @@ class SettingsTile extends StatelessWidget {
                 ),
               ),
               if (!destructive)
-                const Icon(
-                  Icons.chevron_right_rounded,
+                const HugeIcon(
+                  icon: AppIcons.chevronRight,
+                  size: 20,
                   color: AppColors.textSecondary,
                 ),
             ],

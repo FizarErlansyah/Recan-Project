@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
+import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/checkout_page.dart';
+import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/cover_image.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
@@ -77,7 +81,7 @@ class ProductDetailPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: _RedeemBar(
-        enabled: product.stock > 0,
+        product: product,
         onPressed: () => CheckoutPage.open(context, product),
       ),
     );
@@ -114,7 +118,7 @@ class _Details extends StatelessWidget {
           children: [
             PointsBadge(points: product.pricePoints),
             const SizedBox(width: 16),
-            Icon(Icons.inventory_2_rounded, size: 16, color: stockColor),
+            HugeIcon(icon: AppIcons.package, size: 18, color: stockColor),
             const SizedBox(width: 4),
             Expanded(
               child: Text(
@@ -211,49 +215,111 @@ class _SpecificationRow extends StatelessWidget {
   }
 }
 
-class _RedeemBar extends StatelessWidget {
-  const new({required this.enabled, required this.onPressed});
+class _RedeemBar extends StatefulWidget {
+  const new({required this.product, required this.onPressed});
 
-  final bool enabled;
+  final UpcycleProduct product;
   final VoidCallback onPressed;
 
   @override
+  State<_RedeemBar> createState() => _RedeemBarState();
+}
+
+class _RedeemBarState extends State<_RedeemBar> {
+  late final Future<ProfileData> _profile = ProfileService.fetchProfile();
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: const BoxDecoration(
-        color: AppColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 8,
-            offset: Offset(0, -2),
-          ),
-        ],
+        color: AppColors.surface,
+        border: Border(top: BorderSide(color: AppColors.border)),
       ),
       child: SafeArea(
         top: false,
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: FilledButton(
-            onPressed: enabled ? onPressed : null,
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(52),
-              backgroundColor: AppColors.primarySoft,
-              foregroundColor: AppColors.primary,
-              disabledBackgroundColor: AppColors.border,
-              disabledForegroundColor: AppColors.textSecondary,
-            ),
-            child: Text(
-              enabled
-                  ? tr('Tukar Sekarang', 'Redeem Now')
-                  : tr('Stok Habis', 'Out of Stock'),
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: enabled ? AppColors.primary : AppColors.textSecondary,
-              ),
-            ),
+          child: FutureBuilder<ProfileData>(
+            future: _profile,
+            builder: (context, snapshot) {
+              // While the balance is unknown the button stays usable; checkout
+              // re-checks affordability before anything is spent.
+              final balance = snapshot.data?.points;
+              final shortfall = balance == null
+                  ? 0
+                  : widget.product.pricePoints - balance;
+              return _RedeemActions(
+                soldOut: widget.product.stock <= 0,
+                shortfall: shortfall,
+                onPressed: widget.onPressed,
+              );
+            },
           ),
         ),
       ),
+    );
+  }
+}
+
+class _RedeemActions extends StatelessWidget {
+  const new({
+    required this.soldOut,
+    required this.shortfall,
+    required this.onPressed,
+  });
+
+  final bool soldOut;
+  final int shortfall;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final short = shortfall > 0;
+    final enabled = !soldOut && !short;
+    final label = soldOut
+        ? tr('Stok Habis', 'Out of Stock')
+        : short
+        ? tr('Poin Belum Cukup', 'Not Enough Points')
+        : tr('Tukar Sekarang', 'Redeem Now');
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (short && !soldOut) ...[
+          Row(
+            children: [
+              const HugeIcon(
+                icon: AppIcons.coins,
+                size: 18,
+                color: AppColors.goldDeep,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  tr(
+                    'Butuh ${PointsHeader.formatNumber(shortfall)} poin lagi. '
+                        'Setor kaleng untuk menambah poinmu.',
+                    'You need ${PointsHeader.formatNumber(shortfall)} more '
+                        'points. Drop cans to earn them.',
+                  ),
+                  style: textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+        ],
+        FilledButton(
+          onPressed: enabled ? onPressed : null,
+          style: FilledButton.styleFrom(
+            minimumSize: const Size.fromHeight(52),
+            disabledBackgroundColor: AppColors.surfaceMuted,
+            disabledForegroundColor: AppColors.textSecondary,
+          ),
+          child: Text(label),
+        ),
+      ],
     );
   }
 }

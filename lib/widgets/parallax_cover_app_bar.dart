@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/circle_icon_button.dart';
+import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 class ParallaxCoverAppBar extends StatelessWidget {
   const new({
@@ -13,6 +15,8 @@ class ParallaxCoverAppBar extends StatelessWidget {
   });
 
   static const double _leadingWidth = 72;
+  // Past this point the bar is mostly emerald, so the clock needs light icons.
+  static const double _lightIconsFrom = 0.6;
 
   final double expandedHeight;
   final Widget cover;
@@ -27,7 +31,7 @@ class ParallaxCoverAppBar extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       expandedHeight: expandedHeight,
-      backgroundColor: AppColors.scrim,
+      backgroundColor: AppColors.primary,
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
@@ -36,7 +40,7 @@ class ParallaxCoverAppBar extends StatelessWidget {
         padding: const EdgeInsets.only(left: 16),
         child: Center(
           child: CircleIconButton(
-            icon: materialIcon(Icons.arrow_back_rounded),
+            icon: hugeIcon(AppIcons.back),
             tooltip: tr('Kembali', 'Back'),
             onTap: () => Navigator.of(context).pop(),
           ),
@@ -49,36 +53,39 @@ class ParallaxCoverAppBar extends StatelessWidget {
                       collapseRange)
                   .clamp(0.0, 1.0);
 
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              FlexibleSpaceBar(background: RepaintBoundary(child: cover)),
-              IgnorePointer(
-                child: ColoredBox(
-                  color: AppColors.scrim.withValues(alpha: collapse),
+          return StatusBarIcons(
+            light: collapse > _lightIconsFrom,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                FlexibleSpaceBar(background: RepaintBoundary(child: cover)),
+                IgnorePointer(
+                  child: ColoredBox(
+                    color: AppColors.primary.withValues(alpha: collapse),
+                  ),
                 ),
-              ),
-              Positioned(
-                left: _leadingWidth,
-                right: 16,
-                bottom: 0,
-                height: kToolbarHeight,
-                child: Opacity(
-                  opacity: collapse,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.titleMedium?.copyWith(
-                        color: AppColors.white,
+                Positioned(
+                  left: _leadingWidth,
+                  right: 16,
+                  bottom: 0,
+                  height: kToolbarHeight,
+                  child: Opacity(
+                    opacity: collapse,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: AppColors.white,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),

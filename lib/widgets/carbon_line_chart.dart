@@ -11,7 +11,7 @@ class CarbonLineChart extends StatelessWidget {
 
   final CarbonImpact impact;
 
-  static const double height = 200;
+  static const double height = 150;
   static const int _denseThreshold = 8;
   static const int _denseLabelStep = 3;
 

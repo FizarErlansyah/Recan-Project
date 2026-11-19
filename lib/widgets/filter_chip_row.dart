@@ -57,7 +57,7 @@ class _FilterChipPill extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
-        color: selected ? AppColors.primary : AppColors.surface,
+        color: selected ? AppColors.primarySoft : AppColors.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: selected ? AppColors.primary : AppColors.border,
@@ -78,7 +78,10 @@ class _FilterChipPill extends StatelessWidget {
                 child: Text(
                   label,
                   style: textTheme.labelLarge?.copyWith(
-                    color: selected ? AppColors.white : AppColors.primary,
+                    color: selected
+                        ? AppColors.primary
+                        : AppColors.textSecondary,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   ),
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/models/voucher.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -29,103 +30,132 @@ class VoucherTicketCard extends StatelessWidget {
       cornerRadius: 16,
     );
 
-    return PhysicalShape(
-      clipper: clipper,
-      color: AppColors.surface,
-      elevation: 4,
-      shadowColor: AppColors.shadowStrong,
-      child: SizedBox(
-        height: height,
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: voucher.colors),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Icon(voucher.icon, color: AppColors.white),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            voucher.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.titleMedium,
+    return CustomPaint(
+      foregroundPainter: const _TicketOutlinePainter(clipper),
+      child: ClipPath(
+        clipper: clipper,
+        child: ColoredBox(
+          color: AppColors.surface,
+          child: SizedBox(
+            height: height,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(colors: voucher.colors),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            voucher.description,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodySmall,
+                          child: Center(
+                            child: HugeIcon(
+                              icon: voucher.icon,
+                              color: AppColors.white,
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 1,
-              height: height,
-              child: CustomPaint(painter: _DashedDividerPainter()),
-            ),
-            SizedBox(
-              width: _stubWidth - 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    PointsHeader.formatNumber(voucher.pointsCost),
-                    style: textTheme.titleLarge?.copyWith(
-                      color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                voucher.title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                voucher.description,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(tr('Poin', 'Points'), style: textTheme.bodySmall),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 48,
-                    child: FilledButton(
-                      onPressed: onRedeem,
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size(80, 48),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        backgroundColor: affordable
-                            ? AppColors.primary
-                            : AppColors.border,
-                        shape: const StadiumBorder(),
-                      ),
-                      child: Text(
-                        tr('Tukar', 'Redeem'),
-                        style: textTheme.labelLarge?.copyWith(
-                          color: affordable
-                              ? AppColors.white
-                              : AppColors.textSecondary,
+                ),
+                const SizedBox(
+                  width: 1,
+                  height: height,
+                  child: CustomPaint(painter: _DashedDividerPainter()),
+                ),
+                SizedBox(
+                  width: _stubWidth - 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        PointsHeader.formatNumber(voucher.pointsCost),
+                        style: textTheme.titleLarge?.copyWith(
+                          color: AppColors.primary,
                         ),
                       ),
-                    ),
+                      Text(tr('Poin', 'Points'), style: textTheme.bodySmall),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 48,
+                        child: FilledButton(
+                          onPressed: onRedeem,
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size(80, 48),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            backgroundColor: affordable
+                                ? AppColors.primary
+                                : AppColors.border,
+                            shape: const StadiumBorder(),
+                          ),
+                          child: Text(
+                            tr('Tukar', 'Redeem'),
+                            style: textTheme.labelLarge?.copyWith(
+                              color: affordable
+                                  ? AppColors.white
+                                  : AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _TicketOutlinePainter extends CustomPainter {
+  const new(this.clipper);
+
+  final _TicketClipper clipper;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawPath(
+      clipper.getClip(size),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..color = AppColors.border,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_TicketOutlinePainter oldDelegate) =>
+      oldDelegate.clipper.shouldReclip(clipper);
 }
 
 class _TicketClipper extends CustomClipper<Path> {

@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/widgets/login_form_widget.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/widgets/login_hero.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/widgets/register_form_widget.dart';
@@ -282,7 +284,10 @@ class _AuthFormSection extends StatelessWidget {
           children: [
             IconButton(
               onPressed: onBack,
-              icon: const Icon(Icons.arrow_back_rounded),
+              icon: const HugeIcon(
+                icon: AppIcons.back,
+                color: AppColors.textPrimary,
+              ),
               style: IconButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(40, 40),

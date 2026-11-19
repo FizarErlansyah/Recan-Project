@@ -21,7 +21,7 @@ class AppColors {
 
   static const Color textPrimary = Color(0xFF1A1D1F);
   static const Color textSecondary = Color(0xFF5F6B78);
-  static const Color textTertiary = Color(0xFF78838F);
+  static const Color textTertiary = Color(0xFF64707C);
 
   static const Color white = Color(0xFFFFFFFF);
   static const Color transparent = Color(0x00000000);
@@ -44,7 +44,6 @@ class AppColors {
   static const Color bronzeLight = Color(0xFFDDA877);
 
   static const Color clay = Color(0xFFC4703F);
-  static const Color clayDark = Color(0xFFA35631);
   static const Color sand = Color(0xFFD9A84E);
   static const Color sandSoft = Color(0xFFFBF1DC);
 
@@ -56,7 +55,6 @@ class AppColors {
 
   // Reserved for overlays and sheets that genuinely need separation; cards
   // use AppDecorations borders instead.
-  static const Color shadow = Color(0x0D000000);
   static const Color shadowStrong = Color(0x1F000000);
 
   // Fixed near-black for surfaces that must stay dark regardless of theme

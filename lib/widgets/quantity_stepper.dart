@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class QuantityStepper extends StatelessWidget {
@@ -34,7 +36,7 @@ class QuantityStepper extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _StepperButton(
-            icon: Icons.remove_rounded,
+            icon: AppIcons.remove,
             tooltip: tr('Kurangi jumlah', 'Decrease quantity'),
             onTap: canDecrease ? () => onChanged(value - 1) : null,
           ),
@@ -53,7 +55,7 @@ class QuantityStepper extends StatelessWidget {
             ),
           ),
           _StepperButton(
-            icon: Icons.add_rounded,
+            icon: AppIcons.add,
             tooltip: tr('Tambah jumlah', 'Increase quantity'),
             onTap: canIncrease ? () => onChanged(value + 1) : null,
           ),
@@ -66,7 +68,7 @@ class QuantityStepper extends StatelessWidget {
 class _StepperButton extends StatelessWidget {
   const new({required this.icon, required this.tooltip, required this.onTap});
 
-  final IconData icon;
+  final IconGlyph icon;
   final String tooltip;
   final VoidCallback? onTap;
 
@@ -76,7 +78,7 @@ class _StepperButton extends StatelessWidget {
       onPressed: onTap,
       tooltip: tooltip,
       constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-      icon: Icon(icon),
+      icon: HugeIcon(icon: icon, size: 22),
       color: AppColors.primary,
       disabledColor: AppColors.textSecondary.withValues(alpha: 0.5),
     );

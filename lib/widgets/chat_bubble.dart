@@ -35,22 +35,14 @@ class ChatBubble extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: maxWidth),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isUser
-            ? AppColors.primary
-            : AppColors.primarySoft.withValues(alpha: 0.55),
+        color: isUser ? AppColors.primary : AppColors.surface,
         borderRadius: BorderRadius.only(
           topLeft: _round,
           topRight: _round,
           bottomLeft: isUser ? _round : _tail,
           bottomRight: isUser ? _tail : _round,
         ),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
+        border: isUser ? null : Border.all(color: AppColors.border),
       ),
       child: animateTyping
           ? TypewriterText(

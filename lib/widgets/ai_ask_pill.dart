@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/pulsing_status_dot.dart';
 
 class AiAskPill extends StatelessWidget {
   const new({required this.onTap, super.key});
+
+  static const double _pillHeight = 40;
+  static const double _touchHeight = 48;
 
   final VoidCallback onTap;
 
@@ -12,34 +15,48 @@ class AiAskPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Material(
-      color: AppColors.white.withValues(alpha: 0.14),
-      shape: const StadiumBorder(),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 14, 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: 20,
-                height: 20,
-                child: Image.asset(
-                  'assets/images/recan_brandmak_aqua.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, _, _) => const SizedBox.shrink(),
+    // The outer detector pads the hit area to 48dp while the ripple stays on
+    // the visible 40dp pill.
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: SizedBox(
+        height: _touchHeight,
+        child: Center(
+          child: Material(
+            color: AppColors.white.withValues(alpha: 0.10),
+            shape: StadiumBorder(
+              side: BorderSide(
+                color: AppColors.silverLight.withValues(alpha: 0.45),
+              ),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
+              child: SizedBox(
+                height: _pillHeight,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const HugeIcon(
+                        icon: HugeIcons.strokeRoundedAiChat02,
+                        size: 18,
+                        color: AppColors.sageLight,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        tr('Tanya AI', 'Ask AI'),
+                        style: textTheme.labelLarge?.copyWith(
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
-              Text(
-                tr('Tanya AI', 'Ask AI'),
-                style: textTheme.labelLarge?.copyWith(color: AppColors.white),
-              ),
-              const SizedBox(width: 6),
-              const PulsingStatusDot(),
-            ],
+            ),
           ),
         ),
       ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/faq_item.dart';
 import 'package:mobile_apps_recan/pages/ai_chat_page.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -63,42 +65,29 @@ class _AskAiButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      decoration: BoxDecoration(
+    return Material(
+      color: AppColors.primary,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowStrong,
-            blurRadius: 16,
-            offset: Offset(0, 6),
-          ),
-        ],
+        side: BorderSide(color: AppColors.silverLight.withValues(alpha: 0.4)),
       ),
-      child: Material(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(16),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: SizedBox(
-            height: 56,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.smart_toy_rounded,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(
+          height: 56,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const HugeIcon(icon: AppIcons.ai, color: AppColors.sageLight),
+              const SizedBox(width: 12),
+              Text(
+                tr('Tanya ReCan AI', 'Ask ReCan AI'),
+                style: textTheme.titleSmall?.copyWith(
                   color: AppColors.primarySoft,
-                  size: 24,
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  tr('Tanya ReCan AI', 'Ask ReCan AI'),
-                  style: textTheme.titleSmall?.copyWith(
-                    color: AppColors.primarySoft,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

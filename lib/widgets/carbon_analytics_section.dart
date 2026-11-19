@@ -9,7 +9,7 @@ import 'package:mobile_apps_recan/services/data_refresh.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
 import 'package:mobile_apps_recan/widgets/carbon_metric_cards.dart';
-import 'package:mobile_apps_recan/widgets/carbon_range_chips.dart';
+import 'package:mobile_apps_recan/widgets/segmented_pills.dart';
 import 'package:mobile_apps_recan/widgets/shimmer.dart';
 
 class CarbonAnalyticsSection extends StatefulWidget {
@@ -62,16 +62,18 @@ class _CarbonAnalyticsSectionState extends State<CarbonAnalyticsSection> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            tr(
-              'Dampak Karbon & Keberlanjutan',
-              'Carbon & Sustainability Impact',
-            ),
+            tr('Dampak Karbon Kampus', 'Campus Carbon Impact'),
             style: textTheme.titleLarge,
           ),
           const SizedBox(height: 4),
           Text(_range.subtitle, style: textTheme.bodySmall),
           const SizedBox(height: 8),
-          CarbonRangeChips(selected: _range, onSelected: _selectRange),
+          SegmentedPills<CarbonRange>(
+            values: CarbonRange.values,
+            selected: _range,
+            labelOf: (range) => range.label,
+            onSelected: _selectRange,
+          ),
           const SizedBox(height: 8),
           AnimatedSize(
             duration: const Duration(milliseconds: 300),
@@ -155,7 +157,7 @@ class _ImpactContent extends StatelessWidget {
                   color: AppColors.white,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: CarbonLineChart(
@@ -180,7 +182,7 @@ class _ChartCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.primaryDeep,
         borderRadius: BorderRadius.circular(16),
@@ -212,7 +214,7 @@ class _ChartSkeleton extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16),
-          ShimmerBox(height: CarbonLineChart.height + 96, radius: 16),
+          ShimmerBox(height: CarbonLineChart.height + 100, radius: 16),
         ],
       ),
     );

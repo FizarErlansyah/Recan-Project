@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/ewallet_option.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/checkout_success_page.dart';
@@ -93,7 +95,7 @@ class _BalanceBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.toll_rounded, color: AppColors.primary),
+          const HugeIcon(icon: AppIcons.coins, color: AppColors.primary),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

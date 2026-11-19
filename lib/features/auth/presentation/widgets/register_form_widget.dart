@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/recan_form_field.dart';
 
@@ -36,7 +39,7 @@ class RegisterFormWidget extends StatelessWidget {
           ReCanFormField(
             controller: usernameController,
             label: 'Username',
-            icon: Icons.person_outline_rounded,
+            icon: AppIcons.person,
             textInputAction: TextInputAction.next,
             textCapitalization: TextCapitalization.words,
             validator: _validateUsername,
@@ -45,7 +48,7 @@ class RegisterFormWidget extends StatelessWidget {
           ReCanFormField(
             controller: emailController,
             label: 'Email',
-            icon: Icons.mail_outline_rounded,
+            icon: AppIcons.mail,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             validator: _validateEmail,
@@ -54,7 +57,7 @@ class RegisterFormWidget extends StatelessWidget {
           ReCanFormField(
             controller: phoneController,
             label: tr('Nomor Telepon', 'Phone Number'),
-            icon: Icons.call_outlined,
+            icon: AppIcons.phone,
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.next,
             validator: _validatePhone,
@@ -63,7 +66,7 @@ class RegisterFormWidget extends StatelessWidget {
           ReCanFormField(
             controller: passwordController,
             label: 'Password',
-            icon: Icons.lock_outline_rounded,
+            icon: AppIcons.lock,
             obscureText: obscure,
             textInputAction: TextInputAction.done,
             onSubmitted: (_) => onSubmit(),
@@ -121,9 +124,10 @@ class _ObscureToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-      icon: Icon(
-        obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+      icon: HugeIcon(
+        icon: obscure ? AppIcons.hidden : AppIcons.visible,
         size: 20,
+        color: AppColors.textSecondary,
       ),
       onPressed: onPressed,
     );

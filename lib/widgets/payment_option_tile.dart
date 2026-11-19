@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 
 class PaymentOptionTile extends StatelessWidget {
   const new({
@@ -14,7 +16,7 @@ class PaymentOptionTile extends StatelessWidget {
     super.key,
   });
 
-  final IconData icon;
+  final IconGlyph icon;
   final String title;
   final String subtitle;
   final String hint;
@@ -50,14 +52,12 @@ class PaymentOptionTile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
-                  active
-                      ? Icons.radio_button_checked_rounded
-                      : Icons.radio_button_unchecked_rounded,
+                HugeIcon(
+                  icon: active ? AppIcons.checkCircle : AppIcons.radioOff,
                   color: active ? AppColors.primary : AppColors.textSecondary,
                 ),
                 const SizedBox(width: 12),
-                Icon(icon, color: AppColors.primary),
+                HugeIcon(icon: icon, color: AppColors.primary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

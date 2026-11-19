@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/recan_card.dart';
@@ -69,11 +71,11 @@ class _QuestCardState extends State<QuestCard> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  quest.isCompleted
-                      ? Icons.military_tech_rounded
-                      : Icons.track_changes_rounded,
-                  color: AppColors.primary,
+                child: Center(
+                  child: HugeIcon(
+                    icon: quest.isCompleted ? AppIcons.medal : AppIcons.target,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -157,13 +159,24 @@ class _RewardChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.primarySoft.withValues(alpha: 0.55),
+        color: AppColors.goldSoft,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(
-        tr('🎁 +$points Poin', '🎁 +$points Points'),
-        style: Theme.of(context).textTheme.labelMedium
-            ?.copyWith(color: AppColors.primary),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const HugeIcon(
+            icon: AppIcons.coins,
+            size: 14,
+            color: AppColors.goldDeep,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            tr('+$points Poin', '+$points Points'),
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: AppColors.goldDeep),
+          ),
+        ],
       ),
     );
   }
@@ -188,11 +201,11 @@ class _ClaimButton extends StatelessWidget {
             height: 18,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: AppColors.primary,
+              color: AppColors.primaryDeep,
             ),
           )
-        : Icon(
-            claimed ? Icons.check_circle_rounded : Icons.card_giftcard_rounded,
+        : HugeIcon(
+            icon: claimed ? AppIcons.checkCircle : AppIcons.gift,
             size: 18,
           );
 
@@ -201,14 +214,12 @@ class _ClaimButton extends StatelessWidget {
       child: FilledButton.icon(
         onPressed: claimed || claiming ? null : onPressed,
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primarySoft,
-          foregroundColor: AppColors.primary,
+          backgroundColor: AppColors.gold,
+          foregroundColor: AppColors.primaryDeep,
           disabledBackgroundColor: claiming
-              ? AppColors.primarySoft
-              : AppColors.border,
-          disabledForegroundColor: claiming
-              ? AppColors.primary
-              : AppColors.textSecondary,
+              ? AppColors.goldLight
+              : AppColors.goldSoft,
+          disabledForegroundColor: AppColors.goldDeep,
         ),
         icon: icon,
         label: Text(

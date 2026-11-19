@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/field_glyph.dart';
 import 'package:mobile_apps_recan/widgets/profile_avatar.dart';
 
 class EditProfilPage extends StatefulWidget {
@@ -126,7 +129,7 @@ class _EditProfilPageState extends State<EditProfilPage> {
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: tr('Nama Lengkap', 'Full Name'),
-                    prefixIcon: const Icon(Icons.person_outline_rounded),
+                    prefixIcon: const FieldGlyph(icon: AppIcons.person),
                   ),
                   validator: _validateName,
                 ),
@@ -137,7 +140,7 @@ class _EditProfilPageState extends State<EditProfilPage> {
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    prefixIcon: Icon(Icons.email_outlined),
+                    prefixIcon: FieldGlyph(icon: AppIcons.mail),
                   ),
                   validator: _validateEmail,
                 ),
@@ -149,7 +152,7 @@ class _EditProfilPageState extends State<EditProfilPage> {
                   onFieldSubmitted: (_) => _save(),
                   decoration: InputDecoration(
                     labelText: tr('Nomor Telepon', 'Phone Number'),
-                    prefixIcon: const Icon(Icons.call_outlined),
+                    prefixIcon: const FieldGlyph(icon: AppIcons.phone),
                   ),
                   validator: _validatePhone,
                 ),
@@ -191,18 +194,22 @@ class _AvatarPicker extends StatelessWidget {
           right: 0,
           bottom: 0,
           child: Material(
-            color: AppColors.textPrimary,
-            shape: const CircleBorder(),
+            color: AppColors.primary,
+            shape: const CircleBorder(
+              side: BorderSide(color: AppColors.surface, width: 2),
+            ),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: onTap,
               child: const SizedBox(
                 width: 36,
                 height: 36,
-                child: Icon(
-                  Icons.photo_camera_rounded,
-                  size: 18,
-                  color: AppColors.white,
+                child: Center(
+                  child: HugeIcon(
+                    icon: AppIcons.camera,
+                    size: 18,
+                    color: AppColors.white,
+                  ),
                 ),
               ),
             ),
@@ -267,8 +274,8 @@ class _AvatarColorSheet extends StatelessWidget {
                         ),
                       ),
                       child: color == selected
-                          ? const Icon(
-                              Icons.check_rounded,
+                          ? const HugeIcon(
+                              icon: AppIcons.check,
                               color: AppColors.white,
                               size: 20,
                             )

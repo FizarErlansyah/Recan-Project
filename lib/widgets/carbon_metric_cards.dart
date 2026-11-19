@@ -98,7 +98,6 @@ class _MetricTile extends StatelessWidget {
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _IconChip(icon: icon, size: 32),
                 const SizedBox(height: 12),

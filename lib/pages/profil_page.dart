@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/leaderboard_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/payment_methods_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/tier_and_voucher_section.dart';
@@ -160,37 +161,37 @@ class _SettingsSection extends StatelessWidget {
           child: Column(
             children: [
               SettingsTile(
-                icon: Icons.person_outline_rounded,
+                icon: AppIcons.person,
                 label: tr('Edit Profil', 'Edit Profile'),
                 onTap: onEditProfile,
               ),
               divider,
               SettingsTile(
-                icon: Icons.translate_rounded,
+                icon: AppIcons.translate,
                 label: languageLabel,
                 onTap: onLanguage,
               ),
               divider,
               SettingsTile(
-                icon: Icons.help_outline_rounded,
+                icon: AppIcons.help,
                 label: tr('Pusat Bantuan', 'Help Center'),
                 onTap: onHelp,
               ),
               divider,
               SettingsTile(
-                icon: Icons.info_outline_rounded,
+                icon: AppIcons.info,
                 label: tr('Tentang', 'About'),
                 onTap: onAbout,
               ),
               divider,
               SettingsTile(
-                icon: Icons.description_outlined,
+                icon: AppIcons.document,
                 label: tr('Legal & Kebijakan', 'Legal & Policies'),
                 onTap: onLegal,
               ),
               divider,
               SettingsTile(
-                icon: Icons.logout_rounded,
+                icon: AppIcons.logout,
                 label: tr('Keluar', 'Logout'),
                 onTap: onLogout,
                 destructive: true,

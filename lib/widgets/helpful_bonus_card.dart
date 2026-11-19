@@ -4,7 +4,9 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/education_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
@@ -104,10 +106,8 @@ class _HelpfulBonusCardState extends State<HelpfulBonusCard> {
                     disabledForegroundColor: AppColors.goldDeep,
                     shape: const StadiumBorder(),
                   ),
-                  icon: Icon(
-                    _claimed
-                        ? Icons.check_circle_rounded
-                        : Icons.thumb_up_alt_rounded,
+                  icon: HugeIcon(
+                    icon: _claimed ? AppIcons.checkCircle : AppIcons.thumbsUp,
                     size: 20,
                   ),
                   label: AnimatedSwitcher(

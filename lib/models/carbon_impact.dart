@@ -9,7 +9,7 @@ enum CarbonRange {
   String get label => switch (this) {
     week => tr('7 Hari', '7 Days'),
     month => tr('Bulanan', 'Monthly'),
-    sinceJan2025 => tr('Sejak 1 Jan 2025', 'Since Jan 1, 2025'),
+    sinceJan2025 => tr('Sejak 2025', 'Since 2025'),
   };
 
   String get subtitle => switch (this) {

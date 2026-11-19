@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 
 class OnboardingSlideData {
   const new({
@@ -17,7 +20,7 @@ class OnboardingSlideData {
   final String titleTail;
   final String description;
   final String imageAsset;
-  final IconData fallbackIcon;
+  final IconGlyph fallbackIcon;
 }
 
 class OnboardingSlide extends StatelessWidget {
@@ -116,18 +119,14 @@ class _Illustration extends StatelessWidget {
         data.imageAsset,
         fit: BoxFit.contain,
         errorBuilder: (_, _, _) => DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.shadow,
-                blurRadius: 24,
-                offset: Offset(0, 8),
-              ),
-            ],
+          decoration: AppDecorations.card(radius: 32),
+          child: Center(
+            child: HugeIcon(
+              icon: data.fallbackIcon,
+              size: 96,
+              color: AppColors.primary,
+            ),
           ),
-          child: Icon(data.fallbackIcon, size: 96, color: AppColors.primary),
         ),
       ),
     );

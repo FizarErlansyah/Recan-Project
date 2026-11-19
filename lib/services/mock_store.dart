@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
@@ -251,7 +252,7 @@ class MockStore {
       descriptionId: 'Berlaku untuk semua menu di Kantin UPJ.',
       descriptionEn: 'Valid for every menu at the UPJ Canteen.',
       pointsCost: 500,
-      icon: Icons.restaurant_rounded,
+      icon: AppIcons.meal,
       colors: [AppColors.gold, AppColors.goldDeep],
     ),
     const Voucher(
@@ -261,7 +262,7 @@ class MockStore {
       descriptionId: 'Gratis parkir motor satu hari di area kampus.',
       descriptionEn: 'One day of free motorbike parking on campus.',
       pointsCost: 800,
-      icon: Icons.local_parking_rounded,
+      icon: AppIcons.parking,
       colors: [AppColors.primary, AppColors.primaryDark],
     ),
     const Voucher(
@@ -271,7 +272,7 @@ class MockStore {
       descriptionId: 'Potongan biaya fotokopi dan cetak di koperasi kampus.',
       descriptionEn: 'Discount on copying and printing at the campus co-op.',
       pointsCost: 300,
-      icon: Icons.print_rounded,
+      icon: AppIcons.print,
       colors: [AppColors.primaryDark, AppColors.sage],
     ),
   ];

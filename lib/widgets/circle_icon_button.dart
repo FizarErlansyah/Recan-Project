@@ -20,15 +20,15 @@ class CircleIconButton extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: AppColors.scrim.withValues(alpha: 0.6),
-        shape: const CircleBorder(),
+        color: AppColors.surface.withValues(alpha: 0.92),
+        shape: const CircleBorder(side: BorderSide(color: AppColors.border)),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
           child: SizedBox(
             width: 48,
             height: 48,
-            child: icon(color: AppColors.white, size: 24),
+            child: Center(child: icon(color: AppColors.primary, size: 22)),
           ),
         ),
       ),

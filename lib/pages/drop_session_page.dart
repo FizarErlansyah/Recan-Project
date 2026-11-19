@@ -99,10 +99,12 @@ class _DropSessionPageState extends State<DropSessionPage> {
               children: [
                 Row(
                   children: [
-                    const Icon(
-                      Icons.circle,
-                      size: 10,
-                      color: AppColors.success,
+                    const DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppColors.success,
+                        shape: BoxShape.circle,
+                      ),
+                      child: SizedBox.square(dimension: 8),
                     ),
                     const SizedBox(width: 8),
                     Text(

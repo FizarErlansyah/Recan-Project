@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 enum ChatCategory {
@@ -13,10 +12,10 @@ enum ChatCategory {
     rewards => tr('Poin & Hadiah', 'Points & Rewards'),
   };
 
-  IconData get icon => switch (this) {
-    general => Icons.info_outline_rounded,
-    drop => Icons.recycling_rounded,
-    rewards => Icons.card_giftcard_rounded,
+  IconGlyph get icon => switch (this) {
+    general => AppIcons.info,
+    drop => AppIcons.recycle,
+    rewards => AppIcons.gift,
   };
 }
 

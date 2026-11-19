@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/login_page.dart';
 import 'package:mobile_apps_recan/services/onboarding_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -27,7 +28,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             'habits into a cleaner campus.',
       ),
       imageAsset: 'assets/images/ilustrasi_1.png',
-      fallbackIcon: Icons.recycling_rounded,
+      fallbackIcon: AppIcons.recycle,
     ),
     OnboardingSlideData(
       titleLead: tr('', 'Your '),
@@ -39,7 +40,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             'place.',
       ),
       imageAsset: 'assets/images/ilustrasi_2.png',
-      fallbackIcon: Icons.dashboard_rounded,
+      fallbackIcon: AppIcons.dashboard,
     ),
     OnboardingSlideData(
       titleLead: tr('Tukarkan ', 'Redeem your '),
@@ -51,7 +52,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             'e-wallet rewards.',
       ),
       imageAsset: 'assets/images/ilustrasi_3.png',
-      fallbackIcon: Icons.card_giftcard_rounded,
+      fallbackIcon: AppIcons.gift,
     ),
   ];
 

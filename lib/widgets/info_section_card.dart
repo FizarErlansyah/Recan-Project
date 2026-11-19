@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 
 class InfoSectionCard extends StatelessWidget {
   const new({
@@ -11,7 +13,7 @@ class InfoSectionCard extends StatelessWidget {
     this.subtitle,
   });
 
-  final IconData icon;
+  final IconGlyph icon;
   final String title;
   final String? subtitle;
   final Widget child;
@@ -38,11 +40,12 @@ class InfoSectionCard extends StatelessWidget {
               Container(
                 width: 40,
                 height: 40,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: AppColors.primarySoft,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, size: 20, color: AppColors.primary),
+                child: HugeIcon(icon: icon, size: 22, color: AppColors.primary),
               ),
               const SizedBox(width: 12),
               Expanded(

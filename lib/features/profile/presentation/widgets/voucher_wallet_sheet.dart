@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/models/voucher.dart';
@@ -138,7 +139,7 @@ class _VoucherIcon extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(voucher.icon, size: 22, color: AppColors.white),
+      child: HugeIcon(icon: voucher.icon, size: 22, color: AppColors.white),
     );
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/info_section_card.dart';
+import 'package:mobile_apps_recan/widgets/segmented_pills.dart';
 
 class LegalPoliciesPage extends StatelessWidget {
   const new({super.key});
@@ -14,30 +16,29 @@ class LegalPoliciesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: Text(tr('Legal & Kebijakan', 'Legal & Policies')),
-          bottom: TabBar(
-            indicatorColor: AppColors.primarySoft,
-            indicatorWeight: 3,
-            labelColor: AppColors.white,
-            unselectedLabelColor: AppColors.primarySoft.withValues(alpha: 0.7),
-            labelStyle: textTheme.titleSmall,
-            unselectedLabelStyle: textTheme.titleSmall,
-            tabs: [
-              Tab(text: tr('Syarat & Ketentuan', 'Terms of Service')),
-              Tab(text: tr('Kebijakan Privasi', 'Privacy Policy')),
-            ],
-          ),
         ),
-        body: TabBarView(
+        body: Column(
           children: [
-            _PolicyList(sections: _termsSections),
-            _PolicyList(sections: _privacySections),
+            const SizedBox(height: 8),
+            SegmentedTabBar(
+              labels: [
+                tr('Syarat & Ketentuan', 'Terms of Service'),
+                tr('Kebijakan Privasi', 'Privacy Policy'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _PolicyList(sections: _termsSections),
+                  _PolicyList(sections: _privacySections),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -46,7 +47,7 @@ class LegalPoliciesPage extends StatelessWidget {
 
   static List<_PolicySection> get _termsSections => [
     _PolicySection(
-      icon: Icons.recycling_rounded,
+      icon: AppIcons.recycle,
       title: tr('Aturan Pemilahan Kaleng', 'Can Sorting Rules'),
       points: [
         tr(
@@ -73,7 +74,7 @@ class LegalPoliciesPage extends StatelessWidget {
       ],
     ),
     _PolicySection(
-      icon: Icons.toll_rounded,
+      icon: AppIcons.coins,
       title: tr('Validitas Poin', 'Point Validity'),
       points: [
         tr(
@@ -109,7 +110,7 @@ class LegalPoliciesPage extends StatelessWidget {
       ],
     ),
     _PolicySection(
-      icon: Icons.workspace_premium_rounded,
+      icon: AppIcons.medal,
       title: tr('Tier, Misi & Hadiah', 'Tiers, Missions & Rewards'),
       points: [
         tr(
@@ -133,7 +134,7 @@ class LegalPoliciesPage extends StatelessWidget {
       ],
     ),
     _PolicySection(
-      icon: Icons.gavel_rounded,
+      icon: AppIcons.legal,
       title: tr('Ketentuan Umum', 'General Terms'),
       points: [
         tr(
@@ -157,7 +158,7 @@ class LegalPoliciesPage extends StatelessWidget {
 
   static List<_PolicySection> get _privacySections => [
     _PolicySection(
-      icon: Icons.folder_shared_rounded,
+      icon: AppIcons.sharedData,
       title: tr('Data yang Kami Kumpulkan', 'Data We Collect'),
       points: [
         tr(
@@ -178,7 +179,7 @@ class LegalPoliciesPage extends StatelessWidget {
       ],
     ),
     _PolicySection(
-      icon: Icons.manage_accounts_rounded,
+      icon: AppIcons.accountSettings,
       title: tr('Penggunaan Data', 'How We Use Data'),
       points: [
         tr(
@@ -200,7 +201,7 @@ class LegalPoliciesPage extends StatelessWidget {
       ],
     ),
     _PolicySection(
-      icon: Icons.lock_rounded,
+      icon: AppIcons.security,
       title: tr('Keamanan Data', 'Data Security'),
       points: [
         tr(
@@ -224,7 +225,7 @@ class LegalPoliciesPage extends StatelessWidget {
       ],
     ),
     _PolicySection(
-      icon: Icons.verified_user_rounded,
+      icon: AppIcons.privacy,
       title: tr('Hak Pengguna', 'Your Rights'),
       points: [
         tr(
@@ -252,7 +253,7 @@ class LegalPoliciesPage extends StatelessWidget {
 class _PolicySection {
   const new({required this.icon, required this.title, required this.points});
 
-  final IconData icon;
+  final IconGlyph icon;
   final String title;
   final List<String> points;
 }

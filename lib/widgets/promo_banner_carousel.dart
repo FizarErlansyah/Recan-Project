@@ -29,7 +29,7 @@ class PromoBannerCarousel extends StatefulWidget {
   static const int virtualItemCount = 60;
   static const int virtualStartPage = 30;
   static const int recenterEdge = 5;
-  static const Duration autoSlideInterval = Duration(seconds: 4);
+  static const Duration autoSlideInterval = Duration(seconds: 6);
   static const Duration slideDuration = Duration(milliseconds: 600);
 
   final List<PromoBanner> banners;
@@ -56,9 +56,7 @@ class _PromoBannerCarouselState extends State<PromoBannerCarousel> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(PromoBannerCarousel.autoSlideInterval, (_) {
-      _advance();
-    });
+    _startTimer();
   }
 
   @override
@@ -68,9 +66,21 @@ class _PromoBannerCarouselState extends State<PromoBannerCarousel> {
     super.dispose();
   }
 
+  // Restarting on release gives the reader a full interval before the next
+  // slide moves under their thumb.
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(PromoBannerCarousel.autoSlideInterval, (_) {
+      _advance();
+    });
+  }
+
+  void _pauseTimer() => _timer?.cancel();
+
   void _advance() {
     if (!_controller.hasClients || _bannerCount == 0) return;
     if (!TickerMode.valuesOf(context).enabled) return;
+    if (MediaQuery.disableAnimationsOf(context)) return;
     _controller.nextPage(
       duration: PromoBannerCarousel.slideDuration,
       curve: Curves.easeInOutCubic,
@@ -104,19 +114,26 @@ class _PromoBannerCarouselState extends State<PromoBannerCarousel> {
         SizedBox(
           height: PromoBannerCarousel.height + 24,
           child: RepaintBoundary(
-            child: NotificationListener<ScrollEndNotification>(
-              onNotification: (_) {
-                _recenterIfNearEdge();
-                return false;
-              },
-              child: PageView.builder(
-                controller: _controller,
-                clipBehavior: Clip.none,
-                itemCount: PromoBannerCarousel.virtualItemCount,
-                onPageChanged: _handlePageChanged,
-                itemBuilder: (_, i) => Padding(
-                  padding: const EdgeInsets.fromLTRB(6, 0, 6, 24),
-                  child: _BannerCard(banner: widget.banners[i % _bannerCount]),
+            child: Listener(
+              onPointerDown: (_) => _pauseTimer(),
+              onPointerUp: (_) => _startTimer(),
+              onPointerCancel: (_) => _startTimer(),
+              child: NotificationListener<ScrollEndNotification>(
+                onNotification: (_) {
+                  _recenterIfNearEdge();
+                  return false;
+                },
+                child: PageView.builder(
+                  controller: _controller,
+                  clipBehavior: Clip.none,
+                  itemCount: PromoBannerCarousel.virtualItemCount,
+                  onPageChanged: _handlePageChanged,
+                  itemBuilder: (_, i) => Padding(
+                    padding: const EdgeInsets.fromLTRB(6, 0, 6, 24),
+                    child: _BannerCard(
+                      banner: widget.banners[i % _bannerCount],
+                    ),
+                  ),
                 ),
               ),
             ),
