@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/chat_message.dart';
 import 'package:mobile_apps_recan/services/ai_chat_service.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
@@ -103,7 +103,7 @@ class _AiChatPageState extends State<AiChatPage> {
     final itemCount = _messages.length + (_isWaiting ? 1 : 0);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.palette.background,
       appBar: const AiChatAppBar(),
       body: Column(
         children: [

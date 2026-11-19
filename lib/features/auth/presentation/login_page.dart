@@ -2,8 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/widgets/login_form_widget.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/widgets/login_hero.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/widgets/register_form_widget.dart';
@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
     return StatusBarIcons(
       light: true,
       child: Scaffold(
-        backgroundColor: AppColors.surface,
+        backgroundColor: context.palette.surface,
         body: LayoutBuilder(
           builder: (context, constraints) => SingleChildScrollView(
             child: Column(
@@ -199,9 +199,9 @@ class _AuthSheet extends StatelessWidget {
       width: double.infinity,
       constraints: BoxConstraints(minHeight: minHeight),
       padding: EdgeInsets.fromLTRB(24, 36, 24, 32 + bottomInset),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: context.palette.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 220),
@@ -236,7 +236,9 @@ class _AuthLandingContent extends StatelessWidget {
             'Sign in or create an account to start dropping cans and '
                 'tracking your points.',
           ),
-          style: textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
+          style: textTheme.bodyLarge?.copyWith(
+            color: context.palette.textSecondary,
+          ),
         ),
         const SizedBox(height: 40),
         SizedBox(
@@ -284,9 +286,9 @@ class _AuthFormSection extends StatelessWidget {
           children: [
             IconButton(
               onPressed: onBack,
-              icon: const HugeIcon(
+              icon: HugeIcon(
                 icon: AppIcons.back,
-                color: AppColors.textPrimary,
+                color: context.palette.textPrimary,
               ),
               style: IconButton.styleFrom(
                 padding: EdgeInsets.zero,
@@ -303,7 +305,9 @@ class _AuthFormSection extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           subtitle,
-          style: textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
+          style: textTheme.bodyLarge?.copyWith(
+            color: context.palette.textSecondary,
+          ),
         ),
         const SizedBox(height: 32),
         form,

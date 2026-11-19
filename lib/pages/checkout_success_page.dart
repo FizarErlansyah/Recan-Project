@@ -6,6 +6,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -84,7 +85,7 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage> {
         if (!didPop) _backToHome();
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: context.palette.background,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -135,7 +136,7 @@ class _ReceiptPaper extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      decoration: AppDecorations.card(),
+      decoration: AppDecorations.card(context),
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
@@ -204,7 +205,7 @@ class _StatusPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.successSoft,
+        color: context.palette.successSoft,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
@@ -255,10 +256,10 @@ class _DashedDivider extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             for (var i = 0; i < count; i++)
-              const SizedBox(
+              SizedBox(
                 width: 4,
                 height: 1.5,
-                child: ColoredBox(color: AppColors.border),
+                child: ColoredBox(color: context.palette.border),
               ),
           ],
         );

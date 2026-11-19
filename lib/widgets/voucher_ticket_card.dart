@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/voucher.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
@@ -31,11 +32,11 @@ class VoucherTicketCard extends StatelessWidget {
     );
 
     return CustomPaint(
-      foregroundPainter: const _TicketOutlinePainter(clipper),
+      foregroundPainter: _TicketOutlinePainter(clipper, context.palette.border),
       child: ClipPath(
         clipper: clipper,
         child: ColoredBox(
-          color: AppColors.surface,
+          color: context.palette.surface,
           child: SizedBox(
             height: height,
             child: Row(
@@ -85,10 +86,12 @@ class VoucherTicketCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(
+                SizedBox(
                   width: 1,
                   height: height,
-                  child: CustomPaint(painter: _DashedDividerPainter()),
+                  child: CustomPaint(
+                    painter: _DashedDividerPainter(context.palette.border),
+                  ),
                 ),
                 SizedBox(
                   width: _stubWidth - 1,
@@ -112,7 +115,7 @@ class VoucherTicketCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             backgroundColor: affordable
                                 ? AppColors.primary
-                                : AppColors.border,
+                                : context.palette.border,
                             shape: const StadiumBorder(),
                           ),
                           child: Text(
@@ -120,7 +123,7 @@ class VoucherTicketCard extends StatelessWidget {
                             style: textTheme.labelLarge?.copyWith(
                               color: affordable
                                   ? AppColors.white
-                                  : AppColors.textSecondary,
+                                  : context.palette.textSecondary,
                             ),
                           ),
                         ),
@@ -138,9 +141,10 @@ class VoucherTicketCard extends StatelessWidget {
 }
 
 class _TicketOutlinePainter extends CustomPainter {
-  const new(this.clipper);
+  const new(this.clipper, this.color);
 
   final _TicketClipper clipper;
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -149,13 +153,13 @@ class _TicketOutlinePainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1
-        ..color = AppColors.border,
+        ..color = color,
     );
   }
 
   @override
   bool shouldRepaint(_TicketOutlinePainter oldDelegate) =>
-      oldDelegate.clipper.shouldReclip(clipper);
+      oldDelegate.color != color || oldDelegate.clipper.shouldReclip(clipper);
 }
 
 class _TicketClipper extends CustomClipper<Path> {
@@ -212,12 +216,14 @@ class _TicketClipper extends CustomClipper<Path> {
 }
 
 class _DashedDividerPainter extends CustomPainter {
-  const new();
+  const new(this.color);
+
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.border
+      ..color = color
       ..strokeWidth = 1.5;
     const dash = 6.0;
     const gap = 4.0;
@@ -229,5 +235,6 @@ class _DashedDividerPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _DashedDividerPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _DashedDividerPainter oldDelegate) =>
+      oldDelegate.color != color;
 }

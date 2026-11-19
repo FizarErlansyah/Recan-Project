@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class PaymentOptionTile extends StatelessWidget {
   const new({
@@ -35,8 +36,8 @@ class PaymentOptionTile extends StatelessWidget {
         color: enabled
             ? (active
                   ? AppColors.primarySoft.withValues(alpha: 0.3)
-                  : AppColors.surface)
-            : AppColors.border,
+                  : context.palette.surface)
+            : context.palette.border,
         borderRadius: BorderRadius.circular(12),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -46,7 +47,7 @@ class PaymentOptionTile extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: active ? AppColors.primary : AppColors.border,
+                color: active ? AppColors.primary : context.palette.border,
                 width: active ? 1.5 : 1,
               ),
             ),
@@ -54,7 +55,9 @@ class PaymentOptionTile extends StatelessWidget {
               children: [
                 HugeIcon(
                   icon: active ? AppIcons.checkCircle : AppIcons.radioOff,
-                  color: active ? AppColors.primary : AppColors.textSecondary,
+                  color: active
+                      ? AppColors.primary
+                      : context.palette.textSecondary,
                 ),
                 const SizedBox(width: 12),
                 HugeIcon(icon: icon, color: AppColors.primary),
@@ -72,7 +75,7 @@ class PaymentOptionTile extends StatelessWidget {
                         style: textTheme.labelMedium?.copyWith(
                           color: enabled
                               ? AppColors.primary
-                              : AppColors.textSecondary,
+                              : context.palette.textSecondary,
                         ),
                       ),
                     ],

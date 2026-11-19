@@ -3,6 +3,7 @@ import 'package:hugeicons/hugeicons.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class SettingsTile extends StatelessWidget {
   const new({
@@ -20,7 +21,7 @@ class SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = destructive ? AppColors.danger : AppColors.textPrimary;
+    final color = destructive ? AppColors.danger : context.palette.textPrimary;
 
     return InkWell(
       onTap: onTap,
@@ -44,10 +45,10 @@ class SettingsTile extends StatelessWidget {
                 ),
               ),
               if (!destructive)
-                const HugeIcon(
+                HugeIcon(
                   icon: AppIcons.chevronRight,
                   size: 20,
-                  color: AppColors.textSecondary,
+                  color: context.palette.textSecondary,
                 ),
             ],
           ),

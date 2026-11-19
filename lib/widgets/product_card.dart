@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/cover_image.dart';
@@ -109,7 +110,7 @@ class _StockTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: soldOut ? AppColors.danger : AppColors.surface,
+        color: soldOut ? AppColors.danger : context.palette.surface,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(

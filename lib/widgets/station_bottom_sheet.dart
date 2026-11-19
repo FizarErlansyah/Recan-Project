@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/capsule_progress_bar.dart';
@@ -19,7 +20,7 @@ class StationBottomSheet extends StatelessWidget {
   }) {
     return showModalBottomSheet<void>(
       context: context,
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.palette.surface,
       showDragHandle: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -71,7 +72,7 @@ class StationBottomSheet extends StatelessWidget {
             CapsuleProgressBar(
               value: station.capacityPercent / 100,
               colors: barColors,
-              trackColor: AppColors.border,
+              trackColor: context.palette.border,
             ),
             if (almostFull) ...[
               const SizedBox(height: 8),

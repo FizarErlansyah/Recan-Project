@@ -20,7 +20,7 @@ class ReCanApp extends StatelessWidget {
       builder: (context, isEnglish, _) => MaterialApp(
         title: 'ReCan',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.theme.copyWith(
+        theme: AppTheme.light.copyWith(
           extensions: [LanguageExtension(isEnglish: isEnglish)],
         ),
         home: const SplashPage(),

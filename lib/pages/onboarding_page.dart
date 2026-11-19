@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/login_page.dart';
 import 'package:mobile_apps_recan/services/onboarding_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -90,16 +91,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
     return Scaffold(
       body: DecoratedBox(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
               AppColors.sandSoft,
               AppColors.primarySoft,
-              AppColors.background,
+              context.palette.background,
             ],
-            stops: [0, 0.55, 1],
+            stops: const [0, 0.55, 1],
           ),
         ),
         child: SafeArea(
@@ -116,7 +117,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       onPressed: _isLast ? null : _finish,
                       style: TextButton.styleFrom(
                         minimumSize: const Size(48, 48),
-                        foregroundColor: AppColors.textSecondary,
+                        foregroundColor: context.palette.textSecondary,
                       ),
                       child: Text(
                         tr('Lewati', 'Skip'),
@@ -196,7 +197,7 @@ class _Dot extends StatelessWidget {
       width: active ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: active ? AppColors.primary : AppColors.border,
+        color: active ? AppColors.primary : context.palette.border,
         borderRadius: BorderRadius.circular(4),
       ),
     );

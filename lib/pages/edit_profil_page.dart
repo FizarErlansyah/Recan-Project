@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
@@ -195,8 +196,8 @@ class _AvatarPicker extends StatelessWidget {
           bottom: 0,
           child: Material(
             color: AppColors.primary,
-            shape: const CircleBorder(
-              side: BorderSide(color: AppColors.surface, width: 2),
+            shape: CircleBorder(
+              side: BorderSide(color: context.palette.surface, width: 2),
             ),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
@@ -268,7 +269,7 @@ class _AvatarColorSheet extends StatelessWidget {
                         color: color,
                         border: Border.all(
                           color: color == selected
-                              ? AppColors.textPrimary
+                              ? context.palette.textPrimary
                               : AppColors.transparent,
                           width: 3,
                         ),

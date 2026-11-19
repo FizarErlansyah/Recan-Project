@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/chat_topic.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
@@ -33,9 +34,9 @@ class _ChatSuggestionChipsState extends State<ChatSuggestionChips> {
     final visible = _visible;
 
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: context.palette.surface,
+        border: Border(top: BorderSide(color: context.palette.border)),
       ),
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: Column(
@@ -122,7 +123,7 @@ class _CategoryTab extends StatelessWidget {
             curve: Curves.easeOutCubic,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: active ? AppColors.primary : AppColors.background,
+              color: active ? AppColors.primary : context.palette.background,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -158,7 +159,7 @@ class _SuggestionChip extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       opacity: isEnabled ? 1 : 0.5,
       child: Material(
-        color: AppColors.surface,
+        color: context.palette.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: const BorderSide(color: AppColors.primarySoft, width: 1.5),

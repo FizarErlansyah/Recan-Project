@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/leaderboard_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/payment_methods_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/tier_and_voucher_section.dart';
@@ -71,7 +72,7 @@ class ProfilPage extends StatelessWidget {
         refreshOn: DataRefresh.revision,
         builder: (context, overview, reload) => RefreshIndicator(
           color: AppColors.primary,
-          backgroundColor: AppColors.surface,
+          backgroundColor: context.palette.surface,
           onRefresh: reload,
           child: ListView(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
@@ -145,7 +146,7 @@ class _SettingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final divider = Divider(
-      color: AppColors.border.withValues(alpha: 0.6),
+      color: context.palette.border.withValues(alpha: 0.6),
       height: 1,
       thickness: 0.5,
       indent: 56,

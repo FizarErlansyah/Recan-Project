@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/recan_card.dart';
@@ -98,9 +99,8 @@ class _QuestCardState extends State<QuestCard> {
                         value: value,
                         minHeight: 6,
                         color: AppColors.primarySoft,
-                        backgroundColor: AppColors.textSecondary.withValues(
-                          alpha: 0.2,
-                        ),
+                        backgroundColor: context.palette.textSecondary
+                            .withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),

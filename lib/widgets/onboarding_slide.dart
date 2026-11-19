@@ -4,6 +4,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class OnboardingSlideData {
   const new({
@@ -84,7 +85,7 @@ class OnboardingSlide extends StatelessWidget {
                   child: Text(
                     data.description,
                     style: textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
+                      color: context.palette.textSecondary,
                       height: 1.5,
                     ),
                   ),
@@ -119,7 +120,7 @@ class _Illustration extends StatelessWidget {
         data.imageAsset,
         fit: BoxFit.contain,
         errorBuilder: (_, _, _) => DecoratedBox(
-          decoration: AppDecorations.card(radius: 32),
+          decoration: AppDecorations.card(context, radius: 32),
           child: Center(
             child: HugeIcon(
               icon: data.fallbackIcon,

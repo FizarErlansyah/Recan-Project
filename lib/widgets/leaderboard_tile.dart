@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
@@ -53,7 +54,9 @@ class LeaderboardTile extends StatelessWidget {
           Text(
             '${entry.totalKg.toStringAsFixed(1)} kg',
             style: textTheme.titleSmall?.copyWith(
-              color: highlighted ? AppColors.primary : AppColors.textPrimary,
+              color: highlighted
+                  ? AppColors.primary
+                  : context.palette.textPrimary,
             ),
           ),
         ],
@@ -86,7 +89,7 @@ class _RankBadge extends StatelessWidget {
           color: switch (rank) {
             1 || 2 => AppColors.primaryDeep,
             3 => AppColors.white,
-            _ => AppColors.textSecondary,
+            _ => context.palette.textSecondary,
           },
         ),
       ),

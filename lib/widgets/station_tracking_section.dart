@@ -64,7 +64,7 @@ class _StationPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: AppDecorations.card(),
+      decoration: AppDecorations.card(context),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [

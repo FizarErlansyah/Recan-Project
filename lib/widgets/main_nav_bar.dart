@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/haptics.dart';
 import 'package:mobile_apps_recan/widgets/pressable.dart';
 
@@ -112,13 +113,14 @@ class _MainNavBarState extends State<MainNavBar> with TickerProviderStateMixin {
                       painter: _WavePainter(
                         centerX: centerX,
                         top: MainNavBar.overhang,
+                        lineColor: context.palette.border,
                       ),
                       child: ClipPath(
                         clipper: _WaveClipper(
                           centerX: centerX,
                           top: MainNavBar.overhang,
                         ),
-                        child: const ColoredBox(color: AppColors.surface),
+                        child: ColoredBox(color: context.palette.surface),
                       ),
                     ),
                   ),
@@ -205,7 +207,10 @@ class _SelectorBubble extends StatelessWidget {
                 ScaleTransition(scale: animation, child: child),
             child: KeyedSubtree(
               key: ValueKey(index),
-              child: item.selectedIcon(color: AppColors.background, size: 22),
+              child: item.selectedIcon(
+                color: context.palette.background,
+                size: 22,
+              ),
             ),
           ),
         ),
@@ -239,7 +244,10 @@ class _NavButton extends StatelessWidget {
                 AnimatedOpacity(
                   duration: const Duration(milliseconds: 200),
                   opacity: selected ? 0 : 1,
-                  child: item.icon(color: AppColors.textTertiary, size: 22),
+                  child: item.icon(
+                    color: context.palette.textTertiary,
+                    size: 22,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -249,7 +257,7 @@ class _NavButton extends StatelessWidget {
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: selected
                         ? AppColors.primary
-                        : AppColors.textTertiary,
+                        : context.palette.textTertiary,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   ),
                 ),
@@ -310,10 +318,15 @@ class _WaveClipper extends CustomClipper<Path> {
 }
 
 class _WavePainter extends CustomPainter {
-  const new({required this.centerX, required this.top});
+  const new({
+    required this.centerX,
+    required this.top,
+    required this.lineColor,
+  });
 
   final double centerX;
   final double top;
+  final Color lineColor;
 
   // A hairline on the wave edge separates the bar from content without
   // adding a drop shadow.
@@ -324,11 +337,13 @@ class _WavePainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1
-        ..color = AppColors.border,
+        ..color = lineColor,
     );
   }
 
   @override
   bool shouldRepaint(_WavePainter oldDelegate) =>
-      oldDelegate.centerX != centerX || oldDelegate.top != top;
+      oldDelegate.centerX != centerX ||
+      oldDelegate.top != top ||
+      oldDelegate.lineColor != lineColor;
 }

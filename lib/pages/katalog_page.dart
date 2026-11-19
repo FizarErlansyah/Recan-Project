@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/pages/product_detail_page.dart';
 import 'package:mobile_apps_recan/services/data_refresh.dart';
@@ -132,7 +133,7 @@ class _CraftTabState extends State<_CraftTab> {
             Expanded(
               child: RefreshIndicator(
                 color: AppColors.primary,
-                backgroundColor: AppColors.surface,
+                backgroundColor: context.palette.surface,
                 onRefresh: reload,
                 child: GridView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),

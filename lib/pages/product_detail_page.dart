@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/checkout_page.dart';
@@ -57,7 +58,7 @@ class ProductDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.palette.background,
       body: CustomScrollView(
         slivers: [
           ParallaxCoverAppBar(
@@ -103,9 +104,11 @@ class _Details extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final soldOut = product.stock <= 0;
-    final stockColor = soldOut ? AppColors.danger : AppColors.textSecondary;
+    final stockColor = soldOut
+        ? AppColors.danger
+        : context.palette.textSecondary;
     final bodyStyle = textTheme.bodyMedium?.copyWith(
-      color: AppColors.textSecondary,
+      color: context.palette.textSecondary,
       height: 1.6,
     );
 
@@ -144,7 +147,7 @@ class _Details extends StatelessWidget {
           style: textTheme.bodySmall,
         ),
         const SizedBox(height: 24),
-        const Divider(color: AppColors.border, height: 1),
+        Divider(color: context.palette.border, height: 1),
         const SizedBox(height: 24),
         Text(tr('Deskripsi', 'Description'), style: textTheme.titleMedium),
         const SizedBox(height: 8),
@@ -209,7 +212,7 @@ class _SpecificationRow extends StatelessWidget {
             ],
           ),
         ),
-        if (showDivider) const Divider(color: AppColors.border, height: 1),
+        if (showDivider) Divider(color: context.palette.border, height: 1),
       ],
     );
   }
@@ -231,9 +234,9 @@ class _RedeemBarState extends State<_RedeemBar> {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: context.palette.surface,
+        border: Border(top: BorderSide(color: context.palette.border)),
       ),
       child: SafeArea(
         top: false,
@@ -314,8 +317,8 @@ class _RedeemActions extends StatelessWidget {
           onPressed: enabled ? onPressed : null,
           style: FilledButton.styleFrom(
             minimumSize: const Size.fromHeight(52),
-            disabledBackgroundColor: AppColors.surfaceMuted,
-            disabledForegroundColor: AppColors.textSecondary,
+            disabledBackgroundColor: context.palette.surfaceMuted,
+            disabledForegroundColor: context.palette.textSecondary,
           ),
           child: Text(label),
         ),

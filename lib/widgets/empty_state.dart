@@ -30,7 +30,10 @@ class EmptyState extends StatelessWidget {
               width: 80,
               height: 80,
               alignment: Alignment.center,
-              decoration: AppDecorations.card(color: AppColors.primarySoft),
+              decoration: AppDecorations.card(
+                context,
+                color: AppColors.primarySoft,
+              ),
               child: icon(color: AppColors.primary, size: 36),
             ),
             const SizedBox(height: 16),

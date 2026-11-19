@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/recan_form_field.dart';
 
@@ -109,7 +109,7 @@ class _ObscureToggle extends StatelessWidget {
       icon: HugeIcon(
         icon: obscure ? AppIcons.hidden : AppIcons.visible,
         size: 20,
-        color: AppColors.textSecondary,
+        color: context.palette.textSecondary,
       ),
       onPressed: onPressed,
     );

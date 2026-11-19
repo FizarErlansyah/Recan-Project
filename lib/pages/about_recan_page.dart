@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/info_section_card.dart';
@@ -106,7 +107,7 @@ class _ProblemCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.dangerSoft,
+              color: context.palette.dangerSoft,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -230,7 +231,7 @@ class _SdgChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.successSoft,
+        color: context.palette.successSoft,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -338,7 +339,7 @@ class _TeamCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final divider = Divider(
-      color: AppColors.border.withValues(alpha: 0.6),
+      color: context.palette.border.withValues(alpha: 0.6),
       height: 16,
       thickness: 0.5,
     );
@@ -379,7 +380,7 @@ class _TeamCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: context.palette.background,
               borderRadius: BorderRadius.circular(12),
             ),
             child: TeamMemberTile(

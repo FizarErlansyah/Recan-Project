@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 /// Stand-in for a product photo: a brushed-aluminium can, tinted per product,
 /// so catalog tiles still read as upcycled metal when no image is available.
@@ -19,11 +20,11 @@ class CanPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [AppColors.primarySoft, AppColors.surfaceMuted],
+          colors: [AppColors.primarySoft, context.palette.surfaceMuted],
         ),
       ),
       child: CustomPaint(

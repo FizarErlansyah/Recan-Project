@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/education_article.dart';
 import 'package:mobile_apps_recan/services/education_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
@@ -85,13 +86,13 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     final category = article.category;
     final paragraphs = article.paragraphs;
     final bodyStyle = textTheme.bodyLarge?.copyWith(
-      color: AppColors.textPrimary,
+      color: context.palette.textPrimary,
       height: 1.6,
     );
     final related = EducationService.related(article);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.palette.background,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -146,7 +147,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                 const SizedBox(height: 16),
                 _MetaRow(article: article),
                 const SizedBox(height: 24),
-                const Divider(color: AppColors.border, height: 1),
+                Divider(color: context.palette.border, height: 1),
                 const SizedBox(height: 24),
                 Text(paragraphs[0], style: bodyStyle),
                 const SizedBox(height: 24),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/haptics.dart';
 
 /// Visual spec shared by every mutually exclusive, full-width switch in the
@@ -9,22 +10,22 @@ abstract final class SegmentedStyle {
   static const double _trackRadius = 16;
   static const double _thumbRadius = 12;
 
-  static BoxDecoration track() => BoxDecoration(
-    color: AppColors.surfaceMuted,
+  static BoxDecoration track(BuildContext context) => BoxDecoration(
+    color: context.palette.surfaceMuted,
     borderRadius: BorderRadius.circular(_trackRadius),
   );
 
-  static BoxDecoration thumb() => BoxDecoration(
-    color: AppColors.surface,
+  static BoxDecoration thumb(BuildContext context) => BoxDecoration(
+    color: context.palette.surface,
     borderRadius: BorderRadius.circular(_thumbRadius),
-    border: Border.all(color: AppColors.border),
+    border: Border.all(color: context.palette.border),
   );
 
   static BorderRadius get splashRadius => BorderRadius.circular(_thumbRadius);
 
-  static TextStyle? label(TextTheme textTheme, {required bool active}) =>
-      textTheme.titleSmall?.copyWith(
-        color: active ? AppColors.primary : AppColors.textSecondary,
+  static TextStyle? label(BuildContext context, {required bool active}) =>
+      Theme.of(context).textTheme.titleSmall?.copyWith(
+        color: active ? AppColors.primary : context.palette.textSecondary,
         fontWeight: active ? FontWeight.w700 : FontWeight.w500,
       );
 }
@@ -37,23 +38,21 @@ class SegmentedTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
         padding: const EdgeInsets.all(4),
-        decoration: SegmentedStyle.track(),
+        decoration: SegmentedStyle.track(context),
         child: TabBar(
           dividerColor: AppColors.transparent,
           indicatorSize: TabBarIndicatorSize.tab,
           splashBorderRadius: SegmentedStyle.splashRadius,
           labelColor: AppColors.primary,
-          unselectedLabelColor: AppColors.textSecondary,
+          unselectedLabelColor: context.palette.textSecondary,
           labelPadding: EdgeInsets.zero,
-          labelStyle: SegmentedStyle.label(textTheme, active: true),
-          unselectedLabelStyle: SegmentedStyle.label(textTheme, active: false),
-          indicator: SegmentedStyle.thumb(),
+          labelStyle: SegmentedStyle.label(context, active: true),
+          unselectedLabelStyle: SegmentedStyle.label(context, active: false),
+          indicator: SegmentedStyle.thumb(context),
           tabs: [
             for (final label in labels)
               Tab(height: SegmentedStyle.height, text: label),
@@ -82,7 +81,7 @@ class SegmentedPills<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(4),
-      decoration: SegmentedStyle.track(),
+      decoration: SegmentedStyle.track(context),
       child: Row(
         children: [
           for (final value in values)
@@ -121,16 +120,13 @@ class _Segment extends StatelessWidget {
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         decoration: active
-            ? SegmentedStyle.thumb()
+            ? SegmentedStyle.thumb(context)
             : BoxDecoration(borderRadius: SegmentedStyle.splashRadius),
         child: Text(
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: SegmentedStyle.label(
-            Theme.of(context).textTheme,
-            active: active,
-          ),
+          style: SegmentedStyle.label(context, active: active),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -14,7 +15,7 @@ class ActivityDetailSheet extends StatelessWidget {
   ) {
     return showModalBottomSheet<void>(
       context: context,
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.palette.surface,
       showDragHandle: true,
       isScrollControlled: true,
       constraints: BoxConstraints(
@@ -58,7 +59,7 @@ class ActivityDetailSheet extends StatelessWidget {
                       style: textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 24),
-                    const Divider(color: AppColors.border, height: 1),
+                    Divider(color: context.palette.border, height: 1),
                     _DetailRow(
                       label: tr('ID Transaksi', 'Transaction ID'),
                       value: transaction.transactionId,
@@ -88,7 +89,7 @@ class ActivityDetailSheet extends StatelessWidget {
                           '${(transaction.weightKg * 1000).round()} Grams',
                         ),
                       ),
-                    const Divider(color: AppColors.border, height: 1),
+                    Divider(color: context.palette.border, height: 1),
                   ],
                 ),
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/tier_style.dart';
@@ -29,10 +30,10 @@ class TierBenefitCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isCurrent
             ? AppColors.primarySoft.withValues(alpha: 0.3)
-            : AppColors.surface,
+            : context.palette.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isCurrent ? AppColors.primary : AppColors.border,
+          color: isCurrent ? AppColors.primary : context.palette.border,
         ),
       ),
       child: Column(

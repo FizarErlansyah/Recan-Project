@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/checkout_success_page.dart';
@@ -349,7 +350,7 @@ class _OrderSummary extends StatelessWidget {
                       style: textTheme.bodySmall?.copyWith(
                         color: soldOut
                             ? AppColors.danger
-                            : AppColors.textSecondary,
+                            : context.palette.textSecondary,
                       ),
                     ),
                   ],
@@ -359,7 +360,7 @@ class _OrderSummary extends StatelessWidget {
           ),
           if (!soldOut) ...[
             const SizedBox(height: 12),
-            const Divider(color: AppColors.border, height: 1),
+            Divider(color: context.palette.border, height: 1),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -418,9 +419,9 @@ class _ConfirmBar extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: context.palette.surface,
+        border: Border(top: BorderSide(color: context.palette.border)),
       ),
       child: SafeArea(
         top: false,
@@ -454,7 +455,7 @@ class _ConfirmBar extends StatelessWidget {
                   minimumSize: const Size.fromHeight(52),
                   disabledBackgroundColor: isSubmitting
                       ? AppColors.primary
-                      : AppColors.border,
+                      : context.palette.border,
                 ),
                 child: isSubmitting
                     ? const SizedBox(
@@ -470,7 +471,7 @@ class _ConfirmBar extends StatelessWidget {
                         style: textTheme.labelLarge?.copyWith(
                           color: enabled
                               ? AppColors.white
-                              : AppColors.textSecondary,
+                              : context.palette.textSecondary,
                         ),
                       ),
               ),

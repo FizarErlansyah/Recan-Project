@@ -3,6 +3,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
@@ -100,7 +101,7 @@ class _MetricTile extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(14),
-      decoration: AppDecorations.card(),
+      decoration: AppDecorations.card(context),
       child: emphasis
           ? Row(
               children: [
@@ -210,7 +211,7 @@ class _TargetBar extends StatelessWidget {
           value: value,
           minHeight: 4,
           color: AppColors.primary,
-          backgroundColor: AppColors.surfaceMuted,
+          backgroundColor: context.palette.surfaceMuted,
         ),
       ),
     );

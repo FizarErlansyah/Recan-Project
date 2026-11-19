@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/widgets/field_glyph.dart';
 
 class ReCanTextField extends StatelessWidget {
@@ -45,7 +46,7 @@ class ReCanTextField extends StatelessWidget {
         errorText: errorText,
         alignLabelWithHint: maxLines > 1,
         labelStyle: textTheme.bodyMedium?.copyWith(
-          color: AppColors.textSecondary,
+          color: context.palette.textSecondary,
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(color: AppColors.silver),
         prefixIcon: FieldGlyph(icon: icon, color: AppColors.primary),

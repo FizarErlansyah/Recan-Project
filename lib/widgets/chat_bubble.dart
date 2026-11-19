@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/chat_message.dart';
 import 'package:mobile_apps_recan/widgets/ai_avatar.dart';
 import 'package:mobile_apps_recan/widgets/typewriter_text.dart';
@@ -27,7 +28,7 @@ class ChatBubble extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final maxWidth = MediaQuery.sizeOf(context).width * 0.72;
     final textStyle = textTheme.bodyMedium?.copyWith(
-      color: isUser ? AppColors.white : AppColors.textPrimary,
+      color: isUser ? AppColors.white : context.palette.textPrimary,
       height: 1.45,
     );
 
@@ -35,14 +36,14 @@ class ChatBubble extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: maxWidth),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isUser ? AppColors.primary : AppColors.surface,
+        color: isUser ? AppColors.primary : context.palette.surface,
         borderRadius: BorderRadius.only(
           topLeft: _round,
           topRight: _round,
           bottomLeft: isUser ? _round : _tail,
           bottomRight: isUser ? _tail : _round,
         ),
-        border: isUser ? null : Border.all(color: AppColors.border),
+        border: isUser ? null : Border.all(color: context.palette.border),
       ),
       child: animateTyping
           ? TypewriterText(

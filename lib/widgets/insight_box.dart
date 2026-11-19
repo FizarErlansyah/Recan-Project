@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class InsightBox extends StatelessWidget {
@@ -33,7 +33,7 @@ class InsightBox extends StatelessWidget {
               Text(
                 tr('Wawasan Interaktif', 'Interactive Insight'),
                 style: textTheme.labelLarge?.copyWith(
-                  color: AppColors.textPrimary,
+                  color: context.palette.textPrimary,
                 ),
               ),
             ],
@@ -42,7 +42,7 @@ class InsightBox extends StatelessWidget {
           Text(
             text,
             style: textTheme.bodyMedium?.copyWith(
-              color: AppColors.textPrimary,
+              color: context.palette.textPrimary,
               height: 1.6,
             ),
           ),

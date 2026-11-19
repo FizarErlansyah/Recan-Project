@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/animated_check.dart';
@@ -131,17 +132,17 @@ class _Receipt extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: Container(
         width: double.infinity,
-        color: AppColors.surface,
+        color: context.palette.surface,
         child: Column(
           children: [
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 32),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [AppColors.primarySoft, AppColors.surface],
+                  colors: [AppColors.primarySoft, context.palette.surface],
                 ),
               ),
               child: Column(
@@ -166,13 +167,13 @@ class _Receipt extends StatelessWidget {
                     label: tr('Total Kaleng', 'Total Cans'),
                     value: '${summary.cans}',
                   ),
-                  const Divider(color: AppColors.border, height: 24),
+                  Divider(color: context.palette.border, height: 24),
                   _DetailRow(
                     icon: AppIcons.coins,
                     label: tr('Poin Didapat', 'Points Earned'),
                     value: '+${summary.points}',
                   ),
-                  const Divider(color: AppColors.border, height: 24),
+                  Divider(color: context.palette.border, height: 24),
                   _DetailRow(
                     icon: AppIcons.eco,
                     label: tr('Dampak Karbon', 'Carbon Impact'),

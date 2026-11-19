@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/pages/ai_chat_page.dart';
 import 'package:mobile_apps_recan/pages/article_detail_page.dart';
@@ -76,7 +77,7 @@ class _Content extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.palette.surface,
       onRefresh: onRefresh,
       child: ListView(
         padding: const EdgeInsets.only(bottom: 104),

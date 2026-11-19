@@ -23,7 +23,7 @@ class ReCanCard extends StatelessWidget {
     return Pressable(
       enabled: onTap != null,
       child: DecoratedBox(
-        decoration: AppDecorations.card(radius: radius),
+        decoration: AppDecorations.card(context, radius: radius),
         child: Material(
           color: AppColors.transparent,
           borderRadius: BorderRadius.circular(radius),

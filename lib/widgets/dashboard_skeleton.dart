@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/widgets/product_card.dart';
 import 'package:mobile_apps_recan/widgets/shimmer.dart';
 
 class DashboardSkeleton extends StatelessWidget {
   const new({super.key});
 
-  Widget _card({required double height, double? width}) => DecoratedBox(
-    decoration: BoxDecoration(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: ShimmerBox(width: width, height: height),
-  );
+  Widget _card(BuildContext context, {required double height, double? width}) =>
+      DecoratedBox(
+        decoration: BoxDecoration(
+          color: context.palette.surface,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ShimmerBox(width: width, height: height),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +53,9 @@ class DashboardSkeleton extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 children: [
-                  _card(height: 72),
+                  _card(context, height: 72),
                   const SizedBox(height: 8),
-                  _card(height: 72),
+                  _card(context, height: 72),
                 ],
               ),
             ),
@@ -72,7 +73,11 @@ class DashboardSkeleton extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 children: [
                   for (var i = 0; i < 3; i++) ...[
-                    _card(width: ProductCard.width, height: ProductCard.height),
+                    _card(
+                      context,
+                      width: ProductCard.width,
+                      height: ProductCard.height,
+                    ),
                     const SizedBox(width: 12),
                   ],
                 ],

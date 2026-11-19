@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class QuantityStepper extends StatelessWidget {
@@ -29,7 +30,7 @@ class QuantityStepper extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: context.palette.background,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -80,7 +81,7 @@ class _StepperButton extends StatelessWidget {
       constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
       icon: HugeIcon(icon: icon, size: 22),
       color: AppColors.primary,
-      disabledColor: AppColors.textSecondary.withValues(alpha: 0.5),
+      disabledColor: context.palette.textSecondary.withValues(alpha: 0.5),
     );
   }
 }

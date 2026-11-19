@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 
 class PromoBanner {
@@ -165,7 +166,7 @@ class _BannerDot extends StatelessWidget {
       width: active ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: active ? AppColors.primary : AppColors.border,
+        color: active ? AppColors.primary : context.palette.border,
         borderRadius: BorderRadius.circular(4),
       ),
     );

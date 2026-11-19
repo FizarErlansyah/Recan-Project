@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class Shimmer extends StatefulWidget {
   const new({required this.child, super.key});
@@ -47,10 +47,10 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
           shaderCallback: (bounds) => LinearGradient(
             begin: Alignment(-1.5 + 3 * t, -0.3),
             end: Alignment(-0.5 + 3 * t, 0.3),
-            colors: const [
-              AppColors.border,
-              AppColors.background,
-              AppColors.border,
+            colors: [
+              context.palette.border,
+              context.palette.background,
+              context.palette.border,
             ],
             stops: const [0.1, 0.5, 0.9],
           ).createShader(bounds),
@@ -74,7 +74,7 @@ class ShimmerBox extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: AppColors.border,
+        color: context.palette.border,
         borderRadius: BorderRadius.circular(radius),
       ),
     );

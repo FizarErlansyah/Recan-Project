@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/education_article.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/recan_card.dart';
@@ -71,10 +72,10 @@ class EducationCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const HugeIcon(
+                    HugeIcon(
                       icon: AppIcons.clock,
                       size: 14,
-                      color: AppColors.textSecondary,
+                      color: context.palette.textSecondary,
                     ),
                     const SizedBox(width: 4),
                     Text(

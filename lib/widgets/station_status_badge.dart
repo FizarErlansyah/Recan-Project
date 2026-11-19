@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class StationStatusBadge extends StatelessWidget {
@@ -14,7 +15,9 @@ class StationStatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: (full ? AppColors.dangerSoft : AppColors.successSoft),
+        color: (full
+            ? context.palette.dangerSoft
+            : context.palette.successSoft),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(

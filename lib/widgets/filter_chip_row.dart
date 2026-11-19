@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/haptics.dart';
 
 class FilterChipRow extends StatelessWidget {
@@ -61,10 +62,10 @@ class _FilterChipPill extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
-        color: selected ? AppColors.primarySoft : AppColors.surface,
+        color: selected ? AppColors.primarySoft : context.palette.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: selected ? AppColors.primary : AppColors.border,
+          color: selected ? AppColors.primary : context.palette.border,
         ),
       ),
       child: Material(
@@ -84,7 +85,7 @@ class _FilterChipPill extends StatelessWidget {
                   style: textTheme.labelLarge?.copyWith(
                     color: selected
                         ? AppColors.primary
-                        : AppColors.textSecondary,
+                        : context.palette.textSecondary,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   ),
                 ),

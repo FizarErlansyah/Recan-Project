@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/voucher.dart';
 import 'package:mobile_apps_recan/services/voucher_service.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
@@ -89,7 +90,7 @@ class _OwnedVoucherRow extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: AppDecorations.card(),
+      decoration: AppDecorations.card(context),
       child: Row(
         children: [
           _VoucherIcon(voucher: voucher),
@@ -103,7 +104,7 @@ class _OwnedVoucherRow extends StatelessWidget {
                 Text(
                   '${tr('Kode', 'Code')} ${owned.reference}',
                   style: textTheme.labelSmall?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: context.palette.textSecondary,
                     letterSpacing: 0.6,
                   ),
                 ),

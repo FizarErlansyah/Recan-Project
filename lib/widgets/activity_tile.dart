@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/widgets/activity_detail_sheet.dart';
@@ -50,7 +51,7 @@ class ActivityTile extends StatelessWidget {
                           Text(
                             transaction.transactionId,
                             style: textTheme.labelSmall?.copyWith(
-                              color: AppColors.textSecondary,
+                              color: context.palette.textSecondary,
                               letterSpacing: 0.6,
                             ),
                           ),
@@ -87,8 +88,8 @@ class ActivityTile extends StatelessWidget {
           ),
         ),
         if (!isLast)
-          const Divider(
-            color: AppColors.border,
+          Divider(
+            color: context.palette.border,
             height: 1,
             indent: 8 + _iconSize + 12,
           ),

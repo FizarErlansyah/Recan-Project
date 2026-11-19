@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class CircularGauge extends StatelessWidget {
   const new({
@@ -43,7 +43,7 @@ class CircularGauge extends StatelessWidget {
                   child: Text(
                     '$percent%',
                     style: Theme.of(context).textTheme.labelSmall
-                        ?.copyWith(color: AppColors.textPrimary),
+                        ?.copyWith(color: context.palette.textPrimary),
                   ),
                 ),
               ),
