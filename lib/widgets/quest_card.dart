@@ -75,7 +75,7 @@ class _QuestCardState extends State<QuestCard> {
                 child: Center(
                   child: HugeIcon(
                     icon: quest.isCompleted ? AppIcons.medal : AppIcons.target,
-                    color: AppColors.primary,
+                    color: context.palette.accent,
                   ),
                 ),
               ),
@@ -98,7 +98,7 @@ class _QuestCardState extends State<QuestCard> {
                       builder: (_, value, _) => LinearProgressIndicator(
                         value: value,
                         minHeight: 6,
-                        color: AppColors.primarySoft,
+                        color: context.palette.tint,
                         backgroundColor: context.palette.textSecondary
                             .withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(3),
@@ -159,22 +159,22 @@ class _RewardChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.goldSoft,
+        color: context.palette.goldSoft,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const HugeIcon(
+          HugeIcon(
             icon: AppIcons.coins,
             size: 14,
-            color: AppColors.goldDeep,
+            color: context.palette.goldText,
           ),
           const SizedBox(width: 4),
           Text(
             tr('+$points Poin', '+$points Points'),
             style: Theme.of(context).textTheme.labelMedium
-                ?.copyWith(color: AppColors.goldDeep),
+                ?.copyWith(color: context.palette.goldText),
           ),
         ],
       ),
@@ -218,8 +218,8 @@ class _ClaimButton extends StatelessWidget {
           foregroundColor: AppColors.primaryDeep,
           disabledBackgroundColor: claiming
               ? AppColors.goldLight
-              : AppColors.goldSoft,
-          disabledForegroundColor: AppColors.goldDeep,
+              : context.palette.goldSoft,
+          disabledForegroundColor: context.palette.goldText,
         ),
         icon: icon,
         label: Text(

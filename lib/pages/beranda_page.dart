@@ -76,7 +76,7 @@ class _Content extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      color: AppColors.primary,
+      color: context.palette.accent,
       backgroundColor: context.palette.surface,
       onRefresh: onRefresh,
       child: ListView(

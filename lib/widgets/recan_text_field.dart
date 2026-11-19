@@ -39,7 +39,7 @@ class ReCanTextField extends StatelessWidget {
       onChanged: onChanged,
       textCapitalization: TextCapitalization.sentences,
       style: textTheme.bodyMedium,
-      cursorColor: AppColors.primary,
+      cursorColor: context.palette.accent,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
@@ -49,7 +49,7 @@ class ReCanTextField extends StatelessWidget {
           color: context.palette.textSecondary,
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(color: AppColors.silver),
-        prefixIcon: FieldGlyph(icon: icon, color: AppColors.primary),
+        prefixIcon: FieldGlyph(icon: icon, color: context.palette.accent),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,

@@ -110,7 +110,7 @@ class _CategoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final foreground = active ? AppColors.white : AppColors.primary;
+    final foreground = active ? AppColors.white : context.palette.accent;
 
     return InkWell(
       onTap: onTap,
@@ -162,13 +162,13 @@ class _SuggestionChip extends StatelessWidget {
         color: context.palette.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.primarySoft, width: 1.5),
+          side: BorderSide(color: context.palette.tint, width: 1.5),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
-          splashColor: AppColors.primarySoft.withValues(alpha: 0.5),
-          highlightColor: AppColors.primarySoft.withValues(alpha: 0.3),
+          splashColor: context.palette.tint.withValues(alpha: 0.5),
+          highlightColor: context.palette.tint.withValues(alpha: 0.3),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 48),
             child: Padding(
@@ -178,7 +178,7 @@ class _SuggestionChip extends StatelessWidget {
                 child: Text(
                   label,
                   style: textTheme.labelLarge?.copyWith(
-                    color: AppColors.primary,
+                    color: context.palette.accent,
                   ),
                 ),
               ),

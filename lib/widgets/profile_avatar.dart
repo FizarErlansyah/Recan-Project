@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class ProfileAvatar extends StatelessWidget {
   const new({
@@ -23,7 +24,7 @@ class ProfileAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: color,
-        border: Border.all(color: AppColors.primarySoft, width: 4),
+        border: Border.all(color: context.palette.tint, width: 4),
       ),
       child: Text(
         initials,

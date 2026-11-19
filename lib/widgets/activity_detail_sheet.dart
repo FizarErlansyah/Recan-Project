@@ -49,7 +49,7 @@ class ActivityDetailSheet extends StatelessWidget {
                     Text(
                       transaction.amountLabel,
                       style: textTheme.headlineMedium?.copyWith(
-                        color: transaction.amountColor,
+                        color: transaction.amountColor(context),
                       ),
                     ),
                     const SizedBox(height: 4),

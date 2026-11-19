@@ -25,7 +25,7 @@ abstract final class SegmentedStyle {
 
   static TextStyle? label(BuildContext context, {required bool active}) =>
       Theme.of(context).textTheme.titleSmall?.copyWith(
-        color: active ? AppColors.primary : context.palette.textSecondary,
+        color: active ? context.palette.accent : context.palette.textSecondary,
         fontWeight: active ? FontWeight.w700 : FontWeight.w500,
       );
 }
@@ -47,7 +47,7 @@ class SegmentedTabBar extends StatelessWidget {
           dividerColor: AppColors.transparent,
           indicatorSize: TabBarIndicatorSize.tab,
           splashBorderRadius: SegmentedStyle.splashRadius,
-          labelColor: AppColors.primary,
+          labelColor: context.palette.accent,
           unselectedLabelColor: context.palette.textSecondary,
           labelPadding: EdgeInsets.zero,
           labelStyle: SegmentedStyle.label(context, active: true),

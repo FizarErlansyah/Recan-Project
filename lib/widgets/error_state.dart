@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class ErrorState extends StatelessWidget {
@@ -30,15 +30,15 @@ class ErrorState extends StatelessWidget {
             Container(
               width: 96,
               height: 96,
-              decoration: const BoxDecoration(
-                color: AppColors.primarySoft,
+              decoration: BoxDecoration(
+                color: context.palette.tint,
                 shape: BoxShape.circle,
               ),
-              child: const Center(
+              child: Center(
                 child: HugeIcon(
                   icon: AppIcons.offline,
                   size: 40,
-                  color: AppColors.primary,
+                  color: context.palette.accent,
                 ),
               ),
             ),

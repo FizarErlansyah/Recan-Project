@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
@@ -71,7 +70,7 @@ class OnboardingSlide extends StatelessWidget {
                         TextSpan(text: data.titleLead),
                         TextSpan(
                           text: data.titleHighlight,
-                          style: const TextStyle(color: AppColors.primary),
+                          style: TextStyle(color: context.palette.accent),
                         ),
                         TextSpan(text: data.titleTail),
                       ],
@@ -125,7 +124,7 @@ class _Illustration extends StatelessWidget {
             child: HugeIcon(
               icon: data.fallbackIcon,
               size: 96,
-              color: AppColors.primary,
+              color: context.palette.accent,
             ),
           ),
         ),

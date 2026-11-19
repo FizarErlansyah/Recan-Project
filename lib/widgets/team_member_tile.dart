@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class TeamMemberTile extends StatelessWidget {
   const new({
@@ -41,12 +42,12 @@ class TeamMemberTile extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: highlighted ? AppColors.primary : AppColors.primarySoft,
+              color: highlighted ? AppColors.primary : context.palette.tint,
             ),
             child: Text(
               _initials,
               style: textTheme.labelLarge?.copyWith(
-                color: highlighted ? AppColors.white : AppColors.primary,
+                color: highlighted ? AppColors.white : context.palette.accent,
               ),
             ),
           ),

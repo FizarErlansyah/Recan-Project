@@ -70,7 +70,7 @@ class ActivityTile extends StatelessWidget {
                         Text(
                           transaction.amountLabel,
                           style: textTheme.titleSmall?.copyWith(
-                            color: transaction.amountColor,
+                            color: transaction.amountColor(context),
                             fontWeight: FontWeight.w700,
                           ),
                         ),

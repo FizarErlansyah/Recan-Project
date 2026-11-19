@@ -101,7 +101,7 @@ class VoucherTicketCard extends StatelessWidget {
                       Text(
                         PointsHeader.formatNumber(voucher.pointsCost),
                         style: textTheme.titleLarge?.copyWith(
-                          color: AppColors.primary,
+                          color: context.palette.accent,
                         ),
                       ),
                       Text(tr('Poin', 'Points'), style: textTheme.bodySmall),

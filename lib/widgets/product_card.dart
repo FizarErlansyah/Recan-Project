@@ -115,8 +115,9 @@ class _StockTag extends StatelessWidget {
       ),
       child: Text(
         soldOut ? tr('Habis', 'Sold out') : tr('Stok $stock', 'Stock $stock'),
-        style: Theme.of(context).textTheme.labelSmall
-            ?.copyWith(color: soldOut ? AppColors.white : AppColors.primary),
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: soldOut ? AppColors.white : context.palette.accent,
+        ),
       ),
     );
   }

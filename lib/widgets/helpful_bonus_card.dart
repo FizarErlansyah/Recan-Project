@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/education_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
@@ -70,7 +71,7 @@ class _HelpfulBonusCardState extends State<HelpfulBonusCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primarySoft.withValues(alpha: 0.45),
+        color: context.palette.tint.withValues(alpha: 0.45),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -102,8 +103,8 @@ class _HelpfulBonusCardState extends State<HelpfulBonusCard> {
                     minimumSize: const Size.fromHeight(52),
                     backgroundColor: AppColors.gold,
                     foregroundColor: AppColors.primaryDeep,
-                    disabledBackgroundColor: AppColors.goldSoft,
-                    disabledForegroundColor: AppColors.goldDeep,
+                    disabledBackgroundColor: context.palette.goldSoft,
+                    disabledForegroundColor: context.palette.goldText,
                     shape: const StadiumBorder(),
                   ),
                   icon: HugeIcon(
@@ -122,7 +123,7 @@ class _HelpfulBonusCardState extends State<HelpfulBonusCard> {
                       key: ValueKey(_claimed),
                       style: textTheme.labelLarge?.copyWith(
                         color: _claimed
-                            ? AppColors.goldDeep
+                            ? context.palette.goldText
                             : AppColors.primaryDeep,
                       ),
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/login_page.dart';
 import 'package:mobile_apps_recan/pages/aktivitas_page.dart';
 import 'package:mobile_apps_recan/pages/beranda_page.dart';
@@ -128,7 +129,7 @@ class _HomePageState extends State<HomePage> {
     return ValueListenableBuilder<bool>(
       valueListenable: MockStore.isEnglish,
       builder: (context, _, _) => StatusBarIcons(
-        light: false,
+        light: context.isDark,
         child: Scaffold(
           extendBody: true,
           body: _buildTabs(),

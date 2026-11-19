@@ -30,6 +30,7 @@ abstract final class AppIcons {
   static const IconGlyph visible = HugeIcons.strokeRoundedView;
   static const IconGlyph hidden = HugeIcons.strokeRoundedViewOff;
   static const IconGlyph translate = HugeIcons.strokeRoundedTranslate;
+  static const IconGlyph appearance = HugeIcons.strokeRoundedMoon02;
   static const IconGlyph help = HugeIcons.strokeRoundedHelpCircle;
   static const IconGlyph info = HugeIcons.strokeRoundedInformationCircle;
   static const IconGlyph document = HugeIcons.strokeRoundedFile02;

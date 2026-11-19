@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class SectionHeader extends StatelessWidget {
   const new({
@@ -45,7 +45,7 @@ class SectionHeader extends StatelessWidget {
                 minimumSize: const Size(48, 48),
                 padding: EdgeInsets.zero,
                 alignment: Alignment.centerRight,
-                foregroundColor: AppColors.primary,
+                foregroundColor: context.palette.accent,
               ),
               child: Text(action, style: textTheme.labelLarge),
             ),

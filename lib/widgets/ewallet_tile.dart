@@ -31,11 +31,14 @@ class EWalletTile extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.primarySoft,
+              color: context.palette.tint,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Center(
-              child: HugeIcon(icon: AppIcons.wallet, color: AppColors.primary),
+            child: Center(
+              child: HugeIcon(
+                icon: AppIcons.wallet,
+                color: context.palette.accent,
+              ),
             ),
           ),
           const SizedBox(width: 16),

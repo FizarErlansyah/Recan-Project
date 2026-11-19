@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class EmptyState extends StatelessWidget {
   const new({
@@ -32,9 +32,9 @@ class EmptyState extends StatelessWidget {
               alignment: Alignment.center,
               decoration: AppDecorations.card(
                 context,
-                color: AppColors.primarySoft,
+                color: context.palette.tint,
               ),
-              child: icon(color: AppColors.primary, size: 36),
+              child: icon(color: context.palette.accent, size: 36),
             ),
             const SizedBox(height: 16),
             Text(title, style: textTheme.titleLarge),

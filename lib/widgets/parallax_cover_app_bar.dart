@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/circle_icon_button.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
@@ -54,7 +55,7 @@ class ParallaxCoverAppBar extends StatelessWidget {
                   .clamp(0.0, 1.0);
 
           return StatusBarIcons(
-            light: collapse > _lightIconsFrom,
+            light: context.isDark || collapse > _lightIconsFrom,
             child: Stack(
               fit: StackFit.expand,
               children: [

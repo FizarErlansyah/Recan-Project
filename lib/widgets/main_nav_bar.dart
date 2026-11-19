@@ -256,7 +256,7 @@ class _NavButton extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: selected
-                        ? AppColors.primary
+                        ? context.palette.accent
                         : context.palette.textTertiary,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   ),

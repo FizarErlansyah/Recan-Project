@@ -24,7 +24,7 @@ class FaqTile extends StatelessWidget {
             tilePadding: const EdgeInsets.symmetric(horizontal: 16),
             childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             expandedCrossAxisAlignment: CrossAxisAlignment.start,
-            iconColor: AppColors.primary,
+            iconColor: context.palette.accent,
             collapsedIconColor: context.palette.textSecondary,
             title: Text(item.question, style: textTheme.titleSmall),
             children: [Text(item.answer, style: textTheme.bodyMedium)],

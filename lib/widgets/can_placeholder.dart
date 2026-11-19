@@ -24,7 +24,7 @@ class CanPlaceholder extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [AppColors.primarySoft, context.palette.surfaceMuted],
+          colors: [context.palette.tint, context.palette.surfaceMuted],
         ),
       ),
       child: CustomPaint(

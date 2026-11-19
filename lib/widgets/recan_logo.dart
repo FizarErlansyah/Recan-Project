@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class ReCanLogo extends StatelessWidget {
   const new({
@@ -39,13 +39,13 @@ class _BrandBadgeFallback extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.primarySoft,
+        color: context.palette.tint,
         borderRadius: BorderRadius.circular(size / 4),
       ),
       child: HugeIcon(
         icon: AppIcons.recycle,
         size: size / 2,
-        color: AppColors.primary,
+        color: context.palette.accent,
       ),
     );
   }

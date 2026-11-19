@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
@@ -202,7 +201,7 @@ class _QuestMessage extends StatelessWidget {
               onPressed: onAction,
               style: TextButton.styleFrom(
                 minimumSize: const Size(48, 48),
-                foregroundColor: AppColors.primary,
+                foregroundColor: context.palette.accent,
               ),
               child: Text(label),
             ),

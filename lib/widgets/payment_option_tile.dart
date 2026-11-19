@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
@@ -35,7 +34,7 @@ class PaymentOptionTile extends StatelessWidget {
       child: Material(
         color: enabled
             ? (active
-                  ? AppColors.primarySoft.withValues(alpha: 0.3)
+                  ? context.palette.tint.withValues(alpha: 0.3)
                   : context.palette.surface)
             : context.palette.border,
         borderRadius: BorderRadius.circular(12),
@@ -47,7 +46,7 @@ class PaymentOptionTile extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: active ? AppColors.primary : context.palette.border,
+                color: active ? context.palette.accent : context.palette.border,
                 width: active ? 1.5 : 1,
               ),
             ),
@@ -56,11 +55,11 @@ class PaymentOptionTile extends StatelessWidget {
                 HugeIcon(
                   icon: active ? AppIcons.checkCircle : AppIcons.radioOff,
                   color: active
-                      ? AppColors.primary
+                      ? context.palette.accent
                       : context.palette.textSecondary,
                 ),
                 const SizedBox(width: 12),
-                HugeIcon(icon: icon, color: AppColors.primary),
+                HugeIcon(icon: icon, color: context.palette.accent),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -74,7 +73,7 @@ class PaymentOptionTile extends StatelessWidget {
                         hint,
                         style: textTheme.labelMedium?.copyWith(
                           color: enabled
-                              ? AppColors.primary
+                              ? context.palette.accent
                               : context.palette.textSecondary,
                         ),
                       ),

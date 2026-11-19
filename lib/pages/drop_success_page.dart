@@ -202,7 +202,7 @@ class _DetailRow extends StatelessWidget {
 
     return Row(
       children: [
-        HugeIcon(icon: icon, size: 20, color: AppColors.primary),
+        HugeIcon(icon: icon, size: 20, color: context.palette.accent),
         const SizedBox(width: 12),
         Expanded(child: Text(label, style: textTheme.bodyMedium)),
         Text(value, style: textTheme.titleMedium),

@@ -34,7 +34,7 @@ class SettingsTile extends StatelessWidget {
               HugeIcon(
                 icon: icon,
                 size: 22,
-                color: destructive ? AppColors.danger : AppColors.primary,
+                color: destructive ? AppColors.danger : context.palette.accent,
               ),
               const SizedBox(width: 16),
               Expanded(

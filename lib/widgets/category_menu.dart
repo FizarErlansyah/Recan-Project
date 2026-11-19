@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/widgets/pressable.dart';
 
 class CategoryMenuEntry {
@@ -51,7 +52,7 @@ class _CategoryButton extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                entry.icon(color: AppColors.primary, size: 22),
+                entry.icon(color: context.palette.accent, size: 22),
                 const SizedBox(height: 6),
                 Text(
                   entry.label,

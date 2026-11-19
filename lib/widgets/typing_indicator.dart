@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/widgets/ai_avatar.dart';
 import 'package:mobile_apps_recan/widgets/shimmer.dart';
 
@@ -72,8 +73,8 @@ class _TypingIndicatorState extends State<TypingIndicator>
                             child: Container(
                               width: 8,
                               height: 8,
-                              decoration: const BoxDecoration(
-                                color: AppColors.primary,
+                              decoration: BoxDecoration(
+                                color: context.palette.accent,
                                 shape: BoxShape.circle,
                               ),
                             ),

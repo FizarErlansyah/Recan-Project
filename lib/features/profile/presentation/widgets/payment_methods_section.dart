@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 
@@ -102,10 +103,10 @@ class _PaymentCardTitle extends StatelessWidget {
           height: 36,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.primarySoft,
+            color: context.palette.tint,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: icon(color: AppColors.primary, size: 20),
+          child: icon(color: context.palette.accent, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(

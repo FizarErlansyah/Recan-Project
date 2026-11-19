@@ -197,7 +197,7 @@ class _Dot extends StatelessWidget {
       width: active ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: active ? AppColors.primary : context.palette.border,
+        color: active ? context.palette.accent : context.palette.border,
         borderRadius: BorderRadius.circular(4),
       ),
     );

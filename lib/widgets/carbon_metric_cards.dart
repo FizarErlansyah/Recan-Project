@@ -186,10 +186,10 @@ class _IconChip extends StatelessWidget {
       height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: AppColors.primarySoft,
+        color: context.palette.tint,
         borderRadius: BorderRadius.circular(size / 4),
       ),
-      child: icon(color: AppColors.primary, size: size * 0.5),
+      child: icon(color: context.palette.accent, size: size * 0.5),
     );
   }
 }

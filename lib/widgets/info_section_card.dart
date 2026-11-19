@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
@@ -43,10 +42,14 @@ class InfoSectionCard extends StatelessWidget {
                 height: 40,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.primarySoft,
+                  color: context.palette.tint,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: HugeIcon(icon: icon, size: 22, color: AppColors.primary),
+                child: HugeIcon(
+                  icon: icon,
+                  size: 22,
+                  color: context.palette.accent,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(

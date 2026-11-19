@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/pages/drop_station_map_page.dart';
 import 'package:mobile_apps_recan/services/station_service.dart';
@@ -121,6 +122,7 @@ class _MapPreview extends StatelessWidget {
         TileLayer(
           urlTemplate: StationTrackingSection._tileUrl,
           userAgentPackageName: StationTrackingSection._userAgentPackage,
+          tileBuilder: context.isDark ? darkModeTileBuilder : null,
         ),
         MarkerLayer(
           markers: [

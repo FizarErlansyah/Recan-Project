@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 
 /// Theme-dependent colour roles. [AppColors] keeps the fixed brand values
-/// (emerald hero, silver hairlines on dark chrome, gold); everything that
-/// must change between light and dark (page, cards, borders, body text and
-/// their soft state tints) is read from the active palette so a theme swap
-/// needs no feature-level changes.
+/// (emerald hero and fills, silver hairlines on dark chrome, gold gradients);
+/// everything that must change between light and dark is read from the active
+/// palette so a theme swap needs no feature-level changes.
+///
+/// `accent` is brand emerald used as text or an icon on a surface; fills keep
+/// the fixed [AppColors.primary] so buttons look the same in both themes.
 @immutable
 class AppPalette extends ThemeExtension<AppPalette> {
   const new({
@@ -16,6 +18,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.textPrimary,
     required this.textSecondary,
     required this.textTertiary,
+    required this.accent,
+    required this.tint,
+    required this.goldSoft,
+    required this.goldText,
     required this.successSoft,
     required this.dangerSoft,
   });
@@ -28,8 +34,30 @@ class AppPalette extends ThemeExtension<AppPalette> {
     textPrimary: AppColors.textPrimary,
     textSecondary: AppColors.textSecondary,
     textTertiary: AppColors.textTertiary,
+    accent: AppColors.primary,
+    tint: AppColors.primarySoft,
+    goldSoft: AppColors.goldSoft,
+    goldText: AppColors.goldDeep,
     successSoft: AppColors.successSoft,
     dangerSoft: AppColors.dangerSoft,
+  );
+
+  // Graphite with a green undertone instead of pure black, so the emerald
+  // brand still reads as the same family; Pearl Aqua carries accents.
+  static const AppPalette dark = AppPalette(
+    background: Color(0xFF0B1210),
+    surface: Color(0xFF121C19),
+    surfaceMuted: Color(0xFF18241F),
+    border: Color(0xFF2B3934),
+    textPrimary: Color(0xFFE8EEEC),
+    textSecondary: Color(0xFFA3B1AC),
+    textTertiary: Color(0xFF8A9A94),
+    accent: Color(0xFF6FD3B8),
+    tint: Color(0xFF143329),
+    goldSoft: Color(0xFF2A2412),
+    goldText: Color(0xFFD4B06A),
+    successSoft: Color(0xFF14352A),
+    dangerSoft: Color(0xFF3A1E1B),
   );
 
   final Color background;
@@ -39,6 +67,16 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color textPrimary;
   final Color textSecondary;
   final Color textTertiary;
+
+  /// Brand emerald as text or icon on a surface.
+  final Color accent;
+
+  /// Soft emerald fill behind icons and selected chips.
+  final Color tint;
+  final Color goldSoft;
+
+  /// Gold dark enough for text on light, bright enough for text on dark.
+  final Color goldText;
   final Color successSoft;
   final Color dangerSoft;
 
@@ -51,6 +89,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
     Color? textPrimary,
     Color? textSecondary,
     Color? textTertiary,
+    Color? accent,
+    Color? tint,
+    Color? goldSoft,
+    Color? goldText,
     Color? successSoft,
     Color? dangerSoft,
   }) {
@@ -62,6 +104,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       textTertiary: textTertiary ?? this.textTertiary,
+      accent: accent ?? this.accent,
+      tint: tint ?? this.tint,
+      goldSoft: goldSoft ?? this.goldSoft,
+      goldText: goldText ?? this.goldText,
       successSoft: successSoft ?? this.successSoft,
       dangerSoft: dangerSoft ?? this.dangerSoft,
     );
@@ -78,6 +124,10 @@ class AppPalette extends ThemeExtension<AppPalette> {
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,
+      accent: Color.lerp(accent, other.accent, t)!,
+      tint: Color.lerp(tint, other.tint, t)!,
+      goldSoft: Color.lerp(goldSoft, other.goldSoft, t)!,
+      goldText: Color.lerp(goldText, other.goldText, t)!,
       successSoft: Color.lerp(successSoft, other.successSoft, t)!,
       dangerSoft: Color.lerp(dangerSoft, other.dangerSoft, t)!,
     );
@@ -89,4 +139,6 @@ extension PaletteContext on BuildContext {
   /// `MaterialApp` (tests, previews) that never registered the extension.
   AppPalette get palette =>
       Theme.of(this).extension<AppPalette>() ?? AppPalette.light;
+
+  bool get isDark => Theme.of(this).brightness == Brightness.dark;
 }

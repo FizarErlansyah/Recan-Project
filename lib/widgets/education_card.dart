@@ -51,7 +51,7 @@ class EducationCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.labelSmall?.copyWith(
-                    color: AppColors.primary,
+                    color: context.palette.accent,
                     letterSpacing: 0.8,
                   ),
                 ),

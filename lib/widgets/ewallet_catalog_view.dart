@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/ewallet_option.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/checkout_success_page.dart';
@@ -90,17 +90,19 @@ class _BalanceBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.primarySoft,
+        color: context.palette.tint,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
-          const HugeIcon(icon: AppIcons.coins, color: AppColors.primary),
+          HugeIcon(icon: AppIcons.coins, color: context.palette.accent),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               tr('Saldo poinmu', 'Your points balance'),
-              style: textTheme.bodyMedium?.copyWith(color: AppColors.primary),
+              style: textTheme.bodyMedium?.copyWith(
+                color: context.palette.accent,
+              ),
             ),
           ),
           Text(
@@ -108,7 +110,9 @@ class _BalanceBanner extends StatelessWidget {
               '${PointsHeader.formatNumber(points)} Poin',
               '${PointsHeader.formatNumber(points)} Points',
             ),
-            style: textTheme.titleMedium?.copyWith(color: AppColors.primary),
+            style: textTheme.titleMedium?.copyWith(
+              color: context.palette.accent,
+            ),
           ),
         ],
       ),

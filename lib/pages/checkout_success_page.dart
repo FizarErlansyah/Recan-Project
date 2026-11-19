@@ -176,17 +176,28 @@ class _ReceiptPaper extends StatelessWidget {
           const SizedBox(height: 16),
           const _DashedDivider(),
           const SizedBox(height: 24),
-          QrImageView(
-            data: reference,
-            size: 150,
-            padding: EdgeInsets.zero,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.square,
-              color: AppColors.primary,
+          // Scanners need dark modules on a light plate, so the code keeps a
+          // white background even when the receipt card is dark.
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(12),
             ),
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.square,
-              color: AppColors.primary,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: QrImageView(
+                data: reference,
+                size: 150,
+                padding: EdgeInsets.zero,
+                eyeStyle: const QrEyeStyle(
+                  eyeShape: QrEyeShape.square,
+                  color: AppColors.primary,
+                ),
+                dataModuleStyle: const QrDataModuleStyle(
+                  dataModuleShape: QrDataModuleShape.square,
+                  color: AppColors.primary,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -302,22 +313,24 @@ class _ActionButtons extends StatelessWidget {
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: onSaveReceipt,
-            icon: const HugeIcon(
+            icon: HugeIcon(
               icon: AppIcons.download,
-              color: AppColors.primary,
+              color: context.palette.accent,
               size: 20,
             ),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(52),
-              backgroundColor: AppColors.primarySoft.withValues(alpha: 0.35),
-              side: const BorderSide(color: AppColors.primarySoft, width: 1.5),
+              backgroundColor: context.palette.tint.withValues(alpha: 0.35),
+              side: BorderSide(color: context.palette.tint, width: 1.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
             label: Text(
               tr('Simpan Struk', 'Save Receipt'),
-              style: textTheme.labelLarge?.copyWith(color: AppColors.primary),
+              style: textTheme.labelLarge?.copyWith(
+                color: context.palette.accent,
+              ),
             ),
           ),
         ),

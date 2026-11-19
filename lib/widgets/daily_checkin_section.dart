@@ -109,7 +109,7 @@ class _CheckInCard extends StatelessWidget {
               onPressed: claimed ? null : onClaim,
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.gold,
-                disabledBackgroundColor: AppColors.goldSoft,
+                disabledBackgroundColor: context.palette.goldSoft,
                 shape: const StadiumBorder(),
               ),
               child: Text(
@@ -120,7 +120,9 @@ class _CheckInCard extends StatelessWidget {
                         'Claim +${checkIn.todayReward} Points',
                       ),
                 style: textTheme.labelLarge?.copyWith(
-                  color: claimed ? AppColors.goldDeep : AppColors.primaryDeep,
+                  color: claimed
+                      ? context.palette.goldText
+                      : AppColors.primaryDeep,
                 ),
               ),
             ),
@@ -183,7 +185,9 @@ class _CoinSlot extends StatelessWidget {
         Text(
           '$reward',
           style: textTheme.labelMedium?.copyWith(
-            color: isToday ? AppColors.primary : context.palette.textSecondary,
+            color: isToday
+                ? context.palette.accent
+                : context.palette.textSecondary,
             fontWeight: isToday ? FontWeight.w800 : FontWeight.w600,
           ),
         ),

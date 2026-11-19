@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
 import 'package:mobile_apps_recan/pages/drop_session_page.dart';
 import 'package:mobile_apps_recan/services/station_service.dart';
@@ -80,6 +81,7 @@ class _StationMap extends StatelessWidget {
         TileLayer(
           urlTemplate: _tileUrl,
           userAgentPackageName: _userAgentPackage,
+          tileBuilder: context.isDark ? darkModeTileBuilder : null,
         ),
         MarkerLayer(
           markers: [

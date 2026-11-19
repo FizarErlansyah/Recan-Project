@@ -24,7 +24,8 @@ extension ActivityStyle on ActivityTransaction {
 
   String get statusLabel => tr('Berhasil', 'Success');
 
-  Color get amountColor => isIncome ? AppColors.primary : AppColors.danger;
+  Color amountColor(BuildContext context) =>
+      isIncome ? context.palette.accent : AppColors.danger;
 
   String get amountLabel {
     final sign = isIncome ? '+' : '-';
@@ -47,7 +48,7 @@ class ActivityIconBadge extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: transaction.isDeposit
-            ? AppColors.primarySoft
+            ? context.palette.tint
             : context.palette.surfaceMuted,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: context.palette.border),
@@ -55,7 +56,7 @@ class ActivityIconBadge extends StatelessWidget {
       child: transaction.icon(
         // Deposits read as brand emerald; redemptions as neutral aluminium so
         // a spend never competes visually with an earn.
-        color: transaction.isDeposit ? AppColors.primary : AppColors.slate,
+        color: transaction.isDeposit ? context.palette.accent : AppColors.slate,
         size: (size * 0.5).clamp(22, 24),
       ),
     );

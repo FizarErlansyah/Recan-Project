@@ -29,11 +29,11 @@ class TierBenefitCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isCurrent
-            ? AppColors.primarySoft.withValues(alpha: 0.3)
+            ? context.palette.tint.withValues(alpha: 0.3)
             : context.palette.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isCurrent ? AppColors.primary : context.palette.border,
+          color: isCurrent ? context.palette.accent : context.palette.border,
         ),
       ),
       child: Column(

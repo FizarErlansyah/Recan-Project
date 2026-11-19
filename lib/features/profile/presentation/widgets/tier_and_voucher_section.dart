@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/metallic_card.dart';
@@ -158,11 +159,11 @@ class _VoucherCard extends StatelessWidget {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.primarySoft,
+                  color: context.palette.tint,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: hugeIcon(HugeIcons.strokeRoundedTicket01)(
-                  color: AppColors.primary,
+                  color: context.palette.accent,
                   size: 20,
                 ),
               ),

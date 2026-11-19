@@ -71,7 +71,7 @@ class ProfilPage extends StatelessWidget {
         onUnauthorized: onLogout,
         refreshOn: DataRefresh.revision,
         builder: (context, overview, reload) => RefreshIndicator(
-          color: AppColors.primary,
+          color: context.palette.accent,
           backgroundColor: context.palette.surface,
           onRefresh: reload,
           child: ListView(
@@ -111,6 +111,7 @@ class ProfilPage extends StatelessWidget {
                 onHelp: () => HelpCenterPage.open(context),
                 languageLabel: tr('Language | Bahasa', 'Language | English'),
                 onLanguage: () => SettingsSheets.showLanguage(context),
+                onAppearance: () => SettingsSheets.showAppearance(context),
                 onAbout: () => AboutRecanPage.open(context),
                 onLegal: () => LegalPoliciesPage.open(context),
                 onLogout: () => _confirmLogout(context),
@@ -129,6 +130,7 @@ class _SettingsSection extends StatelessWidget {
     required this.onHelp,
     required this.languageLabel,
     required this.onLanguage,
+    required this.onAppearance,
     required this.onAbout,
     required this.onLegal,
     required this.onLogout,
@@ -138,6 +140,7 @@ class _SettingsSection extends StatelessWidget {
   final VoidCallback onHelp;
   final String languageLabel;
   final VoidCallback onLanguage;
+  final VoidCallback onAppearance;
   final VoidCallback onAbout;
   final VoidCallback onLegal;
   final VoidCallback onLogout;
@@ -171,6 +174,12 @@ class _SettingsSection extends StatelessWidget {
                 icon: AppIcons.translate,
                 label: languageLabel,
                 onTap: onLanguage,
+              ),
+              divider,
+              SettingsTile(
+                icon: AppIcons.appearance,
+                label: tr('Tampilan', 'Appearance'),
+                onTap: onAppearance,
               ),
               divider,
               SettingsTile(

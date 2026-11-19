@@ -292,10 +292,10 @@ class _RedeemActions extends StatelessWidget {
         if (short && !soldOut) ...[
           Row(
             children: [
-              const HugeIcon(
+              HugeIcon(
                 icon: AppIcons.coins,
                 size: 18,
-                color: AppColors.goldDeep,
+                color: context.palette.goldText,
               ),
               const SizedBox(width: 8),
               Expanded(

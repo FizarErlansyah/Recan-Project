@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
@@ -65,7 +64,7 @@ class AktivitasPage extends StatelessWidget {
                   );
                 }
                 return RefreshIndicator(
-                  color: AppColors.primary,
+                  color: context.palette.accent,
                   backgroundColor: context.palette.surface,
                   onRefresh: reload,
                   child: ActivityHistoryList(transactions: transactions),

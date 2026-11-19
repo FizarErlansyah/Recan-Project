@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
@@ -29,7 +28,7 @@ class CircleIconButton extends StatelessWidget {
           child: SizedBox(
             width: 48,
             height: 48,
-            child: Center(child: icon(color: AppColors.primary, size: 22)),
+            child: Center(child: icon(color: context.palette.accent, size: 22)),
           ),
         ),
       ),

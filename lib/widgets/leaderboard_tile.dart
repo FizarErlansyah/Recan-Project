@@ -55,7 +55,7 @@ class LeaderboardTile extends StatelessWidget {
             '${entry.totalKg.toStringAsFixed(1)} kg',
             style: textTheme.titleSmall?.copyWith(
               color: highlighted
-                  ? AppColors.primary
+                  ? context.palette.accent
                   : context.palette.textPrimary,
             ),
           ),

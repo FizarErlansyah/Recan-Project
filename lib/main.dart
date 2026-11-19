@@ -4,26 +4,43 @@ import 'package:mobile_apps_recan/core/theme/app_theme.dart';
 import 'package:mobile_apps_recan/core/theme/language_extension.dart';
 import 'package:mobile_apps_recan/pages/splash_page.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
+import 'package:mobile_apps_recan/services/theme_preference.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+  await ThemePreference.load();
   runApp(const ReCanApp());
 }
 
 class ReCanApp extends StatelessWidget {
   const new({super.key});
 
+  // copyWith replaces the extension list, so the palette registered by the
+  // base theme has to be carried over next to the language extension.
+  static ThemeData _localized(ThemeData base, {required bool isEnglish}) {
+    return base.copyWith(
+      extensions: [
+        ...base.extensions.values,
+        LanguageExtension(isEnglish: isEnglish),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: MockStore.isEnglish,
-      builder: (context, isEnglish, _) => MaterialApp(
-        title: 'ReCan',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light.copyWith(
-          extensions: [LanguageExtension(isEnglish: isEnglish)],
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemePreference.mode,
+      builder: (context, themeMode, _) => ValueListenableBuilder<bool>(
+        valueListenable: MockStore.isEnglish,
+        builder: (context, isEnglish, _) => MaterialApp(
+          title: 'ReCan',
+          debugShowCheckedModeBanner: false,
+          themeMode: themeMode,
+          theme: _localized(AppTheme.light, isEnglish: isEnglish),
+          darkTheme: _localized(AppTheme.dark, isEnglish: isEnglish),
+          home: const SplashPage(),
         ),
-        home: const SplashPage(),
       ),
     );
   }

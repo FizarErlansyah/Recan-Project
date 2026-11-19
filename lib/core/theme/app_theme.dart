@@ -12,17 +12,28 @@ class AppTheme {
   static const double controlRadius = 12;
   static const double fieldRadius = 16;
 
-  static ThemeData get light => _build(AppPalette.light);
+  static ThemeData get light => _build(AppPalette.light, Brightness.light);
 
-  static ThemeData _build(AppPalette palette) {
-    final scheme = ColorScheme.light(
+  static ThemeData get dark => _build(AppPalette.dark, Brightness.dark);
+
+  static ThemeData _build(AppPalette palette, Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    final overlay = isDark
+        ? SystemUiOverlayStyle.light
+        : SystemUiOverlayStyle.dark;
+    final makeScheme = isDark ? ColorScheme.dark : ColorScheme.light;
+    final scheme = makeScheme(
       primary: AppColors.primary,
-      primaryContainer: AppColors.primarySoft,
-      onPrimaryContainer: AppColors.primaryDeep,
+      onPrimary: AppColors.white,
+      surface: palette.surface,
+      primaryContainer: palette.tint,
+      onPrimaryContainer: isDark ? palette.accent : AppColors.primaryDeep,
       secondary: AppColors.silver,
       onSecondary: AppColors.primaryDeep,
       secondaryContainer: palette.surfaceMuted,
-      onSecondaryContainer: AppColors.slateDeep,
+      onSecondaryContainer: isDark
+          ? palette.textSecondary
+          : AppColors.slateDeep,
       tertiary: AppColors.gold,
       onTertiary: AppColors.primaryDeep,
       onSurface: palette.textPrimary,
@@ -74,7 +85,7 @@ class AppTheme {
         centerTitle: true,
         iconTheme: IconThemeData(color: palette.textPrimary),
         titleTextStyle: textTheme.titleLarge,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: overlay,
       ),
       cardTheme: CardThemeData(
         color: palette.surface,
@@ -111,7 +122,7 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.primary,
+          foregroundColor: palette.accent,
           minimumSize: const Size(48, 48),
           padding: buttonPadding,
           shape: controlShape,
@@ -121,7 +132,7 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primary,
+          foregroundColor: palette.accent,
           textStyle: buttonText,
         ),
       ),
@@ -135,7 +146,7 @@ class AppTheme {
         hintStyle: textTheme.bodyMedium?.copyWith(color: palette.textTertiary),
         labelStyle: textTheme.bodyLarge?.copyWith(color: palette.textSecondary),
         floatingLabelStyle: textTheme.bodySmall?.copyWith(
-          color: AppColors.primary,
+          color: palette.accent,
         ),
         prefixIconColor: palette.textSecondary,
         suffixIconColor: palette.textSecondary,
@@ -143,7 +154,7 @@ class AppTheme {
         enabledBorder: fieldBorder(),
         disabledBorder: fieldBorder(),
         focusedBorder: fieldBorder(
-          const BorderSide(color: AppColors.primary, width: 1.5),
+          BorderSide(color: palette.accent, width: 1.5),
         ),
         errorBorder: fieldBorder(
           const BorderSide(color: AppColors.danger, width: 1.5),
@@ -156,27 +167,27 @@ class AppTheme {
         backgroundColor: palette.surface,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: palette.accent,
         unselectedItemColor: palette.textTertiary,
         selectedLabelStyle: textTheme.labelMedium,
         unselectedLabelStyle: textTheme.labelMedium,
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: palette.surface,
-        indicatorColor: AppColors.primarySoft,
+        indicatorColor: palette.tint,
         surfaceTintColor: AppColors.transparent,
         elevation: 0,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => textTheme.labelMedium?.copyWith(
             color: states.contains(WidgetState.selected)
-                ? AppColors.primary
+                ? palette.accent
                 : palette.textTertiary,
           ),
         ),
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color: states.contains(WidgetState.selected)
-                ? AppColors.primary
+                ? palette.accent
                 : palette.textTertiary,
           ),
         ),
@@ -201,7 +212,7 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: palette.surface,
-        selectedColor: AppColors.primarySoft,
+        selectedColor: palette.tint,
         side: BorderSide(color: palette.border),
         labelStyle: textTheme.labelLarge,
         shape: RoundedRectangleBorder(
@@ -209,15 +220,15 @@ class AppTheme {
         ),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: AppColors.primary,
+        color: palette.accent,
         linearTrackColor: palette.surfaceMuted,
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.scrim,
+        backgroundColor: isDark ? palette.surfaceMuted : AppColors.scrim,
         elevation: 0,
         contentTextStyle: textTheme.bodyMedium?.copyWith(
-          color: AppColors.white,
+          color: isDark ? palette.textPrimary : AppColors.white,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(controlRadius),
