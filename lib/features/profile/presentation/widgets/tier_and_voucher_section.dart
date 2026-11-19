@@ -9,13 +9,21 @@ import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:mobile_apps_recan/widgets/tier_style.dart';
 
 class TierAndVoucherSection extends StatelessWidget {
-  const new({required this.points, required this.onTierTap, super.key});
+  const new({
+    required this.points,
+    required this.activeVouchers,
+    required this.onTierTap,
+    required this.onVoucherTap,
+    super.key,
+  });
 
   static const double height = 128;
   static const double _gap = 12;
 
   final int points;
+  final int activeVouchers;
   final VoidCallback onTierTap;
+  final VoidCallback onVoucherTap;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +36,10 @@ class TierAndVoucherSection extends StatelessWidget {
             child: _TierCard(points: points, onTap: onTierTap),
           ),
           const SizedBox(width: _gap),
-          const Expanded(flex: 2, child: _VoucherCard()),
+          Expanded(
+            flex: 2,
+            child: _VoucherCard(count: activeVouchers, onTap: onVoucherTap),
+          ),
         ],
       ),
     );
@@ -123,46 +134,53 @@ class _TierMedal extends StatelessWidget {
 }
 
 class _VoucherCard extends StatelessWidget {
-  const new();
+  const new({required this.count, required this.onTap});
+
+  final int count;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: AppColors.primarySoft,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: hugeIcon(HugeIcons.strokeRoundedTicket01)(
-                color: AppColors.primary,
-                size: 20,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('0', style: textTheme.headlineSmall),
-                const SizedBox(height: 2),
-                Text(
-                  tr('Voucher Aktif', 'Active Vouchers'),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.bodySmall,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.primarySoft,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              ],
-            ),
-          ],
+                child: hugeIcon(HugeIcons.strokeRoundedTicket01)(
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('$count', style: textTheme.headlineSmall),
+                  const SizedBox(height: 2),
+                  Text(
+                    tr('Voucher Aktif', 'Active Vouchers'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

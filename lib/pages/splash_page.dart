@@ -10,6 +10,7 @@ import 'package:mobile_apps_recan/services/onboarding_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/recan_logo.dart';
+import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 class SplashPage extends StatefulWidget {
   const new({super.key});
@@ -70,35 +71,38 @@ class _SplashPageState extends State<SplashPage>
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: Center(
-        child: FadeTransition(
-          opacity: _fade,
-          child: ScaleTransition(
-            scale: _scale,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const ReCanLogo(
-                  size: 112,
-                  asset: 'assets/images/recan_brandmak_white.png',
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'ReCan',
-                  style: textTheme.headlineMedium?.copyWith(
-                    color: AppColors.white,
+    return StatusBarIcons(
+      light: true,
+      child: Scaffold(
+        backgroundColor: AppColors.primary,
+        body: Center(
+          child: FadeTransition(
+            opacity: _fade,
+            child: ScaleTransition(
+              scale: _scale,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const ReCanLogo(
+                    size: 112,
+                    asset: 'assets/images/recan_brandmak_white.png',
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  tr('Daur Ulang Kalengmu', 'Recycle Your Can'),
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: AppColors.primarySoft,
+                  const SizedBox(height: 24),
+                  Text(
+                    'ReCan',
+                    style: textTheme.headlineMedium?.copyWith(
+                      color: AppColors.white,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    tr('Daur Ulang Kalengmu', 'Recycle Your Can'),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: AppColors.primarySoft,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

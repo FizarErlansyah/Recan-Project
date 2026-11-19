@@ -8,4 +8,7 @@ class VoucherService {
 
   static Future<List<Voucher>> fetch() =>
       SynchronousFuture(List.unmodifiable(MockStore.vouchers));
+
+  static List<OwnedVoucher> owned() =>
+      List.unmodifiable(MockStore.ownedVouchers);
 }

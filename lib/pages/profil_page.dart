@@ -5,6 +5,7 @@ import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/leaderboard_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/payment_methods_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/tier_and_voucher_section.dart';
+import 'package:mobile_apps_recan/features/profile/presentation/widgets/voucher_wallet_sheet.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/about_recan_page.dart';
 import 'package:mobile_apps_recan/pages/edit_profil_page.dart';
@@ -78,8 +79,10 @@ class ProfilPage extends StatelessWidget {
               const SizedBox(height: 24),
               TierAndVoucherSection(
                 points: overview.profile.points,
+                activeVouchers: overview.profile.activeVouchers,
                 onTierTap: () =>
                     TierInfoPage.open(context, overview.profile.points),
+                onVoucherTap: () => unawaited(VoucherWalletSheet.show(context)),
               ),
               const SizedBox(height: 32),
               PaymentMethodsSection(

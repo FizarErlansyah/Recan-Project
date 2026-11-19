@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 
 class AppTextStyles {
   const new _();
+
+  static const String fontFamily = 'PlusJakartaSans';
 
   static TextStyle _style(
     double size,
@@ -13,9 +13,13 @@ class AppTextStyles {
     double height = 1.4,
     double letterSpacing = 0,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    // The bundled font is a single variable file, so the weight must also be
+    // sent as the wght axis or every style would render at the default weight.
+    return TextStyle(
+      fontFamily: fontFamily,
       fontSize: size,
       fontWeight: weight,
+      fontVariations: [FontVariation('wght', weight.value.toDouble())],
       color: color,
       height: height,
       letterSpacing: letterSpacing,

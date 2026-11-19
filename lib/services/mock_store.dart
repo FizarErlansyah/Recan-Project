@@ -39,6 +39,7 @@ class MockStore {
   static int userTodayCans = 0;
 
   static final List<ActivityTransaction> activities = [];
+  static final List<OwnedVoucher> ownedVouchers = [];
 
   static final List<DailyQuest> quests = [
     const DailyQuest(
@@ -323,6 +324,7 @@ class MockStore {
     tier: MemberTier.of(points).name,
     phone: userPhone,
     gopayConnected: gopayConnected,
+    activeVouchers: ownedVouchers.length,
   );
 
   static DashboardData get dashboard => DashboardData(
@@ -616,7 +618,18 @@ class MockStore {
       titleEn: 'Redeemed ${voucher.titleEn}',
       cost: voucher.pointsCost,
     );
-    if (result.failure == null) _advanceQuests(QuestMetric.voucher, 1);
+    final reference = result.transactionId;
+    if (result.failure == null && reference != null) {
+      ownedVouchers.insert(
+        0,
+        OwnedVoucher(
+          voucher: voucher,
+          reference: reference,
+          redeemedAt: DateTime.now(),
+        ),
+      );
+      _advanceQuests(QuestMetric.voucher, 1);
+    }
     return result;
   }
 

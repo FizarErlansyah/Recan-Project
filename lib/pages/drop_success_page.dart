@@ -8,6 +8,7 @@ import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/animated_check.dart';
+import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 class DropSuccessPage extends StatefulWidget {
   const new({required this.stationName, required this.summary, super.key});
@@ -48,64 +49,67 @@ class _DropSuccessPageState extends State<DropSuccessPage> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: SingleChildScrollView(
-                        child: _Receipt(
-                          stationName: widget.stationName,
-                          summary: widget.summary,
+    return StatusBarIcons(
+      light: true,
+      child: Scaffold(
+        backgroundColor: AppColors.primary,
+        body: Stack(
+          children: [
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: SingleChildScrollView(
+                          child: _Receipt(
+                            stationName: widget.stationName,
+                            summary: widget.summary,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: () =>
-                          Navigator.of(context)
-                              .popUntil((route) => route.isFirst),
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(52),
-                        backgroundColor: AppColors.primarySoft,
-                        foregroundColor: AppColors.primary,
-                      ),
-                      child: Text(
-                        tr('Kembali ke Beranda', 'Back to Home'),
-                        style: textTheme.labelLarge?.copyWith(
-                          color: AppColors.primary,
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: () =>
+                            Navigator.of(context)
+                                .popUntil((route) => route.isFirst),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                          backgroundColor: AppColors.primarySoft,
+                          foregroundColor: AppColors.primary,
+                        ),
+                        child: Text(
+                          tr('Kembali ke Beranda', 'Back to Home'),
+                          style: textTheme.labelLarge?.copyWith(
+                            color: AppColors.primary,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: IgnorePointer(
-              child: ConfettiWidget(
-                confettiController: _confetti,
-                blastDirection: pi / 2,
-                emissionFrequency: 0.04,
-                numberOfParticles: 18,
-                maxBlastForce: 22,
-                minBlastForce: 8,
-                colors: _confettiColors,
+            Align(
+              alignment: Alignment.topCenter,
+              child: IgnorePointer(
+                child: ConfettiWidget(
+                  confettiController: _confetti,
+                  blastDirection: pi / 2,
+                  emissionFrequency: 0.04,
+                  numberOfParticles: 18,
+                  maxBlastForce: 22,
+                  minBlastForce: 8,
+                  colors: _confettiColors,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

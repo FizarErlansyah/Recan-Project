@@ -8,7 +8,6 @@ class PromoBanner {
   const new({
     required this.title,
     required this.subtitle,
-    required this.icon,
     required this.colors,
     required this.onTap,
     required this.imageUrl,
@@ -16,7 +15,6 @@ class PromoBanner {
 
   final String title;
   final String subtitle;
-  final IconData icon;
   final List<Color> colors;
   final VoidCallback onTap;
   final String imageUrl;
@@ -70,6 +68,7 @@ class _PromoBannerCarouselState extends State<PromoBannerCarousel> {
 
   void _advance() {
     if (!_controller.hasClients || _bannerCount == 0) return;
+    if (!TickerMode.valuesOf(context).enabled) return;
     _controller.nextPage(
       duration: PromoBannerCarousel.slideDuration,
       curve: Curves.easeInOutCubic,

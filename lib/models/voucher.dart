@@ -26,3 +26,15 @@ class Voucher {
   String get title => tr(titleId, titleEn);
   String get description => tr(descriptionId, descriptionEn);
 }
+
+class OwnedVoucher {
+  const new({
+    required this.voucher,
+    required this.reference,
+    required this.redeemedAt,
+  });
+
+  final Voucher voucher;
+  final String reference;
+  final DateTime redeemedAt;
+}

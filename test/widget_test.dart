@@ -1,14 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_apps_recan/main.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  setUp(() {
-    GoogleFonts.config.allowRuntimeFetching = false;
-  });
-
   testWidgets('Returning user without token lands on auth landing', (
     tester,
   ) async {

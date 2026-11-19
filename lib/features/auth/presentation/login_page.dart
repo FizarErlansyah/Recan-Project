@@ -9,6 +9,7 @@ import 'package:mobile_apps_recan/pages/home_page.dart';
 import 'package:mobile_apps_recan/services/auth_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 enum _AuthMode { landing, login, register }
 
@@ -106,21 +107,24 @@ class _LoginPageState extends State<LoginPage> {
     // it stays fixed instead of shrinking when the keyboard opens.
     final heroHeight = MediaQuery.sizeOf(context).height * _heroFraction;
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      body: LayoutBuilder(
-        builder: (context, constraints) => SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: heroHeight, child: const LoginHero()),
-              Transform.translate(
-                offset: const Offset(0, -_sheetOverlap),
-                child: _AuthSheet(
-                  minHeight: math.max(0, constraints.maxHeight - heroHeight),
-                  child: _buildSheetContent(),
+    return StatusBarIcons(
+      light: true,
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        body: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: heroHeight, child: const LoginHero()),
+                Transform.translate(
+                  offset: const Offset(0, -_sheetOverlap),
+                  child: _AuthSheet(
+                    minHeight: math.max(0, constraints.maxHeight - heroHeight),
+                    child: _buildSheetContent(),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -10,6 +10,7 @@ import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/frosted_glass.dart';
 import 'package:mobile_apps_recan/widgets/scanner_overlay.dart';
+import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanQrPage extends StatefulWidget {
@@ -74,23 +75,26 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.scrim,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          _buildBody(),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: _TopBar(
-                scanner: _scanner,
-                showFlash: _access == CameraAccess.granted,
-                onBack: () => Navigator.of(context).pop(),
+    return StatusBarIcons(
+      light: true,
+      child: Scaffold(
+        backgroundColor: AppColors.scrim,
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            _buildBody(),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: _TopBar(
+                  scanner: _scanner,
+                  showFlash: _access == CameraAccess.granted,
+                  onBack: () => Navigator.of(context).pop(),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

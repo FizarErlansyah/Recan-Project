@@ -38,7 +38,7 @@ class AiAskPill extends StatelessWidget {
                 style: textTheme.labelLarge?.copyWith(color: AppColors.white),
               ),
               const SizedBox(width: 6),
-              const PulsingStatusDot(color: AppColors.success),
+              const PulsingStatusDot(),
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/pages/drop_station_map_page.dart';
 import 'package:mobile_apps_recan/services/station_service.dart';
@@ -22,57 +23,73 @@ class StationTrackingSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(
+          title: tr('Pelacakan Drop Station', 'Drop Station Tracking'),
+          subtitle: tr(
+            'Peta & status station secara langsung',
+            'Live map & station status',
+          ),
+          actionLabel: tr('Lihat Semua', 'See All'),
+          onAction: () => DropStationMapPage.open(context, onLogout: onLogout),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: _StationPanel(stations: stations, onLogout: onLogout),
+        ),
+      ],
+    );
+  }
+}
+
+class _StationPanel extends StatelessWidget {
+  const new({required this.stations, required this.onLogout});
+
+  final List<DropStation> stations;
+  final VoidCallback onLogout;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: AppDecorations.card(),
+      clipBehavior: Clip.antiAlias,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionHeader(
-            title: tr('Pelacakan Drop Station', 'Drop Station Tracking'),
-            subtitle: tr(
-              'Peta & status station secara langsung',
-              'Live map & station status',
-            ),
-            actionLabel: tr('Lihat Semua', 'See All'),
-            onAction: () =>
-                DropStationMapPage.open(context, onLogout: onLogout),
-          ),
-          const SizedBox(height: 16),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: mapHeight,
-                  child: RepaintBoundary(
-                    child: GestureDetector(
-                      onTap: () =>
-                          DropStationMapPage.open(context, onLogout: onLogout),
-                      child: const _MapPreview(),
-                    ),
-                  ),
-                ),
-                if (stations.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      children: [
-                        for (final station in stations) ...[
-                          DropStationCard(station: station),
-                          if (station != stations.last)
-                            const SizedBox(height: 8),
-                        ],
-                      ],
-                    ),
-                  ),
-              ],
+          SizedBox(
+            height: StationTrackingSection.mapHeight,
+            child: RepaintBoundary(
+              child: GestureDetector(
+                onTap: () =>
+                    DropStationMapPage.open(context, onLogout: onLogout),
+                child: const _MapPreview(),
+              ),
             ),
           ),
+          if (stations.isNotEmpty) _StationList(stations: stations),
+        ],
+      ),
+    );
+  }
+}
+
+class _StationList extends StatelessWidget {
+  const new({required this.stations});
+
+  final List<DropStation> stations;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          for (final station in stations) ...[
+            DropStationCard(station: station),
+            if (station != stations.last) const SizedBox(height: 8),
+          ],
         ],
       ),
     );

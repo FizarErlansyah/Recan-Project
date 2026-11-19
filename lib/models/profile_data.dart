@@ -7,6 +7,7 @@ class ProfileData {
     required this.tier,
     required this.phone,
     required this.gopayConnected,
+    required this.activeVouchers,
   });
 
   final int id;
@@ -16,6 +17,7 @@ class ProfileData {
   final String tier;
   final String phone;
   final bool gopayConnected;
+  final int activeVouchers;
 
   String get initials {
     final words = name.trim().split(RegExp(r'\s+'));

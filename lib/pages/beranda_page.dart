@@ -87,6 +87,7 @@ class _Content extends StatelessWidget {
             onAskAi: () => AiChatPage.open(context),
             onScan: onScan,
           ),
+          const SizedBox(height: 12),
           CategoryMenu(
             entries: [
               CategoryMenuEntry(
@@ -124,7 +125,6 @@ class _Content extends StatelessWidget {
                   'Kumpulkan poin, tukar kriya impianmu',
                   'Collect points, redeem your dream craft',
                 ),
-                icon: Icons.flight_rounded,
                 colors: const [AppColors.primary, AppColors.primaryDark],
                 imageUrl: 'https://picsum.photos/seed/recan-f1-jet/800/420',
                 onTap: () => onSelectTab(1),
@@ -135,7 +135,6 @@ class _Content extends StatelessWidget {
                   'Setor kaleng sekarang dan rasakan bedanya',
                   'Drop cans now and feel the difference',
                 ),
-                icon: Icons.bolt_rounded,
                 colors: const [AppColors.gold, AppColors.goldDeep],
                 imageUrl: 'https://picsum.photos/seed/recan-weekend/800/420',
                 onTap: () =>
@@ -151,7 +150,6 @@ class _Content extends StatelessWidget {
                   'Kampus berkelanjutan, konsumsi bertanggung jawab',
                   'Sustainable campus, responsible consumption',
                 ),
-                icon: Icons.public_rounded,
                 colors: const [AppColors.primaryDark, AppColors.sage],
                 imageUrl: 'https://picsum.photos/seed/recan-sdg/800/420',
                 onTap: () => EdukasiPage.open(context),
@@ -165,7 +163,6 @@ class _Content extends StatelessWidget {
                   'GoPay, OVO, dan DANA mulai Rp 20.000',
                   'GoPay, OVO, and DANA from Rp 20,000',
                 ),
-                icon: Icons.account_balance_wallet_rounded,
                 colors: const [AppColors.primaryDark, AppColors.sage],
                 imageUrl: 'https://picsum.photos/seed/recan-ewallet/800/420',
                 onTap: () => onSelectTab(1),
@@ -176,7 +173,6 @@ class _Content extends StatelessWidget {
                   'Setor tiap hari, hemat karbon, raih Eco-Hero',
                   'Drop daily, save carbon, become an Eco-Hero',
                 ),
-                icon: Icons.eco_rounded,
                 colors: const [AppColors.slateDeep, AppColors.slate],
                 imageUrl: 'https://picsum.photos/seed/recan-zero-emisi/800/420',
                 onTap: () => onSelectTab(3),

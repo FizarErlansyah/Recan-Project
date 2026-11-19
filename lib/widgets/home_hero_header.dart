@@ -9,6 +9,8 @@ import 'package:mobile_apps_recan/widgets/ai_ask_pill.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
 import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
+import 'package:mobile_apps_recan/widgets/pull_up_overlap.dart';
+import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 class HomeHeroHeader extends StatelessWidget {
   const new({
@@ -90,50 +92,53 @@ class HomeHeroHeader extends StatelessWidget {
 
     return Column(
       children: [
-        ClipPath(
-          clipper: const _CurvedBottomClipper(depth: _curveDepth),
-          child: Container(
-            width: double.infinity,
-            color: AppColors.primary,
-            padding: EdgeInsets.fromLTRB(
-              24,
-              topInset + 16,
-              24,
-              _curveDepth + _greenExtraHeight,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _formatToday(),
-                        style: textTheme.bodySmall?.copyWith(
-                          color: AppColors.white.withValues(alpha: 0.78),
+        StatusBarIcons(
+          light: true,
+          child: ClipPath(
+            clipper: const _CurvedBottomClipper(depth: _curveDepth),
+            child: Container(
+              width: double.infinity,
+              color: AppColors.primary,
+              padding: EdgeInsets.fromLTRB(
+                24,
+                topInset + 16,
+                24,
+                _curveDepth + _greenExtraHeight,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _formatToday(),
+                          style: textTheme.bodySmall?.copyWith(
+                            color: AppColors.white.withValues(alpha: 0.78),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        tr('Hai $firstName', 'Hi $firstName'),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: textTheme.headlineSmall?.copyWith(
-                          color: AppColors.white,
+                        const SizedBox(height: 4),
+                        Text(
+                          tr('Hai $firstName', 'Hi $firstName'),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.headlineSmall?.copyWith(
+                            color: AppColors.white,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                AiAskPill(onTap: onAskAi),
-              ],
+                  const SizedBox(width: 12),
+                  AiAskPill(onTap: onAskAi),
+                ],
+              ),
             ),
           ),
         ),
-        Transform.translate(
-          offset: const Offset(0, -_overlap),
+        PullUpOverlap(
+          extent: _overlap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: _BalanceCard(
