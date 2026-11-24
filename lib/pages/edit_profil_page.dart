@@ -28,7 +28,7 @@ class EditProfilPage extends StatefulWidget {
 class _EditProfilPageState extends State<EditProfilPage> {
   static const List<Color> _avatarColors = [
     AppColors.primary,
-    AppColors.sage,
+    AppColors.primaryLight,
     AppColors.clay,
     AppColors.sand,
     AppColors.primaryDeep,

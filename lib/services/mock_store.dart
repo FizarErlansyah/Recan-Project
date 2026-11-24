@@ -274,7 +274,7 @@ class MockStore {
       descriptionEn: 'Discount on copying and printing at the campus co-op.',
       pointsCost: 300,
       icon: AppIcons.print,
-      colors: [AppColors.primaryDark, AppColors.sage],
+      colors: [AppColors.primaryDark, AppColors.primaryLight],
     ),
   ];
 

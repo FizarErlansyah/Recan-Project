@@ -79,7 +79,7 @@ class _AskAiButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const HugeIcon(icon: AppIcons.ai, color: AppColors.sageLight),
+              const HugeIcon(icon: AppIcons.ai, color: AppColors.primarySoft),
               const SizedBox(width: 12),
               Text(
                 tr('Tanya ReCan AI', 'Ask ReCan AI'),

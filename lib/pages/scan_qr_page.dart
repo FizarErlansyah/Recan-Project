@@ -235,7 +235,7 @@ class _ZoomPanelState extends State<_ZoomPanel> {
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: AppColors.sageLight,
+                  activeTrackColor: AppColors.primarySoft,
                   inactiveTrackColor: AppColors.white.withValues(alpha: 0.28),
                   thumbColor: AppColors.white,
                   overlayColor: AppColors.white.withValues(alpha: 0.12),
@@ -282,7 +282,7 @@ class _Instruction extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     hugeIcon(HugeIcons.strokeRoundedQrCode)(
-                      color: AppColors.sageLight,
+                      color: AppColors.primarySoft,
                       size: 22,
                     ),
                     const SizedBox(width: 12),

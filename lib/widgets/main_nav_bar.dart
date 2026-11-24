@@ -207,10 +207,7 @@ class _SelectorBubble extends StatelessWidget {
                 ScaleTransition(scale: animation, child: child),
             child: KeyedSubtree(
               key: ValueKey(index),
-              child: item.selectedIcon(
-                color: context.palette.background,
-                size: 22,
-              ),
+              child: item.selectedIcon(color: AppColors.white, size: 22),
             ),
           ),
         ),

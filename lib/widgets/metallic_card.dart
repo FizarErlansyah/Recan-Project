@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/widgets/pressable.dart';
 
-/// Membership-card surface: emerald gradient, silver hairline border and a
-/// faint diagonal sheen. Shared by the balance card and the tier card so both
-/// read as one metal-card family.
+/// Membership-card surface: Yale Blue gradient, silver hairline border and a
+/// faint Pearl Aqua diagonal sheen. Shared by the balance card and the tier
+/// card so both read as one metal-card family.
 class MetallicCard extends StatelessWidget {
   const new({
     required this.child,
@@ -71,7 +71,7 @@ class _SheenPainter extends CustomPainter {
       ..shader = LinearGradient(
         colors: [
           AppColors.transparent,
-          AppColors.white.withValues(alpha: 0.07),
+          AppColors.primarySoft.withValues(alpha: 0.09),
           AppColors.transparent,
         ],
       ).createShader(band);
@@ -112,7 +112,7 @@ class _SheenPainter extends CustomPainter {
         ..shader = LinearGradient(
           colors: [
             AppColors.transparent,
-            AppColors.white.withValues(alpha: 0.38),
+            AppColors.primarySoft.withValues(alpha: 0.45),
             AppColors.transparent,
           ],
         ).createShader(topEdge),

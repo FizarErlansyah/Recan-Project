@@ -156,12 +156,18 @@ class AppTheme {
         focusedBorder: fieldBorder(
           BorderSide(color: palette.accent, width: 1.5),
         ),
-        errorBorder: fieldBorder(
-          const BorderSide(color: AppColors.danger, width: 1.5),
-        ),
+        errorBorder: fieldBorder(BorderSide(color: palette.danger, width: 1.5)),
         focusedErrorBorder: fieldBorder(
-          const BorderSide(color: AppColors.danger, width: 1.5),
+          BorderSide(color: palette.danger, width: 1.5),
         ),
+        errorStyle: textTheme.bodySmall?.copyWith(color: palette.danger),
+      ),
+      // Yale Blue is too dim for a caret on dark fields, so the caret follows
+      // the accent: Yale Blue on light, Pearl Aqua on dark.
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: palette.accent,
+        selectionHandleColor: palette.accent,
+        selectionColor: palette.accent.withValues(alpha: 0.28),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: palette.surface,

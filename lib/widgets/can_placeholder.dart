@@ -12,7 +12,7 @@ class CanPlaceholder extends StatelessWidget {
     AppColors.primary,
     AppColors.slate,
     AppColors.goldDeep,
-    AppColors.sage,
+    AppColors.primaryLight,
   ];
 
   final int seed;

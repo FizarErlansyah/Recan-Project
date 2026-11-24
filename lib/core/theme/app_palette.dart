@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 
 /// Theme-dependent colour roles. [AppColors] keeps the fixed brand values
-/// (emerald hero and fills, silver hairlines on dark chrome, gold gradients);
+/// (Yale Blue hero and fills, silver hairlines on dark chrome, gold gradients);
 /// everything that must change between light and dark is read from the active
 /// palette so a theme swap needs no feature-level changes.
 ///
-/// `accent` is brand emerald used as text or an icon on a surface; fills keep
-/// the fixed [AppColors.primary] so buttons look the same in both themes.
+/// `accent` is the brand colour used as text or an icon on a surface: Yale Blue
+/// on light, Pearl Aqua on dark. Fills keep the fixed [AppColors.primary] so
+/// buttons look the same in both themes.
 @immutable
 class AppPalette extends ThemeExtension<AppPalette> {
   const new({
@@ -46,22 +47,22 @@ class AppPalette extends ThemeExtension<AppPalette> {
     success: AppColors.success,
   );
 
-  // Graphite with a green undertone instead of pure black, so the emerald
-  // brand still reads as the same family; Pearl Aqua carries accents.
+  // Slate-navy with a blue undertone instead of pure black, so Yale Blue still
+  // reads as the same family; Pearl Aqua carries accents.
   static const AppPalette dark = AppPalette(
-    background: Color(0xFF0B1210),
-    surface: Color(0xFF121C19),
-    surfaceMuted: Color(0xFF18241F),
-    border: Color(0xFF2B3934),
-    textPrimary: Color(0xFFE8EEEC),
-    textSecondary: Color(0xFFA3B1AC),
-    textTertiary: Color(0xFF8A9A94),
-    accent: Color(0xFF6FD3B8),
-    tint: Color(0xFF143329),
-    goldSoft: Color(0xFF2A2412),
+    background: Color(0xFF0D161D),
+    surface: Color(0xFF15222C),
+    surfaceMuted: Color(0xFF1C2B37),
+    border: Color(0xFF2C3E4C),
+    textPrimary: Color(0xFFE9EFF3),
+    textSecondary: Color(0xFFA9B7C2),
+    textTertiary: Color(0xFF93A3AF),
+    accent: AppColors.primarySoft,
+    tint: Color(0xFF1F3A4D),
+    goldSoft: Color(0xFF2A2616),
     goldText: Color(0xFFD4B06A),
-    successSoft: Color(0xFF14352A),
-    dangerSoft: Color(0xFF3A1E1B),
+    successSoft: Color(0xFF133A32),
+    dangerSoft: Color(0xFF3A1F24),
     danger: Color(0xFFE57D72),
     success: Color(0xFF5CC7A0),
   );
@@ -74,10 +75,11 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color textSecondary;
   final Color textTertiary;
 
-  /// Brand emerald as text or icon on a surface.
+  /// Brand colour as text or icon on a surface.
   final Color accent;
 
-  /// Soft emerald fill behind icons and selected chips.
+  /// Soft fill behind icons and selected chips: Pearl Aqua on light, deep
+  /// Yale Blue on dark.
   final Color tint;
   final Color goldSoft;
 

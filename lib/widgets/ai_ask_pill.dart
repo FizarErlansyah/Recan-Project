@@ -46,7 +46,7 @@ class AiAskPill extends StatelessWidget {
                         const HugeIcon(
                           icon: HugeIcons.strokeRoundedAiChat02,
                           size: 18,
-                          color: AppColors.sageLight,
+                          color: AppColors.primarySoft,
                         ),
                         const SizedBox(width: 8),
                         Text(

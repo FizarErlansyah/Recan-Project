@@ -65,7 +65,7 @@ class GlassIconButton extends StatelessWidget {
         radius: 24,
         child: Material(
           color: active
-              ? AppColors.sageLight.withValues(alpha: 0.32)
+              ? AppColors.primarySoft.withValues(alpha: 0.32)
               : AppColors.transparent,
           child: InkWell(
             onTap: onTap,

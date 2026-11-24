@@ -36,7 +36,7 @@ class StationBottomSheet extends StatelessWidget {
     final almostFull = station.isAlmostFull;
     final barColors = almostFull
         ? const [AppColors.danger, AppColors.danger]
-        : const [AppColors.primarySoft, AppColors.sage];
+        : const [AppColors.primarySoft, AppColors.primaryLight];
 
     return SafeArea(
       child: Padding(

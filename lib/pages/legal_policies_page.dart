@@ -309,7 +309,7 @@ class _PolicyPoint extends StatelessWidget {
             width: 6,
             height: 6,
             decoration: const BoxDecoration(
-              color: AppColors.sage,
+              color: AppColors.primaryLight,
               shape: BoxShape.circle,
             ),
           ),

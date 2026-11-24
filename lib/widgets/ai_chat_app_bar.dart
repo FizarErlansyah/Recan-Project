@@ -40,7 +40,7 @@ class AiChatAppBar extends StatelessWidget implements PreferredSizeWidget {
               const HugeIcon(
                 icon: AppIcons.ai,
                 size: 22,
-                color: AppColors.sageLight,
+                color: AppColors.primarySoft,
               ),
               const SizedBox(width: 8),
               Text(
@@ -61,7 +61,7 @@ class AiChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                   'Active • AI Environment Specialist',
                 ),
                 style: textTheme.bodySmall?.copyWith(
-                  color: AppColors.sageLight,
+                  color: AppColors.primarySoft,
                 ),
               ),
             ],

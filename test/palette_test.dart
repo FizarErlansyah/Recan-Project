@@ -7,8 +7,26 @@ import 'package:mobile_apps_recan/main.dart';
 import 'package:mobile_apps_recan/services/theme_preference.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+double contrast(Color a, Color b) {
+  final la = a.computeLuminance();
+  final lb = b.computeLuminance();
+  final hi = la > lb ? la : lb;
+  final lo = la > lb ? lb : la;
+  return (hi + 0.05) / (lo + 0.05);
+}
+
 void main() {
-  test('light palette keeps the pre-palette colours', () {
+  test('brand tokens match the official team palette', () {
+    expect(AppColors.primary, const Color(0xFF284B63));
+    expect(AppColors.primaryDark, const Color(0xFF1B3547));
+    expect(AppColors.primaryDeep, const Color(0xFF162B3A));
+    expect(AppColors.primarySoft, const Color(0xFFC9EDDC));
+    expect(AppColors.textPrimary, const Color(0xFF353535));
+    expect(AppColors.textSecondary, const Color(0xFF6A706E));
+    expect(AppColors.gold, const Color(0xFFC8A252));
+  });
+
+  test('light palette maps the semantic colour tokens', () {
     const light = AppPalette.light;
 
     expect(light.background, AppColors.background);
@@ -18,6 +36,65 @@ void main() {
     expect(light.textPrimary, AppColors.textPrimary);
     expect(light.textSecondary, AppColors.textSecondary);
     expect(light.textTertiary, AppColors.textTertiary);
+    expect(light.background, const Color(0xFFF5F8FA));
+    expect(light.border, const Color(0xFFD6DFE5));
+    expect(light.accent, AppColors.primary);
+    expect(light.tint, AppColors.primarySoft);
+  });
+
+  test('light text, accent and status roles clear 4.5:1', () {
+    const light = AppPalette.light;
+    final grounds = [light.surface, light.background, light.surfaceMuted];
+
+    for (final ground in grounds) {
+      for (final color in [
+        light.textPrimary,
+        light.textSecondary,
+        light.textTertiary,
+        light.accent,
+      ]) {
+        expect(contrast(color, ground), greaterThanOrEqualTo(4.5));
+      }
+    }
+    expect(contrast(light.success, light.surface), greaterThanOrEqualTo(4.5));
+    expect(contrast(light.danger, light.surface), greaterThanOrEqualTo(4.5));
+    expect(
+      contrast(light.success, light.successSoft),
+      greaterThanOrEqualTo(4.5),
+    );
+    expect(contrast(light.danger, light.dangerSoft), greaterThanOrEqualTo(4.5));
+    expect(contrast(light.goldText, light.surface), greaterThanOrEqualTo(4.5));
+  });
+
+  test('Yale Blue and Pearl Aqua keep a readable pairing', () {
+    expect(
+      contrast(AppColors.white, AppColors.primary),
+      greaterThanOrEqualTo(4.5),
+    );
+    expect(
+      contrast(AppColors.primarySoft, AppColors.primary),
+      greaterThanOrEqualTo(4.5),
+    );
+    expect(
+      contrast(AppColors.primarySoft, AppColors.primaryDark),
+      greaterThanOrEqualTo(4.5),
+    );
+    expect(
+      contrast(AppColors.primary, AppColors.primarySoft),
+      greaterThanOrEqualTo(4.5),
+    );
+    expect(
+      contrast(AppColors.textPrimary, AppColors.primarySoft),
+      greaterThanOrEqualTo(4.5),
+    );
+    expect(
+      contrast(AppColors.white, AppColors.success),
+      greaterThanOrEqualTo(4.5),
+    );
+    expect(
+      contrast(AppColors.white, AppColors.danger),
+      greaterThanOrEqualTo(4.5),
+    );
   });
 
   test('light theme registers the palette and themes scaffold and text', () {
@@ -70,24 +147,40 @@ void main() {
       expect(theme.textTheme.bodySmall?.color, AppPalette.dark.textSecondary);
     });
 
-    test('body text and accent clear 4.5:1 on the dark surface', () {
-      double luminance(Color c) => c.computeLuminance();
-      double contrast(Color a, Color b) {
-        final hi = luminance(a) > luminance(b) ? a : b;
-        final lo = hi == a ? b : a;
-        return (luminance(hi) + 0.05) / (luminance(lo) + 0.05);
-      }
-
+    test('body text, accent and status roles clear 4.5:1 on dark grounds', () {
       const dark = AppPalette.dark;
-      for (final color in [
-        dark.textPrimary,
-        dark.textSecondary,
-        dark.textTertiary,
-        dark.accent,
-        dark.goldText,
-      ]) {
-        expect(contrast(color, dark.surface), greaterThanOrEqualTo(4.5));
+      final grounds = [dark.surface, dark.background, dark.surfaceMuted];
+
+      for (final ground in grounds) {
+        for (final color in [
+          dark.textPrimary,
+          dark.textSecondary,
+          dark.textTertiary,
+          dark.accent,
+          dark.goldText,
+          dark.success,
+          dark.danger,
+        ]) {
+          expect(contrast(color, ground), greaterThanOrEqualTo(4.5));
+        }
       }
+      expect(contrast(dark.accent, dark.tint), greaterThanOrEqualTo(4.5));
+      expect(
+        contrast(dark.textSecondary, dark.tint),
+        greaterThanOrEqualTo(4.5),
+      );
+      expect(
+        contrast(dark.success, dark.successSoft),
+        greaterThanOrEqualTo(4.5),
+      );
+      expect(contrast(dark.danger, dark.dangerSoft), greaterThanOrEqualTo(4.5));
+      expect(contrast(dark.goldText, dark.goldSoft), greaterThanOrEqualTo(4.5));
+    });
+
+    test('Pearl Aqua is the dark accent', () {
+      expect(AppPalette.dark.accent, const Color(0xFFC9EDDC));
+      expect(AppPalette.dark.background, const Color(0xFF0D161D));
+      expect(AppPalette.dark.surface, const Color(0xFF15222C));
     });
   });
 

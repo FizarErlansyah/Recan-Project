@@ -152,7 +152,7 @@ class _Content extends StatelessWidget {
                   'Sustainable campus, responsible consumption',
                 ),
                 icon: hugeIcon(HugeIcons.strokeRoundedGlobe02),
-                colors: const [AppColors.primaryDark, AppColors.sage],
+                colors: const [AppColors.primaryDark, AppColors.primaryLight],
                 onTap: () => EdukasiPage.open(context),
               ),
             ],

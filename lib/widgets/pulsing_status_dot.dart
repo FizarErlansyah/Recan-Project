@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 
 class PulsingStatusDot extends StatefulWidget {
-  const new({super.key, this.size = 8, this.color = AppColors.sageLight});
+  const new({super.key, this.size = 8, this.color = AppColors.primarySoft});
 
   final double size;
   final Color color;
