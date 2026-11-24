@@ -1,0 +1,7 @@
+# Copy to android/key.properties and fill in the real values.
+# key.properties and *.jks are git-ignored: never commit either one.
+storePassword=<keystore password>
+keyPassword=<key password>
+keyAlias=recan
+# Resolved relative to android/app/.
+storeFile=upload-keystore.jks
