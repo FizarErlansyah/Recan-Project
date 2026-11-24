@@ -72,7 +72,9 @@ class _HeroCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           GestureDetector(
-            onLongPress: () => DemoToolsSheet.show(context),
+            onLongPress: DemoToolsSheet.isAvailable
+                ? () => DemoToolsSheet.show(context)
+                : null,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(

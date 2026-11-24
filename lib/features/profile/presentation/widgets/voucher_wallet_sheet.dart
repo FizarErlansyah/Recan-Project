@@ -4,18 +4,28 @@ import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/voucher.dart';
+import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/voucher_service.dart';
+import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class VoucherWalletSheet extends StatelessWidget {
   const new({required this.vouchers, super.key});
 
-  static Future<void> show(BuildContext context) {
-    return showModalBottomSheet<void>(
+  static Future<void> show(BuildContext context) async {
+    final List<OwnedVoucher> owned;
+    try {
+      owned = await VoucherService.owned();
+    } on ApiException catch (error) {
+      if (context.mounted) AppSnackBar.show(context, error.message);
+      return;
+    }
+    if (!context.mounted) return;
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (_) => VoucherWalletSheet(vouchers: VoucherService.owned()),
+      builder: (_) => VoucherWalletSheet(vouchers: owned),
     );
   }
 

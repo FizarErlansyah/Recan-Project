@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobile_apps_recan/core/config/supabase_config.dart';
 import 'package:mobile_apps_recan/core/theme/app_theme.dart';
 import 'package:mobile_apps_recan/core/theme/language_extension.dart';
 import 'package:mobile_apps_recan/pages/splash_page.dart';
+import 'package:mobile_apps_recan/services/backend/app_backend.dart';
+import 'package:mobile_apps_recan/services/backend/supabase_backend.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
 import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/services/theme_preference.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   await ThemePreference.load();
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    publishableKey: SupabaseConfig.publishableKey,
+  );
+  Backend.current = SupabaseBackend(Supabase.instance.client);
   await ProfileService.restoreAvatar();
   runApp(const ReCanApp());
 }

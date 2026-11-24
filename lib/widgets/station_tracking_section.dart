@@ -48,7 +48,11 @@ class StationTrackingSection extends StatelessWidget {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: _StationPanel(stations: _nearest, onLogout: onLogout),
+          child: _StationPanel(
+            stations: _nearest,
+            allStations: stations,
+            onLogout: onLogout,
+          ),
         ),
       ],
     );
@@ -56,9 +60,14 @@ class StationTrackingSection extends StatelessWidget {
 }
 
 class _StationPanel extends StatelessWidget {
-  const new({required this.stations, required this.onLogout});
+  const new({
+    required this.stations,
+    required this.allStations,
+    required this.onLogout,
+  });
 
   final List<DropStation> stations;
+  final List<DropStation> allStations;
   final VoidCallback onLogout;
 
   @override
@@ -83,7 +92,7 @@ class _StationPanel extends StatelessWidget {
               child: GestureDetector(
                 onTap: () =>
                     DropStationMapPage.open(context, onLogout: onLogout),
-                child: const _MapPreview(),
+                child: _MapPreview(stations: allStations),
               ),
             ),
           ),
@@ -119,7 +128,9 @@ class _StationList extends StatelessWidget {
 }
 
 class _MapPreview extends StatelessWidget {
-  const new();
+  const new({required this.stations});
+
+  final List<DropStation> stations;
 
   @override
   Widget build(BuildContext context) {
@@ -136,20 +147,21 @@ class _MapPreview extends StatelessWidget {
         ),
         MarkerLayer(
           markers: [
-            for (final station in StationService.stations)
-              Marker(
-                point: station.position,
-                width: 32,
-                height: 32,
-                alignment: Alignment.topCenter,
-                child: HugeIcon(
-                  icon: HugeIcons.strokeRoundedLocation01,
-                  size: 32,
-                  color: station.isAlmostFull
-                      ? AppColors.danger
-                      : AppColors.primary,
+            for (final station in stations)
+              if (station.position case final position?)
+                Marker(
+                  point: position,
+                  width: 32,
+                  height: 32,
+                  alignment: Alignment.topCenter,
+                  child: HugeIcon(
+                    icon: HugeIcons.strokeRoundedLocation01,
+                    size: 32,
+                    color: station.isAlmostFull
+                        ? AppColors.danger
+                        : AppColors.primary,
+                  ),
                 ),
-              ),
           ],
         ),
       ],

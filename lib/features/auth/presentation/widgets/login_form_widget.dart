@@ -8,7 +8,6 @@ import 'package:mobile_apps_recan/widgets/recan_form_field.dart';
 class LoginFormWidget extends StatelessWidget {
   const new({
     required this.formKey,
-    required this.usernameController,
     required this.emailController,
     required this.passwordController,
     required this.obscure,
@@ -19,7 +18,6 @@ class LoginFormWidget extends StatelessWidget {
   });
 
   final GlobalKey<FormState> formKey;
-  final TextEditingController usernameController;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final bool obscure;
@@ -34,15 +32,6 @@ class LoginFormWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ReCanFormField(
-            controller: usernameController,
-            label: 'Username',
-            icon: AppIcons.person,
-            textInputAction: TextInputAction.next,
-            textCapitalization: TextCapitalization.words,
-            validator: _validateUsername,
-          ),
-          const SizedBox(height: 16),
           ReCanFormField(
             controller: emailController,
             label: 'Email',
@@ -70,13 +59,6 @@ class LoginFormWidget extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  static String? _validateUsername(String? value) {
-    if ((value?.trim() ?? '').isEmpty) {
-      return tr('Username wajib diisi', 'Username is required');
-    }
-    return null;
   }
 
   static String? _validateEmail(String? value) {

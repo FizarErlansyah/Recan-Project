@@ -12,9 +12,10 @@ class CanPresetChips extends StatelessWidget {
   final ValueChanged<int> onPreset;
   final bool enabled;
 
-  static const List<int> amounts = [5, 20, 100, 1000];
+  static const int collectiveAmount = 1000;
+  static const List<int> amounts = [5, 20, 100, collectiveAmount];
 
-  static String labelFor(int amount) => amount == 1000
+  static String labelFor(int amount) => amount == collectiveAmount
       ? tr(
           '+1000 (Kolektif Komunitas / Event)',
           '+1000 (Community Collective / Event)',

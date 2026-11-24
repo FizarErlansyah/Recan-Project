@@ -21,7 +21,7 @@ class MockStore {
 
   static const int initialPoints = 0;
   static const int demoPointsGrant = 25000;
-  static const int _userId = 1;
+  static const String _userId = 'local-user';
   static const String _idAlphabet = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
   static final Random _random = Random();
 
@@ -346,53 +346,6 @@ class MockStore {
   static const int _carbonStartYear = 2025;
   static const List<double> _dayFactors = [0.9, 1.1, 0.8, 1.2, 1.0, 0.7, 1.3];
   static const List<double> _weekShares = [0.22, 0.26, 0.24, 0.28];
-  static const List<String> _weekdaysId = [
-    'Sen',
-    'Sel',
-    'Rab',
-    'Kam',
-    'Jum',
-    'Sab',
-    'Min',
-  ];
-  static const List<String> _weekdaysEn = [
-    'Mon',
-    'Tue',
-    'Wed',
-    'Thu',
-    'Fri',
-    'Sat',
-    'Sun',
-  ];
-  static const List<String> _monthsId = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'Mei',
-    'Jun',
-    'Jul',
-    'Agu',
-    'Sep',
-    'Okt',
-    'Nov',
-    'Des',
-  ];
-  static const List<String> _monthsEn = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
   static int _communityMonthCans(int monthIndex) =>
       900 + 60 * monthIndex + (monthIndex % 3) * 70;
 
@@ -415,9 +368,8 @@ class MockStore {
     final dailyBase = _communityMonthCans(_currentMonthIndex) / 30;
     return [
       for (var i = 6; i >= 0; i--)
-        CarbonPoint(
-          labelId: _weekdaysId[(today - i) % 7],
-          labelEn: _weekdaysEn[(today - i) % 7],
+        CarbonPoint.weekday(
+          weekday: (today - i) % 7 + 1,
           cans:
               (dailyBase * _dayFactors[(today - i) % 7]).round() +
               (i == 0 ? userTodayCans : 0),
@@ -429,9 +381,8 @@ class MockStore {
     final monthBase = _communityMonthCans(_currentMonthIndex);
     return [
       for (var i = 0; i < _weekShares.length; i++)
-        CarbonPoint(
-          labelId: 'Mg ${i + 1}',
-          labelEn: 'W${i + 1}',
+        CarbonPoint.weekOfMonth(
+          week: i + 1,
           cans:
               (monthBase * _weekShares[i]).round() +
               (i == _weekShares.length - 1 ? userTotalCans : 0),
@@ -443,9 +394,9 @@ class MockStore {
     final last = _currentMonthIndex;
     return [
       for (var i = 0; i <= last; i++)
-        CarbonPoint(
-          labelId: '${_monthsId[i % 12]} ${(_carbonStartYear + i ~/ 12) % 100}',
-          labelEn: '${_monthsEn[i % 12]} ${(_carbonStartYear + i ~/ 12) % 100}',
+        CarbonPoint.month(
+          year: _carbonStartYear + i ~/ 12,
+          month: i % 12 + 1,
           cans: _communityMonthCans(i) + (i == last ? userTotalCans : 0),
         ),
     ];

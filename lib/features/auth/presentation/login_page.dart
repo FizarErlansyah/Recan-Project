@@ -29,7 +29,6 @@ class _LoginPageState extends State<LoginPage> {
   _AuthMode _mode = _AuthMode.landing;
 
   final _loginFormKey = GlobalKey<FormState>();
-  final _loginUsernameController = TextEditingController();
   final _loginEmailController = TextEditingController();
   final _loginPasswordController = TextEditingController();
   bool _obscureLogin = true;
@@ -45,7 +44,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _loginUsernameController.dispose();
     _loginEmailController.dispose();
     _loginPasswordController.dispose();
     _registerUsernameController.dispose();
@@ -72,7 +70,6 @@ class _LoginPageState extends State<LoginPage> {
       await AuthService.login(
         _loginEmailController.text.trim(),
         _loginPasswordController.text,
-        username: _loginUsernameController.text,
       );
       await _openHome();
     } on AuthException catch (e) {
@@ -88,13 +85,27 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() => _loadingRegister = true);
     try {
-      await AuthService.register(
+      final email = _registerEmailController.text.trim();
+      final signedIn = await AuthService.register(
         username: _registerUsernameController.text.trim(),
-        email: _registerEmailController.text.trim(),
+        email: email,
         phone: _registerPhoneController.text.trim(),
         password: _registerPasswordController.text,
       );
-      await _openHome();
+      if (signedIn) {
+        await _openHome();
+        return;
+      }
+      if (!mounted) return;
+      _loginEmailController.text = email;
+      _goTo(_AuthMode.login);
+      AppSnackBar.show(
+        context,
+        tr(
+          'Akun dibuat. Cek emailmu untuk verifikasi, lalu masuk.',
+          'Account created. Check your email to verify it, then log in.',
+        ),
+      );
     } on AuthException catch (e) {
       if (!mounted) return;
       AppSnackBar.show(context, e.message);
@@ -150,7 +161,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
           form: LoginFormWidget(
             formKey: _loginFormKey,
-            usernameController: _loginUsernameController,
             emailController: _loginEmailController,
             passwordController: _loginPasswordController,
             obscure: _obscureLogin,

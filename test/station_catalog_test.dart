@@ -10,23 +10,22 @@ import 'package:mobile_apps_recan/widgets/station_tracking_section.dart';
 
 void main() {
   group('station catalog', () {
-    test(
-      'covers public places around Greater Jakarta, not only the campus',
-      () {
-        final names = MockStations.mapStations.map((s) => s.name).join('|');
+    test('covers public places around Greater Jakarta', () {
+      final names = MockStations.mapStations.map((s) => s.name).join('|');
 
-        for (final place in [
-          'Jurang Mangu',
-          'Bintaro Jaya Xchange',
-          'AEON Mall BSD',
-          'Taman Kota 1 BSD',
-          'Rawa Buntu',
-          'UPJ',
-        ]) {
-          expect(names, contains(place));
-        }
-      },
-    );
+      for (final place in [
+        'Jurang Mangu',
+        'Pasar Modern Bintaro',
+        'Bintaro Plaza',
+        'Pondok Ranji',
+        'Bintaro Jaya Xchange',
+        'AEON Mall BSD',
+        'Taman Kota 1 BSD',
+        'Rawa Buntu',
+      ]) {
+        expect(names, contains(place));
+      }
+    });
 
     test('has unique ids and plausible Jabodetabek coordinates', () {
       final stations = MockStations.mapStations;
@@ -98,7 +97,7 @@ void main() {
         tester.widget<TileLayer>(find.byType(TileLayer)).tileBuilder,
         isNull,
       );
-      expect(StationService.stations, isNotEmpty);
+      expect(await StationService.fetchAll(), isNotEmpty);
     });
   });
 }

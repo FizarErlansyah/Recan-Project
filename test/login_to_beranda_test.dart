@@ -21,9 +21,8 @@ void main() {
     await tester.pumpAndSettle();
 
     final fields = find.byType(TextFormField);
-    await tester.enterText(fields.at(0), 'Tester');
-    await tester.enterText(fields.at(1), 'tester@upj.ac.id');
-    await tester.enterText(fields.at(2), 'secret');
+    await tester.enterText(fields.at(0), 'tester@mail.com');
+    await tester.enterText(fields.at(1), 'secret');
     await tester.ensureVisible(find.text('Masuk'));
     await tester.tap(find.text('Masuk'));
 

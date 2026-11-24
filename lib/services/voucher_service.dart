@@ -1,14 +1,10 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:mobile_apps_recan/models/voucher.dart';
-import 'package:mobile_apps_recan/services/mock_store.dart';
+import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 
 class VoucherService {
   const new _();
 
-  static Future<List<Voucher>> fetch() =>
-      SynchronousFuture(List.unmodifiable(MockStore.vouchers));
+  static Future<List<Voucher>> fetch() => Backend.current.vouchers();
 
-  static List<OwnedVoucher> owned() =>
-      List.unmodifiable(MockStore.ownedVouchers);
+  static Future<List<OwnedVoucher>> owned() => Backend.current.ownedVouchers();
 }

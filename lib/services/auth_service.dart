@@ -1,7 +1,4 @@
-import 'package:mobile_apps_recan/services/api_config.dart';
-import 'package:mobile_apps_recan/services/mock_store.dart';
-import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 
 class AuthException implements Exception {
   const new(this.message);
@@ -13,64 +10,27 @@ class AuthException implements Exception {
 }
 
 class AuthService {
-  static String? token;
+  const new _();
 
-  static const String _mockToken = 'mock-session';
+  static Future<bool> restoreSession() => Backend.current.restoreSession();
 
-  static Future<bool> loadToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString(ApiConfig.tokenKey);
-    return token != null && token!.isNotEmpty;
-  }
+  static Future<void> logout() => Backend.current.signOut();
 
-  static Future<void> logout() async {
-    token = null;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(ApiConfig.tokenKey);
-  }
+  static Future<void> login(String email, String password) =>
+      Backend.current.signIn(email: email.trim(), password: password);
 
-  static Future<void> login(
-    String email,
-    String password, {
-    String? username,
-  }) async {
-    if (email.isEmpty || password.isEmpty) {
-      throw AuthException(
-        tr(
-          'Email dan kata sandi wajib diisi.',
-          'Email and password are required.',
-        ),
-      );
-    }
-    MockStore.userEmail = email;
-    final trimmedUsername = username?.trim() ?? '';
-    if (trimmedUsername.isNotEmpty) {
-      MockStore.currentUsername = trimmedUsername;
-    }
-    token = _mockToken;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(ApiConfig.tokenKey, _mockToken);
-  }
-
-  static Future<void> register({
+  /// Returns false when the account was created but the email must be
+  /// confirmed before the first login.
+  static Future<bool> register({
     required String username,
     required String email,
     required String phone,
     required String password,
-  }) async {
-    if (username.isEmpty ||
-        email.isEmpty ||
-        phone.isEmpty ||
-        password.isEmpty) {
-      throw AuthException(
-        tr('Semua kolom wajib diisi.', 'All fields are required.'),
-      );
-    }
-    MockStore.currentUsername = username;
-    MockStore.userEmail = email;
-    MockStore.userPhone = phone;
-    token = _mockToken;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(ApiConfig.tokenKey, _mockToken);
-  }
+  }) => Backend.current.signUp(
+    username: username,
+    fullName: username,
+    email: email.trim(),
+    phone: phone,
+    password: password,
+  );
 }

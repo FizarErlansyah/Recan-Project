@@ -161,7 +161,7 @@ void main() {
               children: [
                 HomeHeroHeader(
                   user: const UserProfile(
-                    id: 1,
+                    id: 'user-1',
                     name: 'Budi Santoso',
                     email: 'budi@recan.id',
                     pointsBalance: 0,

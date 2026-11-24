@@ -28,7 +28,7 @@ void main() {
 
       expect(MockStore.profile.activeVouchers, 1);
       expect(MockStore.profile.points, 0);
-      final owned = VoucherService.owned();
+      final owned = await VoucherService.owned();
       expect(owned.single.voucher.id, voucher.id);
       expect(owned.single.reference, reference);
     },

@@ -37,8 +37,8 @@ class AktivitasPage extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   tr(
-                    'Riwayat setoran dan penukaran poin',
-                    'History of deposits and point redemptions',
+                    'Riwayat setoran, penukaran, dan hadiah poin',
+                    'History of deposits, redemptions and point rewards',
                   ),
                   style: textTheme.bodySmall,
                 ),

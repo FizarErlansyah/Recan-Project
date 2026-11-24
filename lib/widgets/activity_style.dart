@@ -10,16 +10,29 @@ import 'package:mobile_apps_recan/widgets/points_header.dart';
 extension ActivityStyle on ActivityTransaction {
   bool get isDeposit => type == ActivityType.deposit;
 
-  String get typeLabel => isDeposit
-      ? tr('Setoran Kaleng', 'Can Deposit')
-      : tr('Penukaran Produk', 'Product Redemption');
+  String get typeLabel => switch (type) {
+    ActivityType.deposit => tr('Setoran Kaleng', 'Can Deposit'),
+    ActivityType.redeem => tr('Penukaran Produk', 'Product Redemption'),
+    ActivityType.quest => tr('Hadiah Misi', 'Quest Reward'),
+    ActivityType.checkin => tr('Check-in Harian', 'Daily Check-in'),
+    ActivityType.bonus => tr('Bonus Edukasi', 'Education Bonus'),
+  };
 
-  AppIconBuilder get icon => isDeposit
-      ? hugeIcon(HugeIcons.strokeRoundedRecycle01)
-      : hugeIcon(HugeIcons.strokeRoundedShoppingBag01);
+  AppIconBuilder get icon => switch (type) {
+    ActivityType.deposit => hugeIcon(HugeIcons.strokeRoundedRecycle01),
+    ActivityType.redeem => hugeIcon(HugeIcons.strokeRoundedShoppingBag01),
+    ActivityType.quest => hugeIcon(HugeIcons.strokeRoundedAward01),
+    ActivityType.checkin => hugeIcon(HugeIcons.strokeRoundedCalendarCheckIn01),
+    ActivityType.bonus => hugeIcon(HugeIcons.strokeRoundedBookOpen01),
+  };
 
-  String get locationLabel =>
-      isDeposit ? 'Drop Station' : tr('Katalog ReCan', 'ReCan Catalog');
+  String get locationLabel => switch (type) {
+    ActivityType.deposit => 'Drop Station',
+    ActivityType.redeem => tr('Katalog ReCan', 'ReCan Catalog'),
+    ActivityType.quest ||
+    ActivityType.checkin => tr('Misi & Hadiah', 'Quests & Rewards'),
+    ActivityType.bonus => tr('Edukasi ReCan', 'ReCan Education'),
+  };
 
   String get statusLabel => tr('Berhasil', 'Success');
 
@@ -46,16 +59,16 @@ class ActivityIconBadge extends StatelessWidget {
       height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: transaction.isDeposit
+        color: transaction.isIncome
             ? context.palette.tint
             : context.palette.surfaceMuted,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: context.palette.border),
       ),
       child: transaction.icon(
-        // Deposits read as brand emerald; redemptions as neutral aluminium so
+        // Earnings read as brand colour; redemptions as neutral aluminium so
         // a spend never competes visually with an earn.
-        color: transaction.isDeposit
+        color: transaction.isIncome
             ? context.palette.accent
             : (context.isDark
                   ? context.palette.textSecondary

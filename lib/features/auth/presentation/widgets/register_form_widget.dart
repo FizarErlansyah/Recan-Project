@@ -20,6 +20,9 @@ class RegisterFormWidget extends StatelessWidget {
   });
 
   final GlobalKey<FormState> formKey;
+  static const int _minUsername = 3;
+  static const int _minPassword = 6;
+
   final TextEditingController usernameController;
   final TextEditingController emailController;
   final TextEditingController phoneController;
@@ -84,8 +87,13 @@ class RegisterFormWidget extends StatelessWidget {
   }
 
   static String? _validateUsername(String? value) {
-    if ((value?.trim() ?? '').isEmpty) {
-      return tr('Username wajib diisi', 'Username is required');
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return tr('Username wajib diisi', 'Username is required');
+    if (v.length < _minUsername) {
+      return tr(
+        'Username minimal $_minUsername karakter',
+        'Username must be at least $_minUsername characters',
+      );
     }
     return null;
   }
@@ -109,6 +117,12 @@ class RegisterFormWidget extends StatelessWidget {
   static String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return tr('Password wajib diisi', 'Password is required');
+    }
+    if (value.length < _minPassword) {
+      return tr(
+        'Password minimal $_minPassword karakter',
+        'Password must be at least $_minPassword characters',
+      );
     }
     return null;
   }

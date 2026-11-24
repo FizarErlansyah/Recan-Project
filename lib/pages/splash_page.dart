@@ -44,7 +44,7 @@ class _SplashPageState extends State<SplashPage>
 
   Future<void> _launch() async {
     final animation = _controller.forward();
-    final hasToken = await AuthService.loadToken();
+    final hasToken = await AuthService.restoreSession();
     final onboardingDone = await OnboardingService.isCompleted();
     await animation;
     if (!mounted) return;

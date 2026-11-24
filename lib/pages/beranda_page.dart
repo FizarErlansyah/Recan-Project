@@ -15,7 +15,6 @@ import 'package:mobile_apps_recan/services/dashboard_service.dart';
 import 'package:mobile_apps_recan/services/data_refresh.dart';
 import 'package:mobile_apps_recan/services/education_service.dart';
 import 'package:mobile_apps_recan/services/home_navigation.dart';
-import 'package:mobile_apps_recan/services/mock_store.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/async_view.dart';
 import 'package:mobile_apps_recan/widgets/carbon_analytics_section.dart';
@@ -85,7 +84,7 @@ class _Content extends StatelessWidget {
         children: [
           HomeHeroHeader(
             user: data.user,
-            cansDeposited: MockStore.userTotalCans,
+            cansDeposited: data.user.totalCans,
             onAskAi: () => AiChatPage.open(context),
             onScan: onScan,
             onOpenProfile: () => onSelectTab(HomeNavigation.profileTab),

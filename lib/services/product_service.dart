@@ -1,11 +1,8 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
-import 'package:mobile_apps_recan/services/mock_store.dart';
+import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 
 class ProductService {
   const new _();
 
-  static Future<List<UpcycleProduct>> fetch() =>
-      SynchronousFuture(List.unmodifiable(MockStore.products));
+  static Future<List<UpcycleProduct>> fetch() => Backend.current.products();
 }

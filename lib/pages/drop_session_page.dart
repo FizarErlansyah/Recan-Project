@@ -17,9 +17,10 @@ import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 class DropSessionPage extends StatefulWidget {
-  const new({required this.stationName, super.key});
+  const new({required this.stationName, required this.stationId, super.key});
 
   final String stationName;
+  final int stationId;
 
   @override
   State<DropSessionPage> createState() => _DropSessionPageState();
@@ -27,9 +28,15 @@ class DropSessionPage extends StatefulWidget {
 
 class _DropSessionPageState extends State<DropSessionPage> {
   int _cans = 0;
+  bool _collective = false;
   bool _isSubmitting = false;
 
   DropSessionSummary get _summary => DropSessionSummary(cans: _cans);
+
+  void _addPreset(int amount) {
+    if (amount >= CanPresetChips.collectiveAmount) _collective = true;
+    _addCans(amount);
+  }
 
   void _addCans(int amount) {
     if (_isSubmitting) return;
@@ -61,7 +68,11 @@ class _DropSessionPageState extends State<DropSessionPage> {
     });
 
     try {
-      await TransactionService.submitDrop(_cans);
+      await TransactionService.submitDrop(
+        _cans,
+        stationId: widget.stationId,
+        collective: _collective,
+      );
     } on ApiException catch (error) {
       if (!mounted) return;
       setState(() {
@@ -158,7 +169,7 @@ class _DropSessionPageState extends State<DropSessionPage> {
                           DropEstimateCard(summary: _summary),
                           const SizedBox(height: 16),
                           CanPresetChips(
-                            onPreset: _addCans,
+                            onPreset: _addPreset,
                             enabled: !_isSubmitting,
                           ),
                         ],

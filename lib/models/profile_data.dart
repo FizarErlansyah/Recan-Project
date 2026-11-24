@@ -14,7 +14,21 @@ class ProfileData {
     this.avatar = AvatarRef.none,
   });
 
-  final int id;
+  /// Reads a `profiles` row. The caller adds `email` (auth) and
+  /// `active_vouchers` (a count over `owned_vouchers`).
+  factory fromJson(Map<String, dynamic> json) => ProfileData(
+    id: json['id'] as String,
+    name: json['full_name'] as String,
+    email: json['email'] as String? ?? '',
+    points: (json['points'] as num).toInt(),
+    tier: json['tier'] as String,
+    phone: json['phone'] as String? ?? '',
+    gopayConnected: json['gopay_connected'] as bool? ?? false,
+    activeVouchers: (json['active_vouchers'] as num?)?.toInt() ?? 0,
+    avatar: AvatarRef(url: json['avatar_url'] as String?),
+  );
+
+  final String id;
   final String name;
   final String email;
   final int points;
@@ -35,11 +49,12 @@ class LeaderboardEntry {
     required this.isCurrentUser,
   });
 
+  /// Reads a row of the `public_leaderboard` view.
   factory fromJson(Map<String, dynamic> json) => LeaderboardEntry(
-    rank: json['rank'] as int,
-    name: json['name'] as String,
+    rank: (json['rank'] as num).toInt(),
+    name: json['full_name'] as String,
     totalKg: (json['total_kg'] as num).toDouble(),
-    isCurrentUser: json['is_current_user'] as bool,
+    isCurrentUser: json['is_current_user'] as bool? ?? false,
   );
 
   final int rank;

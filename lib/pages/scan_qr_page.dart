@@ -4,8 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/models/map_station.dart';
 import 'package:mobile_apps_recan/pages/drop_session_page.dart';
+import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/camera_permission_service.dart';
+import 'package:mobile_apps_recan/services/station_service.dart';
+import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/frosted_glass.dart';
@@ -21,9 +25,6 @@ class ScanQrPage extends StatefulWidget {
 }
 
 class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
-  static String get _dummyStationName =>
-      tr('Drop Station Terdekat', 'Nearest Drop Station');
-
   final MobileScannerController _scanner = MobileScannerController(
     formats: const [BarcodeFormat.qrCode],
   );
@@ -54,16 +55,42 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
 
   Future<void> _onDetect(BarcodeCapture capture) async {
     if (_handled) return;
-    final hasValue = capture.barcodes.any((b) => b.rawValue != null);
-    if (!hasValue) return;
+    final code = capture.barcodes
+        .map((barcode) => barcode.rawValue)
+        .nonNulls
+        .firstOrNull;
+    if (code == null) return;
     _handled = true;
     await _scanner.stop();
+    final MapStation? station;
+    try {
+      station = await StationService.findByQr(code);
+    } on ApiException catch (error) {
+      await _rejectScan(error.message);
+      return;
+    }
+    if (station == null) {
+      await _rejectScan(
+        tr(
+          'Kode QR ini bukan milik Drop Station ReCan.',
+          'This QR code does not belong to a ReCan Drop Station.',
+        ),
+      );
+      return;
+    }
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
+    await Navigator.of(context).pushReplacement(
       FadePageRoute<void>(
-        page: DropSessionPage(stationName: _dummyStationName),
+        page: DropSessionPage(stationName: station.name, stationId: station.id),
       ),
     );
+  }
+
+  Future<void> _rejectScan(String message) async {
+    if (!mounted) return;
+    AppSnackBar.show(context, message);
+    _handled = false;
+    await _scanner.start();
   }
 
   @override

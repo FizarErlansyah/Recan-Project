@@ -115,7 +115,10 @@ class _StationMap extends StatelessWidget {
                       Navigator.of(context).pop();
                       Navigator.of(context).push(
                         FadePageRoute<void>(
-                          page: DropSessionPage(stationName: station.name),
+                          page: DropSessionPage(
+                            stationName: station.name,
+                            stationId: station.id,
+                          ),
                         ),
                       );
                     },

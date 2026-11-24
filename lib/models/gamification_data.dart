@@ -47,12 +47,15 @@ class DailyQuest {
        _unit = unit,
        _unitEn = unitEn ?? unit;
 
+  /// Reads a row of the `my_quest_status` view.
   factory fromJson(Map<String, dynamic> json) => DailyQuest(
     id: json['id'] as int,
     title: json['title'] as String,
+    titleEn: json['title_en'] as String?,
     progress: (json['progress'] as num).toInt(),
     target: (json['target'] as num).toInt(),
     unit: json['unit'] as String? ?? 'Kaleng',
+    unitEn: json['unit_en'] as String?,
     period: QuestPeriod.parse(json['period'] as String?),
     metric: QuestMetric.parse(json['metric'] as String?),
     rewardPoints: (json['reward_points'] as num).toInt(),

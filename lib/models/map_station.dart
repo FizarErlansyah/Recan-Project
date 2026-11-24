@@ -12,14 +12,16 @@ class MapStation {
   }) : _name = name,
        _nameEn = nameEn ?? name;
 
+  /// Reads a row of the `stations_with_distance` function.
   factory fromJson(Map<String, dynamic> json) => MapStation(
     id: json['id'] as int,
     name: json['name'] as String,
+    nameEn: json['name_en'] as String?,
     position: LatLng(
-      _number(json['latitude'] ?? json['lat']),
-      _number(json['longitude'] ?? json['lng'] ?? json['lon']),
+      (json['lat'] as num).toDouble(),
+      (json['lng'] as num).toDouble(),
     ),
-    capacityPercent: _number(json['capacity_percent']).round(),
+    capacityPercent: (json['capacity_percentage'] as num).round(),
   );
 
   static const int fullThreshold = 80;
@@ -33,9 +35,4 @@ class MapStation {
   String get name => tr(_name, _nameEn);
 
   bool get isAlmostFull => capacityPercent >= fullThreshold;
-
-  static double _number(Object? value) {
-    if (value is num) return value.toDouble();
-    return double.parse('$value');
-  }
 }

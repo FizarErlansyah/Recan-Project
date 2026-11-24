@@ -1,42 +1,21 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:mobile_apps_recan/models/gamification_data.dart';
-import 'package:mobile_apps_recan/services/api_client.dart';
+import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 import 'package:mobile_apps_recan/services/data_refresh.dart';
-import 'package:mobile_apps_recan/services/mock_store.dart';
-import 'package:mobile_apps_recan/utils/localization.dart';
 
 class GamificationService {
   const new _();
 
-  static GamificationData get current => MockStore.gamification;
+  static GamificationData? get current => Backend.current.cachedGamification;
 
-  static Future<GamificationData> fetch() => SynchronousFuture(current);
+  static Future<GamificationData> fetch() => Backend.current.gamification();
 
-  static Future<void> claimCheckIn() {
-    if (!MockStore.claimCheckIn()) {
-      return Future.error(
-        ApiException(
-          tr(
-            'Hadiah hari ini sudah diklaim.',
-            'Your reward for today is already claimed.',
-          ),
-        ),
-      );
-    }
+  static Future<void> claimCheckIn() async {
+    await Backend.current.claimCheckIn();
     DataRefresh.notifyChanged();
-    return SynchronousFuture(null);
   }
 
-  static Future<void> claim(int questId) {
-    if (!MockStore.claimQuest(questId)) {
-      return Future.error(
-        ApiException(
-          tr('Misi belum bisa diklaim.', 'Mission cannot be claimed yet.'),
-        ),
-      );
-    }
+  static Future<void> claim(int questId) async {
+    await Backend.current.claimQuest(questId);
     DataRefresh.notifyChanged();
-    return SynchronousFuture(null);
   }
 }

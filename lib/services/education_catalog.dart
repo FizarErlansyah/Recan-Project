@@ -1,4 +1,5 @@
 import 'package:mobile_apps_recan/models/education_article.dart';
+import 'package:mobile_apps_recan/services/mock_stations.dart';
 
 class EducationCatalog {
   const new _();
@@ -23,18 +24,18 @@ class EducationCatalog {
       ],
       insightId: 'Satu kaleng yang disetor di ReCan mendapat 25 poin, dan semuanya tercatat otomatis di tab Aktivitas.',
       insightEn: 'Every can dropped at ReCan earns 25 points, all recorded automatically in the Activity tab.',
-      stats: const [
-        ArticleStat(
+      stats: [
+        const ArticleStat(
           value: '25',
           labelId: 'Poin per kaleng',
           labelEn: 'Points per can',
         ),
         ArticleStat(
-          value: '3',
+          value: '${MockStations.mapStations.length}',
           labelId: 'Titik Drop Station',
           labelEn: 'Drop Station points',
         ),
-        ArticleStat(
+        const ArticleStat(
           value: '3',
           labelId: 'Tier member',
           labelEn: 'Member tiers',

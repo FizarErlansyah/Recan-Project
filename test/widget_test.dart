@@ -20,7 +20,6 @@ void main() {
     await tester.tap(find.text('Masuk'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Username'), findsOneWidget);
     expect(find.text('Email'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
     expect(find.text('Masuk'), findsOneWidget);

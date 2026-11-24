@@ -1,15 +1,17 @@
-import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:mobile_apps_recan/models/map_station.dart';
-import 'package:mobile_apps_recan/services/mock_stations.dart';
+import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 
 class StationService {
   const new _();
 
-  static const LatLng userPosition = MockStations.userPosition;
+  // Stand-in for the device position until live location is wired in; it sits
+  // in Pondok Aren so the Bintaro points read as nearest.
+  static const LatLng userPosition = LatLng(-6.2880, 106.7290);
 
-  static List<MapStation> get stations => MockStations.mapStations;
+  static Future<List<MapStation>> fetchAll() => Backend.current.stations();
 
-  static Future<List<MapStation>> fetchAll() => SynchronousFuture(stations);
+  static Future<MapStation?> findByQr(String code) =>
+      Backend.current.stationByQr(code);
 }

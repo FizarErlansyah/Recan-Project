@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
-import 'package:mobile_apps_recan/services/mock_store.dart';
+import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 
 class AnalyticsService {
   const new _();
 
   static Future<CarbonImpact> fetchCarbonImpact(CarbonRange range) =>
-      SynchronousFuture(MockStore.carbonImpact(range));
+      Backend.current.carbonImpact(range);
 }

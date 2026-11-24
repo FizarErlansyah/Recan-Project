@@ -43,6 +43,95 @@ enum CarbonRange {
 class CarbonPoint {
   const new({required this.labelId, required this.labelEn, required this.cans});
 
+  /// One bar of the 7-day chart; [weekday] follows DateTime (1 = Monday).
+  factory weekday({required int weekday, required int cans}) => CarbonPoint(
+    labelId: _weekdaysId[weekday - 1],
+    labelEn: _weekdaysEn[weekday - 1],
+    cans: cans,
+  );
+
+  /// One bar of the monthly chart; [week] counts from 1.
+  factory weekOfMonth({required int week, required int cans}) =>
+      CarbonPoint(labelId: 'Mg $week', labelEn: 'W$week', cans: cans);
+
+  /// One bar of the since-2025 chart.
+  factory month({required int year, required int month, required int cans}) {
+    final yy = year % 100;
+    return CarbonPoint(
+      labelId: '${_monthsId[month - 1]} $yy',
+      labelEn: '${_monthsEn[month - 1]} $yy',
+      cans: cans,
+    );
+  }
+
+  /// Reads a row of the `community_carbon_summary` view.
+  factory fromSummaryRow(CarbonRange range, Map<String, dynamic> json) {
+    final cans = (json['cans'] as num).toInt();
+    final start = DateTime.parse(json['bucket_start'] as String);
+    return switch (range) {
+      CarbonRange.week => CarbonPoint.weekday(
+        weekday: start.weekday,
+        cans: cans,
+      ),
+      CarbonRange.month => CarbonPoint.weekOfMonth(
+        week: (json['bucket_index'] as num).toInt(),
+        cans: cans,
+      ),
+      CarbonRange.sinceJan2025 => CarbonPoint.month(
+        year: start.year,
+        month: start.month,
+        cans: cans,
+      ),
+    };
+  }
+
+  static const List<String> _weekdaysId = [
+    'Sen',
+    'Sel',
+    'Rab',
+    'Kam',
+    'Jum',
+    'Sab',
+    'Min',
+  ];
+  static const List<String> _weekdaysEn = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun',
+  ];
+  static const List<String> _monthsId = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'Mei',
+    'Jun',
+    'Jul',
+    'Agu',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Des',
+  ];
+  static const List<String> _monthsEn = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
   final String labelId;
   final String labelEn;
   final int cans;
@@ -54,6 +143,14 @@ class CarbonPoint {
 
 class CarbonImpact {
   const new({required this.range, required this.points});
+
+  factory fromSummary(CarbonRange range, List<Map<String, dynamic>> rows) =>
+      CarbonImpact(
+        range: range,
+        points: [
+          for (final row in rows) CarbonPoint.fromSummaryRow(range, row),
+        ],
+      );
 
   final CarbonRange range;
   final List<CarbonPoint> points;

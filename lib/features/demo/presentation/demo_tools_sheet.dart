@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 import 'package:mobile_apps_recan/services/data_refresh.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
@@ -11,10 +13,17 @@ import 'package:mobile_apps_recan/widgets/points_header.dart';
 /// Presenter shortcut: lets a demo reach the redeem flow without depositing
 /// cans first. It is reachable only by long-pressing the version chip on the
 /// About page, so the first-run Zero State stays untouched on screen.
+///
+/// It edits the in-memory demo data, so it works only in debug builds
+/// (`kDebugMode`) on the mock backend. A release build, or any build on real
+/// data, must never be able to hand out fake points.
 class DemoToolsSheet {
   const new _();
 
+  static bool get isAvailable => kDebugMode && !Backend.current.isRemote;
+
   static Future<void> show(BuildContext context) {
+    if (!isAvailable) return Future<void>.value();
     final messenger = ScaffoldMessenger.of(context);
     return showModalBottomSheet<void>(
       context: context,

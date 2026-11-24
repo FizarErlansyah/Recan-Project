@@ -2,44 +2,41 @@ import 'package:latlong2/latlong.dart';
 
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
+import 'package:mobile_apps_recan/services/station_service.dart';
 
 /// Single seed for every drop station, so the Beranda list, the map pins and
 /// the distances can never disagree. Coordinates come from OpenStreetMap.
 class MockStations {
   const new _();
 
-  // Stand-in for the device position until live location is wired in; it sits
-  // in Pondok Aren so the Bintaro points read as nearest.
-  static const LatLng userPosition = LatLng(-6.2880, 106.7290);
-
   static const Distance _distance = Distance();
 
   static const List<_Seed> _seeds = [
     _Seed(
       id: 201,
-      name: 'Drop Station Gedung Utama UPJ',
-      nameEn: 'UPJ Main Building Drop Station',
-      location: 'Lobi Gedung Utama',
-      locationEn: 'Main Building Lobby',
-      position: LatLng(-6.29236, 106.72557),
+      name: 'Drop Station Pasar Modern Bintaro',
+      nameEn: 'Drop Station at Pasar Modern Bintaro',
+      location: 'Pasar Modern Bintaro Sektor 7',
+      locationEn: 'Pasar Modern Bintaro Sector 7',
+      position: LatLng(-6.27960, 106.71938),
       capacityPercent: 35,
     ),
     _Seed(
       id: 202,
-      name: 'Drop Station Kantin UPJ',
-      nameEn: 'UPJ Canteen Drop Station',
-      location: 'Area Kantin',
-      locationEn: 'Canteen Area',
-      position: LatLng(-6.29200, 106.72605),
+      name: 'Drop Station Stasiun Pondok Ranji',
+      nameEn: 'Drop Station at Pondok Ranji Station',
+      location: 'Stasiun KRL Pondok Ranji',
+      locationEn: 'Pondok Ranji KRL Station',
+      position: LatLng(-6.27668, 106.74469),
       capacityPercent: 85,
     ),
     _Seed(
       id: 203,
-      name: 'Drop Station Perpustakaan UPJ',
-      nameEn: 'UPJ Library Drop Station',
-      location: 'Teras Perpustakaan',
-      locationEn: 'Library Terrace',
-      position: LatLng(-6.29285, 106.72510),
+      name: 'Drop Station Bintaro Plaza',
+      nameEn: 'Drop Station at Bintaro Plaza',
+      location: 'Bintaro Plaza Sektor 3A',
+      locationEn: 'Bintaro Plaza Sector 3A',
+      position: LatLng(-6.27268, 106.74187),
       capacityPercent: 60,
     ),
     _Seed(
@@ -111,7 +108,7 @@ class MockStations {
         capacityPercentage: seed.capacityPercent,
         status: 'available',
         distanceMeters: _distance
-            .as(LengthUnit.Meter, userPosition, seed.position)
+            .as(LengthUnit.Meter, StationService.userPosition, seed.position)
             .round(),
       ),
   ];

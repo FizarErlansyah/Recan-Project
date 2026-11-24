@@ -153,6 +153,7 @@ class _EditProfilPageState extends State<EditProfilPage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailController,
+                  enabled: ProfileService.canEditEmail,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(

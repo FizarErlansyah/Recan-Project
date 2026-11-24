@@ -45,15 +45,16 @@ class AiChatService {
       question: tr('Lokasi Drop Station', 'Drop Station locations'),
       answer: tr(
         'Drop Station ada di area publik Tangerang Selatan, seperti Stasiun '
-            'Jurang Mangu, Bintaro Jaya Xchange, AEON Mall BSD, Taman Kota 1 '
-            'BSD, Stasiun Rawa Buntu, dan kampus UPJ. Buka peta dari tombol '
-            'Lihat Semua di bagian Drop Station beranda untuk melihat jarak '
-            'dan kapasitas tiap station.',
+            'Jurang Mangu, Pasar Modern Bintaro, Bintaro Jaya Xchange, AEON '
+            'Mall BSD, Taman Kota 1 BSD, dan Stasiun Rawa Buntu. Buka peta '
+            'dari tombol Lihat Semua di bagian Drop Station beranda untuk '
+            'melihat jarak dan kapasitas tiap station.',
         'Drop Stations are in public areas around South Tangerang, such as '
-            'Jurang Mangu Station, Bintaro Jaya Xchange, AEON Mall BSD, Taman '
-            'Kota 1 BSD, Rawa Buntu Station, and the UPJ campus. Open the map '
-            'from the See All button in the Drop Station section on the home '
-            'page to see the distance and capacity of each station.',
+            'Jurang Mangu Station, Pasar Modern Bintaro, Bintaro Jaya '
+            'Xchange, AEON Mall BSD, Taman Kota 1 BSD, and Rawa Buntu '
+            'Station. Open the map from the See All button in the Drop '
+            'Station section on the home page to see the distance and '
+            'capacity of each station.',
       ),
       keywords: [
         'lokasi',
