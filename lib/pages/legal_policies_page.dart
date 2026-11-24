@@ -189,9 +189,9 @@ class LegalPoliciesPage extends StatelessWidget {
               'tier, and carbon impact calculations.',
         ),
         tr(
-          'Statistik dampak lingkungan kampus ditampilkan secara agregat '
+          'Statistik dampak lingkungan komunitas ditampilkan secara agregat '
               'tanpa membuka identitas pribadi.',
-          'Campus environmental impact statistics are shown in aggregate '
+          'Community environmental impact statistics are shown in aggregate '
               'without revealing personal identity.',
         ),
         tr(

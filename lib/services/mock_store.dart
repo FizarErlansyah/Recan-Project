@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
+import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
@@ -12,6 +13,7 @@ import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/models/voucher.dart';
+import 'package:mobile_apps_recan/services/mock_stations.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class MockStore {
@@ -33,7 +35,9 @@ class MockStore {
   static final Set<int> _claimedCheckInDays = {
     for (var i = 0; i < DateTime.now().weekday - 1; i++) i,
   };
-  static String userEmail = 'mahasiswa@upj.ac.id';
+  static String userEmail = 'guest@recan.id';
+  static String? avatarPath;
+  static String? avatarUrl;
   static int points = initialPoints;
   static int streakDays = 5;
   static double depositedKg = 0;
@@ -234,10 +238,10 @@ class MockStore {
       nameEn: 'Tin Can Desk Lamp',
       description:
           'Lampu meja hangat dengan rangka kaleng daur ulang, cocok untuk '
-          'kamar kos dan ruang belajar.',
+          'kamar tidur dan sudut kerja.',
       descriptionEn:
-          'A warm desk lamp with a recycled can frame, great for dorm rooms '
-          'and study corners.',
+          'A warm desk lamp with a recycled can frame, great for bedrooms '
+          'and work corners.',
       pricePoints: 14000,
       priceIdr: 140000,
       stock: 6,
@@ -248,20 +252,20 @@ class MockStore {
   static final List<Voucher> vouchers = [
     const Voucher(
       id: 1,
-      titleId: 'Diskon Kantin 20%',
-      titleEn: 'Canteen Discount 20%',
-      descriptionId: 'Berlaku untuk semua menu di Kantin UPJ.',
-      descriptionEn: 'Valid for every menu at the UPJ Canteen.',
+      titleId: 'Diskon Kuliner 20%',
+      titleEn: 'Food Discount 20%',
+      descriptionId: 'Berlaku di gerai makanan dan minuman mitra ReCan.',
+      descriptionEn: 'Valid at ReCan partner food and beverage outlets.',
       pointsCost: 500,
       icon: AppIcons.meal,
       colors: [AppColors.gold, AppColors.goldDeep],
     ),
     const Voucher(
       id: 2,
-      titleId: 'Gratis Parkir UPJ',
-      titleEn: 'Free UPJ Parking',
-      descriptionId: 'Gratis parkir motor satu hari di area kampus.',
-      descriptionEn: 'One day of free motorbike parking on campus.',
+      titleId: 'Gratis Parkir',
+      titleEn: 'Free Parking',
+      descriptionId: 'Gratis parkir motor satu hari di lokasi mitra.',
+      descriptionEn: 'One day of free motorbike parking at partner locations.',
       pointsCost: 800,
       icon: AppIcons.parking,
       colors: [AppColors.primary, AppColors.primaryDark],
@@ -270,46 +274,15 @@ class MockStore {
       id: 3,
       titleId: 'Diskon Fotokopi 30%',
       titleEn: 'Photocopy Discount 30%',
-      descriptionId: 'Potongan biaya fotokopi dan cetak di koperasi kampus.',
-      descriptionEn: 'Discount on copying and printing at the campus co-op.',
+      descriptionId: 'Potongan biaya fotokopi dan cetak di gerai mitra.',
+      descriptionEn: 'Discount on copying and printing at partner shops.',
       pointsCost: 300,
       icon: AppIcons.print,
       colors: [AppColors.primaryDark, AppColors.primaryLight],
     ),
   ];
 
-  static final List<DropStation> dropStations = [
-    const DropStation(
-      id: 201,
-      name: 'Drop Station Gedung Utama UPJ',
-      nameEn: 'UPJ Main Building Drop Station',
-      location: 'Lobi Gedung Utama',
-      locationEn: 'Main Building Lobby',
-      capacityPercentage: 35,
-      status: 'available',
-      distanceMeters: 120,
-    ),
-    const DropStation(
-      id: 202,
-      name: 'Drop Station Kantin UPJ',
-      nameEn: 'UPJ Canteen Drop Station',
-      location: 'Area Kantin Kampus',
-      locationEn: 'Campus Canteen Area',
-      capacityPercentage: 85,
-      status: 'available',
-      distanceMeters: 340,
-    ),
-    const DropStation(
-      id: 203,
-      name: 'Drop Station Perpustakaan UPJ',
-      nameEn: 'UPJ Library Drop Station',
-      location: 'Teras Perpustakaan',
-      locationEn: 'Library Terrace',
-      capacityPercentage: 60,
-      status: 'available',
-      distanceMeters: 510,
-    ),
-  ];
+  static final List<DropStation> dropStations = MockStations.dropStations;
 
   static const List<(String, double)> _rivals = [
     ('Aditya Pratama', 18.4),
@@ -317,6 +290,8 @@ class MockStore {
     ('Bagas Nugroho', 11.8),
     ('Nadia Rahmawati', 9.3),
   ];
+
+  static AvatarRef get avatar => AvatarRef(path: avatarPath, url: avatarUrl);
 
   static ProfileData get profile => ProfileData(
     id: _userId,
@@ -327,6 +302,7 @@ class MockStore {
     phone: userPhone,
     gopayConnected: gopayConnected,
     activeVouchers: ownedVouchers.length,
+    avatar: avatar,
   );
 
   static DashboardData get dashboard => DashboardData(
@@ -335,6 +311,7 @@ class MockStore {
       name: currentUsername,
       email: userEmail,
       pointsBalance: points,
+      avatar: avatar,
     ),
     dropStations: List.unmodifiable(dropStations),
     products: List.unmodifiable(products),
@@ -416,7 +393,7 @@ class MockStore {
     'Dec',
   ];
 
-  static int _campusMonthCans(int monthIndex) =>
+  static int _communityMonthCans(int monthIndex) =>
       900 + 60 * monthIndex + (monthIndex % 3) * 70;
 
   static int get _currentMonthIndex {
@@ -435,7 +412,7 @@ class MockStore {
 
   static List<CarbonPoint> _weekPoints() {
     final today = DateTime.now().weekday - 1;
-    final dailyBase = _campusMonthCans(_currentMonthIndex) / 30;
+    final dailyBase = _communityMonthCans(_currentMonthIndex) / 30;
     return [
       for (var i = 6; i >= 0; i--)
         CarbonPoint(
@@ -449,7 +426,7 @@ class MockStore {
   }
 
   static List<CarbonPoint> _monthPoints() {
-    final monthBase = _campusMonthCans(_currentMonthIndex);
+    final monthBase = _communityMonthCans(_currentMonthIndex);
     return [
       for (var i = 0; i < _weekShares.length; i++)
         CarbonPoint(
@@ -469,7 +446,7 @@ class MockStore {
         CarbonPoint(
           labelId: '${_monthsId[i % 12]} ${(_carbonStartYear + i ~/ 12) % 100}',
           labelEn: '${_monthsEn[i % 12]} ${(_carbonStartYear + i ~/ 12) % 100}',
-          cans: _campusMonthCans(i) + (i == last ? userTotalCans : 0),
+          cans: _communityMonthCans(i) + (i == last ? userTotalCans : 0),
         ),
     ];
   }

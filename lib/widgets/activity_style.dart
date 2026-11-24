@@ -18,9 +18,8 @@ extension ActivityStyle on ActivityTransaction {
       ? hugeIcon(HugeIcons.strokeRoundedRecycle01)
       : hugeIcon(HugeIcons.strokeRoundedShoppingBag01);
 
-  String get locationLabel => isDeposit
-      ? tr('Drop Station UPJ', 'UPJ Drop Station')
-      : tr('Katalog ReCan', 'ReCan Catalog');
+  String get locationLabel =>
+      isDeposit ? 'Drop Station' : tr('Katalog ReCan', 'ReCan Catalog');
 
   String get statusLabel => tr('Berhasil', 'Success');
 

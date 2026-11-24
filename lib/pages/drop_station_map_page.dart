@@ -65,23 +65,38 @@ class _StationMap extends StatelessWidget {
 
   final List<MapStation> stations;
 
-  static const double _zoom = 16;
+  static const double _fitPadding = 56;
+  static const double _maxFitZoom = 16;
   static const String _tileUrl =
       'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
   static const String _userAgentPackage = 'com.example.mobile_apps_recan';
 
   @override
   Widget build(BuildContext context) {
+    return DecoratedBox(
+      // The tiles stay light in dark mode, so a hairline under the app bar
+      // keeps the dark chrome and the bright map from meeting abruptly.
+      position: DecorationPosition.foreground,
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: context.palette.border)),
+      ),
+      child: _buildMap(context),
+    );
+  }
+
+  Widget _buildMap(BuildContext context) {
     return FlutterMap(
-      options: const MapOptions(
-        initialCenter: StationService.campusCenter,
-        initialZoom: _zoom,
+      options: MapOptions(
+        initialCameraFit: CameraFit.coordinates(
+          coordinates: [for (final station in stations) station.position],
+          padding: const EdgeInsets.all(_fitPadding),
+          maxZoom: _maxFitZoom,
+        ),
       ),
       children: [
         TileLayer(
           urlTemplate: _tileUrl,
           userAgentPackageName: _userAgentPackage,
-          tileBuilder: context.isDark ? darkModeTileBuilder : null,
         ),
         MarkerLayer(
           markers: [

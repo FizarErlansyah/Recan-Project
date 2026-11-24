@@ -14,16 +14,16 @@ enum CarbonRange {
 
   String get subtitle => switch (this) {
     week => tr(
-      'Karbon yang dihemat kampus 7 hari terakhir',
-      'Carbon saved by the campus in the last 7 days',
+      'Karbon yang dihemat komunitas 7 hari terakhir',
+      'Carbon saved by the community in the last 7 days',
     ),
     month => tr(
-      'Karbon yang dihemat kampus bulan ini per minggu',
-      'Carbon saved by the campus this month, week by week',
+      'Karbon yang dihemat komunitas bulan ini per minggu',
+      'Carbon saved by the community this month, week by week',
     ),
     sinceJan2025 => tr(
-      'Akumulasi karbon yang dihemat kampus sejak 1 Jan 2025',
-      'Cumulative carbon saved by the campus since Jan 1, 2025',
+      'Akumulasi karbon yang dihemat komunitas sejak 1 Jan 2025',
+      'Cumulative carbon saved by the community since Jan 1, 2025',
     ),
   };
 

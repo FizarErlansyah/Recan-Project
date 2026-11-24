@@ -1,3 +1,6 @@
+import 'package:mobile_apps_recan/models/avatar_ref.dart';
+import 'package:mobile_apps_recan/utils/initials.dart';
+
 class ProfileData {
   const new({
     required this.id,
@@ -8,6 +11,7 @@ class ProfileData {
     required this.phone,
     required this.gopayConnected,
     required this.activeVouchers,
+    this.avatar = AvatarRef.none,
   });
 
   final int id;
@@ -18,12 +22,9 @@ class ProfileData {
   final String phone;
   final bool gopayConnected;
   final int activeVouchers;
+  final AvatarRef avatar;
 
-  String get initials {
-    final words = name.trim().split(RegExp(r'\s+'));
-    final letters = words.take(2).map((word) => word[0].toUpperCase());
-    return letters.join();
-  }
+  String get initials => initialsOf(name);
 }
 
 class LeaderboardEntry {

@@ -62,7 +62,7 @@ class _CarbonAnalyticsSectionState extends State<CarbonAnalyticsSection> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            tr('Dampak Karbon Kampus', 'Campus Carbon Impact'),
+            tr('Dampak Karbon Komunitas', 'Community Carbon Impact'),
             style: textTheme.titleLarge,
           ),
           const SizedBox(height: 4),

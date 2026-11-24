@@ -20,6 +20,8 @@ abstract final class AppIcons {
   static const IconGlyph share = HugeIcons.strokeRoundedShare01;
   static const IconGlyph bookmark = HugeIcons.strokeRoundedBookmark01;
   static const IconGlyph camera = HugeIcons.strokeRoundedCamera01;
+  static const IconGlyph gallery = HugeIcons.strokeRoundedImage01;
+  static const IconGlyph delete = HugeIcons.strokeRoundedDelete02;
   static const IconGlyph apps = HugeIcons.strokeRoundedDashboardSquare01;
 
   // Account and forms

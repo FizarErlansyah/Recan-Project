@@ -53,10 +53,7 @@ class CarbonMetricCards extends StatelessWidget {
                   value: impact.targetPercent.toDouble(),
                   format: (value) => '${value.round()}%',
                   memoryKey: 'carbon.target',
-                  label: tr(
-                    'Target Kampus Hijau UPJ',
-                    'UPJ Green Campus Target',
-                  ),
+                  label: tr('Target Komunitas', 'Community Goal'),
                   progress: impact.targetPercent / 100,
                 ),
               ),

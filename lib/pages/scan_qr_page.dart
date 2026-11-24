@@ -22,7 +22,7 @@ class ScanQrPage extends StatefulWidget {
 
 class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
   static String get _dummyStationName =>
-      tr('Drop Station Kampus Utama', 'Main Campus Drop Station');
+      tr('Drop Station Terdekat', 'Nearest Drop Station');
 
   final MobileScannerController _scanner = MobileScannerController(
     formats: const [BarcodeFormat.qrCode],

@@ -1,3 +1,5 @@
+import 'package:mobile_apps_recan/models/avatar_ref.dart';
+import 'package:mobile_apps_recan/utils/initials.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class UserProfile {
@@ -6,6 +8,7 @@ class UserProfile {
     required this.name,
     required this.email,
     required this.pointsBalance,
+    this.avatar = AvatarRef.none,
   });
 
   factory fromJson(Map<String, dynamic> json) => UserProfile(
@@ -13,12 +16,16 @@ class UserProfile {
     name: json['name'] as String,
     email: json['email'] as String,
     pointsBalance: json['points_balance'] as int,
+    avatar: AvatarRef(url: json['avatar_url'] as String?),
   );
 
   final int id;
   final String name;
   final String email;
   final int pointsBalance;
+  final AvatarRef avatar;
+
+  String get initials => initialsOf(name);
 }
 
 class DropStation {

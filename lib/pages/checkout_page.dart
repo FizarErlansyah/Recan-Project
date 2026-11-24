@@ -225,13 +225,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
               const SizedBox(height: 12),
               ReCanTextField(
                 controller: _addressController,
-                label: tr(
-                  'Alamat Pengiriman Kampus / Rumah',
-                  'Campus / Home Shipping Address',
-                ),
+                label: tr('Alamat Pengiriman', 'Shipping Address'),
                 hint: tr(
-                  'Contoh: Gedung A Lt. 2, UPJ Bintaro',
-                  'Example: Building A, 2nd Floor, UPJ Bintaro',
+                  'Contoh: Jl. Cendrawasih No. 12, Tangerang Selatan',
+                  'Example: 12 Cendrawasih St., South Tangerang',
                 ),
                 icon: AppIcons.location,
                 maxLines: 3,

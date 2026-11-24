@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>ReCan memakai kamera untuk memindai kode QR di Drop Station dan mengambil foto profil.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>ReCan membutuhkan akses galeri untuk memilih foto profil.</string>
 </dict>
 </plist>

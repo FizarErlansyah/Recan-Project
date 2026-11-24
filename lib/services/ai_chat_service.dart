@@ -11,10 +11,10 @@ class AiChatService {
       category: ChatCategory.general,
       question: tr('Apa itu ReCan?', 'What is ReCan?'),
       answer: tr(
-        'ReCan adalah aplikasi daur ulang kaleng untuk civitas kampus. Setor '
+        'ReCan adalah aplikasi daur ulang kaleng untuk semua orang. Setor '
             'kaleng di Drop Station, kumpulkan poin, lalu tukarkan dengan '
             'produk kriya atau saldo e-wallet.',
-        'ReCan is a can recycling app for the campus community. Drop cans at '
+        'ReCan is a can recycling app for everyone. Drop cans at '
             'a Drop Station, collect points, then redeem them for crafts or '
             'e-wallet balance.',
       ),
@@ -42,15 +42,18 @@ class AiChatService {
     ),
     ChatTopic(
       category: ChatCategory.drop,
-      question: tr('Lokasi Drop Station UPJ', 'UPJ Drop Station locations'),
+      question: tr('Lokasi Drop Station', 'Drop Station locations'),
       answer: tr(
-        'Drop Station ada di Gedung Utama, Kantin, dan Perpustakaan UPJ. '
-            'Buka peta dari tombol Lihat Semua di bagian Drop Station '
-            'beranda untuk melihat jarak dan kapasitas tiap station.',
-        'Drop Stations are at the UPJ Main Building, Canteen, and Library. '
-            'Open the map from the See All button in the Drop Station section '
-            'on the home page to see the distance and capacity of each '
-            'station.',
+        'Drop Station ada di area publik Tangerang Selatan, seperti Stasiun '
+            'Jurang Mangu, Bintaro Jaya Xchange, AEON Mall BSD, Taman Kota 1 '
+            'BSD, Stasiun Rawa Buntu, dan kampus UPJ. Buka peta dari tombol '
+            'Lihat Semua di bagian Drop Station beranda untuk melihat jarak '
+            'dan kapasitas tiap station.',
+        'Drop Stations are in public areas around South Tangerang, such as '
+            'Jurang Mangu Station, Bintaro Jaya Xchange, AEON Mall BSD, Taman '
+            'Kota 1 BSD, Rawa Buntu Station, and the UPJ campus. Open the map '
+            'from the See All button in the Drop Station section on the home '
+            'page to see the distance and capacity of each station.',
       ),
       keywords: [
         'lokasi',

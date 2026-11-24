@@ -272,9 +272,9 @@ class _PillarsCard extends StatelessWidget {
             icon: AppIcons.architecture,
             title: tr('Arsitektur', 'Architecture'),
             description: tr(
-              'Desain Modular Drop Station yang mudah dipasang di titik kampus.',
-              'Modular Drop Station design that is easy to install around '
-                  'campus.',
+              'Desain Modular Drop Station yang mudah dipasang di ruang publik.',
+              'Modular Drop Station design that is easy to install in public '
+                  'spaces.',
             ),
           ),
           const SizedBox(height: 16),

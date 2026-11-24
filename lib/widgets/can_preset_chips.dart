@@ -16,8 +16,8 @@ class CanPresetChips extends StatelessWidget {
 
   static String labelFor(int amount) => amount == 1000
       ? tr(
-          '+1000 (Kolektif Kampus / Event)',
-          '+1000 (Campus Collective / Event)',
+          '+1000 (Kolektif Komunitas / Event)',
+          '+1000 (Community Collective / Event)',
         )
       : '+$amount';
 

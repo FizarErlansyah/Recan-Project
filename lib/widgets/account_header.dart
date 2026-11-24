@@ -24,7 +24,11 @@ class AccountHeader extends StatelessWidget {
       decoration: AppDecorations.card(context),
       child: Row(
         children: [
-          ProfileAvatar(initials: profile.initials, size: 72),
+          ProfileAvatar(
+            initials: profile.initials,
+            avatar: profile.avatar,
+            size: 72,
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(

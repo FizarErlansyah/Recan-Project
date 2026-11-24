@@ -11,6 +11,7 @@ import 'package:mobile_apps_recan/widgets/count_up.dart';
 import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:mobile_apps_recan/widgets/pressable.dart';
+import 'package:mobile_apps_recan/widgets/profile_avatar.dart';
 import 'package:mobile_apps_recan/widgets/pull_up_overlap.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
@@ -20,6 +21,7 @@ class HomeHeroHeader extends StatelessWidget {
     required this.cansDeposited,
     required this.onAskAi,
     required this.onScan,
+    required this.onOpenProfile,
     super.key,
   });
 
@@ -27,6 +29,7 @@ class HomeHeroHeader extends StatelessWidget {
   final int cansDeposited;
   final VoidCallback onAskAi;
   final VoidCallback onScan;
+  final VoidCallback onOpenProfile;
 
   static const List<String> _daysId = [
     'Senin',
@@ -89,8 +92,6 @@ class HomeHeroHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topInset = MediaQuery.paddingOf(context).top;
-    final firstName = user.name.trim().split(' ').first;
-    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       children: [
@@ -107,33 +108,11 @@ class HomeHeroHeader extends StatelessWidget {
                 24,
                 _curveDepth + _greenExtraHeight,
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _formatToday(),
-                          style: textTheme.bodySmall?.copyWith(
-                            color: AppColors.white.withValues(alpha: 0.78),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          tr('Hai $firstName', 'Hi $firstName'),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: textTheme.headlineSmall?.copyWith(
-                            color: AppColors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  AiAskPill(onTap: onAskAi),
-                ],
+              child: _GreetingRow(
+                user: user,
+                today: _formatToday(),
+                onOpenProfile: onOpenProfile,
+                onAskAi: onAskAi,
               ),
             ),
           ),
@@ -150,6 +129,96 @@ class HomeHeroHeader extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _GreetingRow extends StatelessWidget {
+  const new({
+    required this.user,
+    required this.today,
+    required this.onOpenProfile,
+    required this.onAskAi,
+  });
+
+  final UserProfile user;
+  final String today;
+  final VoidCallback onOpenProfile;
+  final VoidCallback onAskAi;
+
+  @override
+  Widget build(BuildContext context) {
+    final firstName = user.name.trim().split(' ').first;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      children: [
+        _HeaderAvatar(user: user, onTap: onOpenProfile),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                today,
+                style: textTheme.bodySmall?.copyWith(
+                  color: AppColors.white.withValues(alpha: 0.78),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                tr('Hai $firstName', 'Hi $firstName'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.headlineSmall?.copyWith(
+                  color: AppColors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        AiAskPill(onTap: onAskAi),
+      ],
+    );
+  }
+}
+
+class _HeaderAvatar extends StatelessWidget {
+  const new({required this.user, required this.onTap});
+
+  final UserProfile user;
+  final VoidCallback onTap;
+
+  static const double _size = 42;
+
+  @override
+  Widget build(BuildContext context) {
+    // The header is Yale Blue, so a Yale Blue disc would vanish: the fallback
+    // initials sit on Pearl Aqua and the rim stays a quiet silver.
+    return Semantics(
+      button: true,
+      label: tr('Buka profil', 'Open profile'),
+      child: Pressable(
+        haptic: PressHaptic.light,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          // Padding below and to the right lifts the touch target towards 48dp
+          // without moving the avatar off the 24dp content edge.
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 3, 12, 3),
+            child: ProfileAvatar(
+              initials: user.initials,
+              avatar: user.avatar,
+              size: _size,
+              color: AppColors.primarySoft,
+              foreground: AppColors.primary,
+              borderColor: AppColors.silverLight.withValues(alpha: 0.7),
+              borderWidth: 1.5,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

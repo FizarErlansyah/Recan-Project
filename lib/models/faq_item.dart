@@ -21,11 +21,11 @@ class FaqItem {
       question: 'Apa itu ReCan?',
       questionEn: 'What is ReCan?',
       answer:
-          'ReCan adalah aplikasi daur ulang kaleng untuk civitas kampus. '
+          'ReCan adalah aplikasi daur ulang kaleng untuk semua orang. '
           'Setor kaleng bekas, kumpulkan poin, lalu tukarkan dengan voucher '
           'atau produk kriya daur ulang.',
       answerEn:
-          'ReCan is a can recycling app for the campus community. Drop your '
+          'ReCan is a can recycling app for everyone. Drop your '
           'used cans, collect points, then redeem them for vouchers or '
           'recycled crafts.',
     ),
@@ -56,10 +56,10 @@ class FaqItem {
       questionEn: 'How do I redeem points?',
       answer:
           'Buka tab Katalog untuk produk daur ulang, atau lihat bagian '
-          'Reward & Promo di beranda untuk voucher kampus.',
+          'Reward & Promo di beranda untuk voucher mitra.',
       answerEn:
           'Open the Catalog tab for recycled products, or check the Reward & '
-          'Promo section on the home page for campus vouchers.',
+          'Promo section on the home page for partner vouchers.',
     ),
     FaqItem(
       question: 'Apa itu tier member?',

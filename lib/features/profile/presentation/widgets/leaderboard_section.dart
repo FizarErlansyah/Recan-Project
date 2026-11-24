@@ -15,13 +15,10 @@ class LeaderboardSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          tr('Papan Peringkat Kampus', 'Campus Leaderboard'),
-          style: textTheme.titleLarge,
-        ),
+        Text(tr('Papan Peringkat', 'Leaderboard'), style: textTheme.titleLarge),
         const SizedBox(height: 4),
         Text(
-          tr('Top Pahlawan Lingkungan', 'Top Environmental Heroes'),
+          tr('Top Kontributor', 'Top Contributors'),
           style: textTheme.bodySmall,
         ),
         const SizedBox(height: 12),

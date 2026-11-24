@@ -3,7 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
-import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/pages/drop_station_map_page.dart';
 import 'package:mobile_apps_recan/services/station_service.dart';
@@ -64,8 +63,17 @@ class _StationPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final card = AppDecorations.card(context);
+
+    // The map is always light, so on a dark surface it would paint over the
+    // 1px border along the top and sides. Drawing the frame in front keeps
+    // the edge visible in both themes.
     return Container(
-      decoration: AppDecorations.card(context),
+      decoration: card,
+      foregroundDecoration: BoxDecoration(
+        borderRadius: card.borderRadius,
+        border: card.border,
+      ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
@@ -79,7 +87,10 @@ class _StationPanel extends StatelessWidget {
               ),
             ),
           ),
-          if (stations.isNotEmpty) _StationList(stations: stations),
+          if (stations.isNotEmpty) ...[
+            const Divider(),
+            _StationList(stations: stations),
+          ],
         ],
       ),
     );
@@ -114,7 +125,7 @@ class _MapPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterMap(
       options: const MapOptions(
-        initialCenter: StationService.campusCenter,
+        initialCenter: StationService.userPosition,
         initialZoom: 15.4,
         interactionOptions: InteractionOptions(flags: InteractiveFlag.none),
       ),
@@ -122,11 +133,10 @@ class _MapPreview extends StatelessWidget {
         TileLayer(
           urlTemplate: StationTrackingSection._tileUrl,
           userAgentPackageName: StationTrackingSection._userAgentPackage,
-          tileBuilder: context.isDark ? darkModeTileBuilder : null,
         ),
         MarkerLayer(
           markers: [
-            for (final station in StationService.campusStations)
+            for (final station in StationService.stations)
               Marker(
                 point: station.position,
                 width: 32,

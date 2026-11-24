@@ -59,8 +59,8 @@ class VoucherCatalogView extends StatelessWidget {
             children: [
               Text(
                 tr(
-                  'Tukar poin dengan potongan harga di kampus',
-                  'Trade points for campus discounts',
+                  'Tukar poin dengan potongan harga di tempat mitra',
+                  'Trade points for discounts at partner locations',
                 ),
                 style: Theme.of(context).textTheme.bodySmall,
               ),

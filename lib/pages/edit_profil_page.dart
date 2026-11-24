@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/profile/presentation/widgets/avatar_source_sheet.dart';
+import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
+import 'package:mobile_apps_recan/services/avatar_picker.dart';
 import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -26,14 +30,6 @@ class EditProfilPage extends StatefulWidget {
 }
 
 class _EditProfilPageState extends State<EditProfilPage> {
-  static const List<Color> _avatarColors = [
-    AppColors.primary,
-    AppColors.primaryLight,
-    AppColors.clay,
-    AppColors.sand,
-    AppColors.primaryDeep,
-  ];
-
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController = TextEditingController(
     text: widget.profile.name,
@@ -44,7 +40,7 @@ class _EditProfilPageState extends State<EditProfilPage> {
   late final TextEditingController _phoneController = TextEditingController(
     text: widget.profile.phone,
   );
-  late Color _avatarColor = _avatarColors.first;
+  late AvatarRef _avatar = widget.profile.avatar;
 
   @override
   void dispose() {
@@ -71,16 +67,36 @@ class _EditProfilPageState extends State<EditProfilPage> {
     );
   }
 
-  Future<void> _pickAvatarColor() async {
-    final picked = await showModalBottomSheet<Color>(
-      context: context,
-      builder: (sheetContext) => _AvatarColorSheet(
-        initials: widget.profile.initials,
-        colors: _avatarColors,
-        selected: _avatarColor,
-      ),
+  Future<void> _changeAvatar() async {
+    final action = await AvatarSourceSheet.show(
+      context,
+      hasPhoto: !_avatar.isEmpty,
     );
-    if (picked != null) setState(() => _avatarColor = picked);
+    if (action == null || !mounted) return;
+    try {
+      final updated = await switch (action) {
+        AvatarAction.remove => ProfileService.removeAvatar(),
+        AvatarAction.camera => _pick(AvatarSource.camera),
+        AvatarAction.gallery => _pick(AvatarSource.gallery),
+      };
+      if (updated != null && mounted) setState(() => _avatar = updated);
+    } on PlatformException {
+      if (!mounted) return;
+      AppSnackBar.show(
+        context,
+        tr(
+          'Foto tidak bisa diambil. Periksa izin kamera atau galeri.',
+          'Could not get the photo. Check the camera or gallery permission.',
+        ),
+      );
+    }
+  }
+
+  Future<AvatarRef?> _pick(AvatarSource source) async {
+    final path = await AvatarPicker.pick(source);
+    if (path == null) return null;
+    final updated = await ProfileService.updateAvatar(path);
+    return updated;
   }
 
   String? _validateName(String? value) {
@@ -116,8 +132,8 @@ class _EditProfilPageState extends State<EditProfilPage> {
           Center(
             child: _AvatarPicker(
               initials: widget.profile.initials,
-              color: _avatarColor,
-              onTap: _pickAvatarColor,
+              avatar: _avatar,
+              onTap: _changeAvatar,
             ),
           ),
           const SizedBox(height: 32),
@@ -179,10 +195,14 @@ class _EditProfilPageState extends State<EditProfilPage> {
 }
 
 class _AvatarPicker extends StatelessWidget {
-  const new({required this.initials, required this.color, required this.onTap});
+  const new({
+    required this.initials,
+    required this.avatar,
+    required this.onTap,
+  });
 
   final String initials;
-  final Color color;
+  final AvatarRef avatar;
   final VoidCallback onTap;
 
   @override
@@ -190,7 +210,10 @@ class _AvatarPicker extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        ProfileAvatar(initials: initials, size: 104, color: color),
+        GestureDetector(
+          onTap: onTap,
+          child: ProfileAvatar(initials: initials, avatar: avatar, size: 104),
+        ),
         Positioned(
           right: 0,
           bottom: 0,
@@ -217,77 +240,6 @@ class _AvatarPicker extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _AvatarColorSheet extends StatelessWidget {
-  const new({
-    required this.initials,
-    required this.colors,
-    required this.selected,
-  });
-
-  final String initials;
-  final List<Color> colors;
-  final Color selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              tr('Pilih Warna Avatar', 'Choose Avatar Color'),
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              tr(
-                'Pratinjau foto profil belum tersedia, pilih warna sebagai gantinya.',
-                "Photo upload isn't available yet, pick a color instead.",
-              ),
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                for (final color in colors)
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(color),
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: color,
-                        border: Border.all(
-                          color: color == selected
-                              ? context.palette.textPrimary
-                              : AppColors.transparent,
-                          width: 3,
-                        ),
-                      ),
-                      child: color == selected
-                          ? const HugeIcon(
-                              icon: AppIcons.check,
-                              color: AppColors.white,
-                              size: 20,
-                            )
-                          : null,
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

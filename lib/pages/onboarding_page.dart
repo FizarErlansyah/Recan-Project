@@ -24,9 +24,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       titleHighlight: tr('Sampah', 'Waste'),
       titleTail: tr(' Bekasmu', ' Material'),
       description: tr(
-        'Setor kaleng bekasmu ke station terdekat dan ubah kebiasaan kecil menjadi kampus yang lebih bersih.',
+        'Setor kaleng bekasmu ke station terdekat dan ubah kebiasaan kecil menjadi lingkungan yang lebih bersih.',
         'Drop your used cans at the nearest station and turn small '
-            'habits into a cleaner campus.',
+            'habits into a cleaner community.',
       ),
       imageAsset: 'assets/images/ilustrasi_1.png',
       fallbackIcon: AppIcons.recycle,

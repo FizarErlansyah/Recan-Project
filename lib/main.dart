@@ -4,12 +4,14 @@ import 'package:mobile_apps_recan/core/theme/app_theme.dart';
 import 'package:mobile_apps_recan/core/theme/language_extension.dart';
 import 'package:mobile_apps_recan/pages/splash_page.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
+import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/services/theme_preference.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   await ThemePreference.load();
+  await ProfileService.restoreAvatar();
   runApp(const ReCanApp());
 }
 

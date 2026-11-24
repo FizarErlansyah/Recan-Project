@@ -14,6 +14,7 @@ import 'package:mobile_apps_recan/pages/scan_qr_page.dart';
 import 'package:mobile_apps_recan/services/dashboard_service.dart';
 import 'package:mobile_apps_recan/services/data_refresh.dart';
 import 'package:mobile_apps_recan/services/education_service.dart';
+import 'package:mobile_apps_recan/services/home_navigation.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/async_view.dart';
@@ -87,6 +88,7 @@ class _Content extends StatelessWidget {
             cansDeposited: MockStore.userTotalCans,
             onAskAi: () => AiChatPage.open(context),
             onScan: onScan,
+            onOpenProfile: () => onSelectTab(HomeNavigation.profileTab),
           ),
           const SizedBox(height: 12),
           CategoryMenu(
@@ -143,13 +145,10 @@ class _Content extends StatelessWidget {
                         .push(FadePageRoute<void>(page: const ScanQrPage())),
               ),
               PromoBanner(
-                title: tr(
-                  'Kampanye SDG 11 & 12 UPJ',
-                  'UPJ SDG 11 & 12 Campaign',
-                ),
+                title: tr('Kampanye SDG 11 & 12', 'SDG 11 & 12 Campaign'),
                 subtitle: tr(
-                  'Kampus berkelanjutan, konsumsi bertanggung jawab',
-                  'Sustainable campus, responsible consumption',
+                  'Kota berkelanjutan, konsumsi bertanggung jawab',
+                  'Sustainable cities, responsible consumption',
                 ),
                 icon: hugeIcon(HugeIcons.strokeRoundedGlobe02),
                 colors: const [AppColors.primaryDark, AppColors.primaryLight],
