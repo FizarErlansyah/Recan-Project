@@ -88,6 +88,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final palette = context.palette;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // The light stops are fixed pastels; in dark mode the palette text turns
+    // pale, so the same stops would leave the headline unreadable.
+    final gradientColors = isDark
+        ? [palette.tint, palette.surface, palette.background]
+        : [AppColors.sandSoft, AppColors.primarySoft, palette.background];
 
     return Scaffold(
       body: DecoratedBox(
@@ -95,11 +103,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              AppColors.sandSoft,
-              AppColors.primarySoft,
-              context.palette.background,
-            ],
+            colors: gradientColors,
             stops: const [0, 0.55, 1],
           ),
         ),
