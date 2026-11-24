@@ -4,6 +4,7 @@ import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/utils/weight_format.dart';
 import 'package:mobile_apps_recan/widgets/activity_style.dart';
 
 class ActivityDetailSheet extends StatelessWidget {
@@ -84,10 +85,7 @@ class ActivityDetailSheet extends StatelessWidget {
                     if (transaction.isDeposit)
                       _DetailRow(
                         label: tr('Berat', 'Weight'),
-                        value: tr(
-                          '${(transaction.weightKg * 1000).round()} Gram',
-                          '${(transaction.weightKg * 1000).round()} Grams',
-                        ),
+                        value: formatWeight(transaction.weightKg * 1000),
                       ),
                     Divider(color: context.palette.border, height: 1),
                   ],

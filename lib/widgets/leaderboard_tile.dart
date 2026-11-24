@@ -3,6 +3,7 @@ import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/utils/weight_format.dart';
 
 class LeaderboardTile extends StatelessWidget {
   const new({required this.entry, super.key});
@@ -52,7 +53,7 @@ class LeaderboardTile extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            '${entry.totalKg.toStringAsFixed(1)} kg',
+            formatWeight(entry.totalKg * 1000),
             style: textTheme.titleSmall?.copyWith(
               color: highlighted
                   ? context.palette.accent

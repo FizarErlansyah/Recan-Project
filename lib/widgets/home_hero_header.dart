@@ -5,6 +5,7 @@ import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/utils/weight_format.dart';
 import 'package:mobile_apps_recan/widgets/ai_ask_pill.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
 import 'package:mobile_apps_recan/widgets/count_up.dart';
@@ -344,7 +345,7 @@ class _MetricsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final weightKg = cans * DropSessionSummary.gramsPerCan / 1000;
+    final weightGrams = cans * DropSessionSummary.gramsPerCan;
     final carbonKg = cans * DropSessionSummary.carbonKgPerCan;
 
     // Top-aligned so a label that wraps to two lines never lifts its icon
@@ -365,8 +366,8 @@ class _MetricsRow extends StatelessWidget {
         Expanded(
           child: _Metric(
             icon: hugeIcon(HugeIcons.strokeRoundedWeightScale),
-            target: weightKg,
-            format: (value) => '${CarbonLineChart.formatNumber(value)} kg',
+            target: weightGrams.toDouble(),
+            format: formatWeight,
             label: tr('Berat', 'Weight'),
             memoryKey: 'hero.weight',
           ),

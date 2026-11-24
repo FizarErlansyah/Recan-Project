@@ -4,18 +4,13 @@ import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/utils/weight_format.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 
 class DropEstimateCard extends StatelessWidget {
   const new({required this.summary, super.key});
 
   final DropSessionSummary summary;
-
-  static const int _gramsPerKilogram = 1000;
-
-  static String formatWeight(int grams) => grams >= _gramsPerKilogram
-      ? '${(grams / _gramsPerKilogram).toStringAsFixed(2)} kg'
-      : '${PointsHeader.formatNumber(grams)} ${tr('gram', 'grams')}';
 
   @override
   Widget build(BuildContext context) {
