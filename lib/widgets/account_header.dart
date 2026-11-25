@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
@@ -15,47 +16,89 @@ class AccountHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final tier = MemberTier.of(profile.points);
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: AppDecorations.card(context),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ProfileAvatar(
-            initials: profile.initials,
-            avatar: profile.avatar,
-            size: 72,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  profile.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  profile.email,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 2),
-                Text(profile.phone, style: textTheme.bodySmall),
-                const SizedBox(height: 8),
-                _TierBadge(tier: tier),
-              ],
-            ),
-          ),
+          _Identity(profile: profile),
+          const SizedBox(height: 12),
+          const Divider(height: 1),
+          const SizedBox(height: 12),
+          // Contact lines get the full card width and wrap, so an address is
+          // never cut off.
+          _ContactLine(icon: AppIcons.mail, value: profile.email),
+          const SizedBox(height: 8),
+          _ContactLine(icon: AppIcons.phone, value: profile.phone),
         ],
       ),
+    );
+  }
+}
+
+class _Identity extends StatelessWidget {
+  const new({required this.profile});
+
+  final ProfileData profile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ProfileAvatar(
+          initials: profile.initials,
+          avatar: profile.avatar,
+          size: 72,
+        ),
+        const SizedBox(width: 16),
+        Expanded(child: _NameAndTier(profile: profile)),
+      ],
+    );
+  }
+}
+
+class _NameAndTier extends StatelessWidget {
+  const new({required this.profile});
+
+  final ProfileData profile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          profile.name,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 8),
+        _TierBadge(tier: MemberTier.of(profile.points)),
+      ],
+    );
+  }
+}
+
+class _ContactLine extends StatelessWidget {
+  const new({required this.icon, required this.value});
+
+  final IconGlyph icon;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        HugeIcon(icon: icon, color: context.palette.textSecondary, size: 18),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+        ),
+      ],
     );
   }
 }
@@ -81,11 +124,13 @@ class _TierBadge extends StatelessWidget {
         children: [
           hugeIcon(HugeIcons.strokeRoundedMedal01)(color: color, size: 14),
           const SizedBox(width: 4),
-          Text(
-            '${tier.name.toUpperCase()} MEMBER',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: context.palette.textPrimary,
-              letterSpacing: 0.6,
+          Flexible(
+            child: Text(
+              '${tier.name.toUpperCase()} MEMBER',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: context.palette.textPrimary,
+                letterSpacing: 0.6,
+              ),
             ),
           ),
         ],

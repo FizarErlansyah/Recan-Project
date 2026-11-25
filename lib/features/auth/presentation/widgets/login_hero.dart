@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/motion/brand_hero.dart';
+import 'package:mobile_apps_recan/widgets/motion/brand_rings.dart';
 
-/// Forest header of the sign-in screen: brand mark and one line of purpose.
+/// Navy header of the sign-in screen: brand mark and one line of purpose.
 class LoginHero extends StatelessWidget {
   const new({required this.overlap, super.key});
 
@@ -41,10 +42,10 @@ class _Backdrop extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.forest, AppColors.forestDeep],
+          colors: AppColors.heroGradient,
         ),
       ),
-      child: CustomPaint(painter: const _LoopPainter(), child: child),
+      child: BrandRings(child: child),
     );
   }
 }
@@ -76,30 +77,4 @@ class _Lockup extends StatelessWidget {
       ],
     );
   }
-}
-
-/// Two open rings in the corner, a quiet nod to the loop a can travels.
-class _LoopPainter extends CustomPainter {
-  const new();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width, 0);
-    for (final (radius, alpha) in [(110.0, 0.14), (170.0, 0.08)]) {
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        1.75,
-        2.2,
-        false,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 18
-          ..strokeCap = StrokeCap.round
-          ..color = AppColors.primarySoft.withValues(alpha: alpha),
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_LoopPainter oldDelegate) => false;
 }

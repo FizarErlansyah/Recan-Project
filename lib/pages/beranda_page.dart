@@ -3,7 +3,9 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/home/presentation/compact_balance_bar.dart';
 import 'package:mobile_apps_recan/features/home/presentation/home_insights_section.dart';
+import 'package:mobile_apps_recan/features/tour/presentation/tour_anchors.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/pages/ai_chat_page.dart';
 import 'package:mobile_apps_recan/pages/article_detail_page.dart';
@@ -25,6 +27,7 @@ import 'package:mobile_apps_recan/widgets/education_card.dart';
 import 'package:mobile_apps_recan/widgets/home_hero_header.dart';
 import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/motion/staggered_entrance.dart';
+import 'package:mobile_apps_recan/widgets/on_first_frame.dart';
 import 'package:mobile_apps_recan/widgets/product_card.dart';
 import 'package:mobile_apps_recan/widgets/promo_banner_carousel.dart';
 import 'package:mobile_apps_recan/widgets/section_header.dart';
@@ -35,12 +38,18 @@ class BerandaPage extends StatefulWidget {
     required this.onLogout,
     required this.onSelectTab,
     required this.onScan,
+    required this.tourAnchors,
+    required this.onReady,
     super.key,
   });
 
   final VoidCallback onLogout;
   final ValueChanged<int> onSelectTab;
   final VoidCallback onScan;
+  final TourAnchors tourAnchors;
+
+  /// Told who is signed in once the dashboard is on screen.
+  final ValueChanged<String> onReady;
 
   @override
   State<BerandaPage> createState() => _BerandaPageState();
@@ -67,16 +76,20 @@ class _BerandaPageState extends State<BerandaPage> {
       loading: const DashboardSkeleton(),
       onUnauthorized: widget.onLogout,
       refreshOn: DataRefresh.revision,
-      builder: (context, data, reload) => _Content(
-        data: data,
-        onRefresh: () {
-          _pulls.value++;
-          return reload();
-        },
-        insightsRefresh: _insightsRefresh,
-        onSelectTab: widget.onSelectTab,
-        onLogout: widget.onLogout,
-        onScan: widget.onScan,
+      builder: (context, data, reload) => OnFirstFrame(
+        action: () => widget.onReady(data.user.id),
+        child: _Content(
+          tourAnchors: widget.tourAnchors,
+          data: data,
+          onRefresh: () {
+            _pulls.value++;
+            return reload();
+          },
+          insightsRefresh: _insightsRefresh,
+          onSelectTab: widget.onSelectTab,
+          onLogout: widget.onLogout,
+          onScan: widget.onScan,
+        ),
       ),
     );
   }
@@ -84,6 +97,7 @@ class _BerandaPageState extends State<BerandaPage> {
 
 class _Content extends StatelessWidget {
   const new({
+    required this.tourAnchors,
     required this.data,
     required this.onRefresh,
     required this.insightsRefresh,
@@ -92,6 +106,7 @@ class _Content extends StatelessWidget {
     required this.onScan,
   });
 
+  final TourAnchors tourAnchors;
   final DashboardData data;
   final Future<void> Function() onRefresh;
   final Listenable insightsRefresh;
@@ -101,14 +116,25 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return CompactBalanceBar(
+      points: data.user.pointsBalance,
+      onScan: onScan,
+      child: _sections(context),
+    );
+  }
+
+  Widget _sections(BuildContext context) {
     return RefreshIndicator(
       color: context.palette.accent,
       backgroundColor: context.palette.surface,
       onRefresh: onRefresh,
       child: ListView(
-        padding: const EdgeInsets.only(bottom: 104),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom + 24,
+        ),
         children: [
           HomeHeroHeader(
+            cardAnchor: tourAnchors.balance,
             user: data.user,
             cansDeposited: data.user.totalCans,
             onAskAi: () => AiChatPage.open(context),
@@ -121,22 +147,26 @@ class _Content extends StatelessWidget {
             child: CategoryMenu(
               entries: [
                 CategoryMenuEntry(
+                  anchor: tourAnchors.redeem,
                   icon: hugeIcon(HugeIcons.strokeRoundedGift),
                   label: tr('Tukar Poin', 'Redeem'),
                   onTap: () => onSelectTab(1),
                 ),
                 CategoryMenuEntry(
+                  anchor: tourAnchors.missions,
                   icon: hugeIcon(HugeIcons.strokeRoundedAward01),
-                  label: tr('Misi & Hadiah', 'Quests'),
+                  label: tr('Misi', 'Quests'),
                   onTap: () => QuestPage.open(context, onLogout: onLogout),
                 ),
                 CategoryMenuEntry(
+                  anchor: tourAnchors.stations,
                   icon: hugeIcon(HugeIcons.strokeRoundedLocation01),
                   label: tr('Drop Station', 'Stations'),
                   onTap: () =>
                       DropStationMapPage.open(context, onLogout: onLogout),
                 ),
                 CategoryMenuEntry(
+                  anchor: tourAnchors.education,
                   icon: hugeIcon(HugeIcons.strokeRoundedBookOpen01),
                   label: tr('Edukasi', 'Learn'),
                   onTap: () => EdukasiPage.open(context),
@@ -152,7 +182,12 @@ class _Content extends StatelessWidget {
             onOpenQuests: () => QuestPage.open(context, onLogout: onLogout),
             onSeeAllActivity: () => onSelectTab(HomeNavigation.activityTab),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
+          StationTrackingSection(
+            stations: data.dropStations,
+            onLogout: onLogout,
+          ),
+          const SizedBox(height: 32),
           PromoBannerCarousel(
             banners: [
               PromoBanner(
@@ -175,7 +210,7 @@ class _Content extends StatelessWidget {
                   'Drop cans now and feel the difference',
                 ),
                 icon: hugeIcon(HugeIcons.strokeRoundedGift),
-                colors: const [AppColors.slateDeep, AppColors.primaryDeep],
+                colors: const [AppColors.goldDeep, AppColors.onWarm],
                 onTap: () =>
                     Navigator.of(context)
                         .push(RecanPageRoute<void>(page: const ScanQrPage())),
@@ -187,17 +222,12 @@ class _Content extends StatelessWidget {
                   'Sustainable cities, responsible consumption',
                 ),
                 icon: hugeIcon(HugeIcons.strokeRoundedGlobe02),
-                colors: const [AppColors.primaryDark, AppColors.primaryLight],
+                colors: const [AppColors.success, AppColors.primaryDeep],
                 onTap: () => EdukasiPage.open(context),
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          StationTrackingSection(
-            stations: data.dropStations,
-            onLogout: onLogout,
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           SectionHeader(
             title: tr('Katalog Daur Ulang', 'Recycling Catalog'),
             subtitle: tr(
@@ -221,9 +251,9 @@ class _Content extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           CarbonAnalyticsSection(onUnauthorized: onLogout),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           SectionHeader(
             title: tr('Edukasi ReCan', 'ReCan Education'),
             subtitle: tr(

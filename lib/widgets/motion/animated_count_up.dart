@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_apps_recan/core/theme/app_text_styles.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 
 /// A whole number that climbs to its value, written with Indonesian thousands
@@ -24,8 +25,10 @@ class AnimatedCountUp extends StatelessWidget {
     return value < 0 ? '-$digits' : digits;
   }
 
-  Widget _text(int shown) =>
-      Text('$prefix${format(shown)}$suffix', style: style);
+  Widget _text(int shown) => Text(
+    '$prefix${format(shown)}$suffix',
+    style: AppTextStyles.tabular(style ?? const TextStyle()),
+  );
 
   @override
   Widget build(BuildContext context) {

@@ -163,6 +163,12 @@ class SupabaseErrors {
         );
       case 'insufficient_points':
         return tr('Poin kamu tidak cukup.', 'You do not have enough points.');
+      case 'voucher_not_found':
+        return tr('Voucher tidak ditemukan.', 'Voucher not found.');
+      case 'voucher_already_used':
+        return tr('Voucher sudah dipakai.', 'This voucher is already used.');
+      case 'voucher_expired':
+        return tr('Voucher sudah kedaluwarsa.', 'This voucher has expired.');
       case 'quest_not_found':
       case 'quest_not_completed':
         return tr('Misi belum bisa diklaim.', 'Mission cannot be claimed yet.');

@@ -87,101 +87,145 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final palette = context.palette;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      body: _Backdrop(
+        child: Column(
+          children: [
+            _SkipButton(onSkip: _isLast ? null : _finish),
+            Expanded(
+              child: PageView.builder(
+                controller: _controller,
+                itemCount: _slides.length,
+                onPageChanged: (value) => setState(() {
+                  _index = value;
+                }),
+                itemBuilder: (_, index) => OnboardingSlide(
+                  data: _slides[index],
+                  index: index,
+                  controller: _controller,
+                ),
+              ),
+            ),
+            _Dots(count: _slides.length, current: _index),
+            const SizedBox(height: 24),
+            _NextButton(isLast: _isLast, onNext: _next),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
+class _Backdrop extends StatelessWidget {
+  const new({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
     // The light stops are fixed pastels; in dark mode the palette text turns
     // pale, so the same stops would leave the headline unreadable.
-    final gradientColors = isDark
+    final colors = context.isDark
         ? [palette.tint, palette.surface, palette.background]
         : [AppColors.sandSoft, AppColors.primarySoft, palette.background];
 
-    return Scaffold(
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: gradientColors,
-            stops: const [0, 0.55, 1],
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: colors,
+          stops: const [0, 0.55, 1],
+        ),
+      ),
+      child: SafeArea(child: child),
+    );
+  }
+}
+
+class _SkipButton extends StatelessWidget {
+  const new({required this.onSkip});
+
+  /// Null on the last slide, where the button fades away.
+  final VoidCallback? onSkip;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.fromLTRB(24, 8, 16, 0),
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 200),
+        opacity: onSkip == null ? 0 : 1,
+        child: TextButton(
+          onPressed: onSkip,
+          style: TextButton.styleFrom(
+            minimumSize: const Size(48, 48),
+            foregroundColor: context.palette.textSecondary,
+          ),
+          child: Text(
+            tr('Lewati', 'Skip'),
+            style: Theme.of(context).textTheme.labelLarge,
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 8, 16, 0),
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 200),
-                    opacity: _isLast ? 0 : 1,
-                    child: TextButton(
-                      onPressed: _isLast ? null : _finish,
-                      style: TextButton.styleFrom(
-                        minimumSize: const Size(48, 48),
-                        foregroundColor: context.palette.textSecondary,
-                      ),
-                      child: Text(
-                        tr('Lewati', 'Skip'),
-                        style: textTheme.labelLarge,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: PageView.builder(
-                  controller: _controller,
-                  itemCount: _slides.length,
-                  onPageChanged: (value) => setState(() {
-                    _index = value;
-                  }),
-                  itemBuilder: (_, index) => OnboardingSlide(
-                    data: _slides[index],
-                    index: index,
-                    controller: _controller,
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 0; i < _slides.length; i++)
-                    _Dot(active: i == _index),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: _next,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      minimumSize: const Size.fromHeight(56),
-                      shape: const StadiumBorder(),
-                    ),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: Text(
-                        _isLast
-                            ? tr('Mulai', 'Get Started')
-                            : tr('Lanjut', 'Next'),
-                        key: ValueKey(_isLast),
-                        style: textTheme.labelLarge?.copyWith(
-                          color: AppColors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+      ),
+    );
+  }
+}
+
+class _Dots extends StatelessWidget {
+  const new({required this.count, required this.current});
+
+  final int count;
+  final int current;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [for (var i = 0; i < count; i++) _Dot(active: i == current)],
+    );
+  }
+}
+
+class _NextButton extends StatelessWidget {
+  const new({required this.isLast, required this.onNext});
+
+  final bool isLast;
+  final VoidCallback onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+      child: FilledButton(
+        onPressed: onNext,
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(56),
+          shape: const StadiumBorder(),
         ),
+        child: _NextLabel(isLast: isLast),
+      ),
+    );
+  }
+}
+
+class _NextLabel extends StatelessWidget {
+  const new({required this.isLast});
+
+  final bool isLast;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      child: Text(
+        isLast ? tr('Mulai', 'Get Started') : tr('Lanjut', 'Next'),
+        key: ValueKey(isLast),
+        style: Theme.of(context).textTheme.labelLarge
+            ?.copyWith(color: context.palette.onPrimary),
       ),
     );
   }

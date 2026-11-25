@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
@@ -34,9 +33,6 @@ class ActivityDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final payment = transaction.payment;
-
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
@@ -45,77 +41,97 @@ class ActivityDetailSheet extends StatelessWidget {
           children: [
             Flexible(
               child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ActivityIconBadge(transaction: transaction, size: 72),
-                    const SizedBox(height: 16),
-                    Text(
-                      transaction.amountLabel,
-                      style: textTheme.headlineMedium?.copyWith(
-                        color: transaction.amountColor(context),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      transaction.title,
-                      textAlign: TextAlign.center,
-                      style: textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 24),
-                    Divider(color: context.palette.border, height: 1),
-                    _DetailRow(
-                      label: tr('ID Transaksi', 'Transaction ID'),
-                      value: transaction.transactionId,
-                    ),
-                    _DetailRow(
-                      label: tr('Jenis', 'Type'),
-                      value: transaction.typeLabel,
-                    ),
-                    _DetailRow(
-                      label: tr('Waktu', 'Time'),
-                      value: IndonesianDate.dateTime(transaction.timestamp),
-                    ),
-                    _DetailRow(
-                      label: tr('Lokasi', 'Location'),
-                      value: transaction.locationLabel,
-                    ),
-                    _DetailRow(
-                      label: 'Status',
-                      value: transaction.statusLabel,
-                      valueColor: context.palette.success,
-                    ),
-                    if (transaction.isDeposit)
-                      _DetailRow(
-                        label: tr('Berat', 'Weight'),
-                        value: formatWeight(transaction.weightKg * 1000),
-                      ),
-                    if (payment != null)
-                      for (final (label, value) in paymentRows(payment))
-                        _DetailRow(label: label, value: value),
-                    Divider(color: context.palette.border, height: 1),
-                  ],
-                ),
+                child: _Details(transaction: transaction),
               ),
             ),
             const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(52),
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: Text(
-                  tr('Tutup', 'Close'),
-                  style: textTheme.labelLarge?.copyWith(color: AppColors.white),
-                ),
-              ),
-            ),
+            const _CloseButton(),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Details extends StatelessWidget {
+  const new({required this.transaction});
+
+  final ActivityTransaction transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final payment = transaction.payment;
+
+    return Column(
+      children: [
+        ActivityIconBadge(transaction: transaction, size: 72),
+        const SizedBox(height: 16),
+        Text(
+          transaction.amountLabel,
+          style: textTheme.headlineMedium?.copyWith(
+            color: transaction.amountColor(context),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          transaction.title,
+          textAlign: TextAlign.center,
+          style: textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 24),
+        Divider(color: context.palette.border, height: 1),
+        _DetailRow(
+          label: tr('ID Transaksi', 'Transaction ID'),
+          value: transaction.transactionId,
+        ),
+        _DetailRow(label: tr('Jenis', 'Type'), value: transaction.typeLabel),
+        _DetailRow(
+          label: tr('Waktu', 'Time'),
+          value: IndonesianDate.dateTime(transaction.timestamp),
+        ),
+        _DetailRow(
+          label: tr('Lokasi', 'Location'),
+          value: transaction.locationLabel,
+        ),
+        _DetailRow(
+          label: 'Status',
+          value: transaction.statusLabel,
+          valueColor: context.palette.success,
+        ),
+        if (transaction.isDeposit)
+          _DetailRow(
+            label: tr('Berat', 'Weight'),
+            value: formatWeight(transaction.weightKg * 1000),
+          ),
+        if (payment != null)
+          for (final (label, value) in paymentRows(payment))
+            _DetailRow(label: label, value: value),
+        Divider(color: context.palette.border, height: 1),
+      ],
+    );
+  }
+}
+
+class _CloseButton extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton(
+        onPressed: () => Navigator.of(context).pop(),
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(52),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Text(
+          tr('Tutup', 'Close'),
+          style: Theme.of(context).textTheme.labelLarge
+              ?.copyWith(color: context.palette.onPrimary),
         ),
       ),
     );

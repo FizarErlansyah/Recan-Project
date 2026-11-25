@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/payment_methods_section.dart';
+import 'package:mobile_apps_recan/features/voucher/presentation/voucher_catalog_view.dart';
 import 'package:mobile_apps_recan/main.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
@@ -15,7 +16,6 @@ import 'package:mobile_apps_recan/widgets/activity_tile.dart';
 import 'package:mobile_apps_recan/widgets/ewallet_catalog_view.dart';
 import 'package:mobile_apps_recan/widgets/quest_card.dart';
 import 'package:mobile_apps_recan/widgets/settings_sheets.dart';
-import 'package:mobile_apps_recan/widgets/voucher_catalog_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/screen.dart';
@@ -58,6 +58,11 @@ void main() {
         useTallPhone(tester);
         await tester.pumpWidget(testApp(Scaffold(body: view)));
         await tester.pumpAndSettle();
+        // Vouchers are redeemed from their detail screen, e-wallets in place.
+        if (name == 'voucher') {
+          await tester.tap(find.text('Diskon Kuliner 20%'));
+          await tester.pumpAndSettle();
+        }
         return find.widgetWithText(FilledButton, 'Tukar').first;
       }
 
@@ -205,7 +210,7 @@ void main() {
           body: PaymentMethodsSection(
             points: 1400,
             gopayConnected: false,
-            onConnectGoPay: () {},
+            onConnectGoPay: () async {},
           ),
         ),
       ),
@@ -254,7 +259,7 @@ void main() {
     testWidgets('About shows version and build', (tester) async {
       await tester.pumpWidget(testApp(const AboutRecanPage()));
 
-      expect(find.text('Versi 2.0.0 (build 2)'), findsOneWidget);
+      expect(find.text('Versi 2.1.0 (build 3)'), findsOneWidget);
     });
   });
 

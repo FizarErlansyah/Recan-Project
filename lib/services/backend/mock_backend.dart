@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
 import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
+import 'package:mobile_apps_recan/features/voucher/domain/voucher.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
@@ -10,7 +11,6 @@ import 'package:mobile_apps_recan/models/ewallet_option.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
-import 'package:mobile_apps_recan/models/voucher.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/api_config.dart';
 import 'package:mobile_apps_recan/services/auth_service.dart';
@@ -26,7 +26,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// In-memory data source: the demo data of [MockStore]. Futures complete
 /// synchronously where they always did, so widgets paint their first frame
 /// with data and tests need no server.
-final class MockBackend implements AppBackend {
+base class MockBackend implements AppBackend {
   static const String _mockToken = 'mock-session';
 
   @override
@@ -179,6 +179,13 @@ final class MockBackend implements AppBackend {
   @override
   Future<List<OwnedVoucher>> ownedVouchers() =>
       SynchronousFuture(List.unmodifiable(MockStore.ownedVouchers));
+
+  @override
+  Future<void> useVoucher(String reference) {
+    final failure = MockStore.useVoucher(reference);
+    if (failure != null) return Future.error(ApiException(failure));
+    return SynchronousFuture(null);
+  }
 
   @override
   Future<List<ActivityTransaction>> activities() =>

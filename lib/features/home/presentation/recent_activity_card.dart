@@ -44,28 +44,41 @@ class _Heading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
+    // The link drops under the title once large text leaves no room beside it.
     return Padding(
       padding: const EdgeInsets.only(left: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
+      child: SizedBox(
+        width: double.infinity,
+        child: Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(
               tr('Riwayat Terakhir', 'Recent Activity'),
-              style: textTheme.titleMedium,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-          ),
-          TextButton(
-            onPressed: onSeeAll,
-            style: TextButton.styleFrom(
-              minimumSize: const Size(48, 48),
-              foregroundColor: context.palette.accent,
-            ),
-            child: Text(tr('Lihat Semua', 'See All')),
-          ),
-        ],
+            _SeeAll(onTap: onSeeAll),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class _SeeAll extends StatelessWidget {
+  const new({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onTap,
+      style: TextButton.styleFrom(
+        minimumSize: const Size(48, 48),
+        foregroundColor: context.palette.accent,
+      ),
+      child: Text(tr('Lihat Semua', 'See All')),
     );
   }
 }

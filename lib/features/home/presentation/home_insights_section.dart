@@ -36,11 +36,12 @@ class HomeInsightsSection extends StatelessWidget {
   final VoidCallback onSeeAllActivity;
 
   static Future<_Insights> _load() async {
-    final (activities, gamification) = await (
-      ActivityService.fetch(),
-      GamificationService.fetch(),
-    ).wait;
-    return (activities: activities, gamification: gamification);
+    final activities = ActivityService.fetch();
+    final gamification = GamificationService.fetch();
+    // Not `(a, b).wait`: it wraps a failure in ParallelWaitError, which hides
+    // the message and the expired session from AsyncView.
+    await Future.wait<void>([activities, gamification]);
+    return (activities: await activities, gamification: await gamification);
   }
 
   @override
@@ -85,15 +86,15 @@ class _InsightCards extends StatelessWidget {
       children: [
         StaggeredEntrance(
           index: 3,
-          child: WeeklyDepositChart(week: week, onScan: onScan),
-        ),
-        const SizedBox(height: 16),
-        StaggeredEntrance(
-          index: 4,
           child: MissionRingCard(
             quests: data.gamification.dailyQuests,
             onTap: onOpenQuests,
           ),
+        ),
+        const SizedBox(height: 16),
+        StaggeredEntrance(
+          index: 4,
+          child: WeeklyDepositChart(week: week, onScan: onScan),
         ),
         const SizedBox(height: 16),
         StaggeredEntrance(
@@ -116,11 +117,11 @@ class _InsightsSkeleton extends StatelessWidget {
     return const Shimmer(
       child: Column(
         children: [
-          ShimmerBox(height: 220, radius: 16),
+          ShimmerBox(height: 104, radius: 20),
           SizedBox(height: 16),
-          ShimmerBox(height: 104, radius: 16),
+          ShimmerBox(height: 220, radius: 20),
           SizedBox(height: 16),
-          ShimmerBox(height: 200, radius: 16),
+          ShimmerBox(height: 200, radius: 20),
         ],
       ),
     );

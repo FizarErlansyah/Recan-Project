@@ -80,11 +80,19 @@ class _PhotoDisc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pixels = (diameter * MediaQuery.devicePixelRatioOf(context)).round();
+    // Decoded to fit a box twice the disc, so the photo keeps its shape and
+    // [BoxFit.cover] still has full resolution on the short side up to 2:1.
+    // The default resize policy would squash every photo into a square.
+    final box = (diameter * 2 * MediaQuery.devicePixelRatioOf(context)).round();
 
     return ClipOval(
       child: Image(
-        image: ResizeImage.resizeIfNeeded(pixels, pixels, image),
+        image: ResizeImage(
+          image,
+          width: box,
+          height: box,
+          policy: ResizeImagePolicy.fit,
+        ),
         width: diameter,
         height: diameter,
         fit: BoxFit.cover,

@@ -3,6 +3,7 @@ import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
 import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/widgets/motion/animated_amount.dart';
 import 'package:mobile_apps_recan/widgets/recan_card.dart';
 
 /// Lets the buyer choose how many points to put toward an order and shows
@@ -124,6 +125,8 @@ class _Breakdown extends StatelessWidget {
 
   final PaymentQuote quote;
 
+  static String _discount(int value) => '-${formatRupiah(value)}';
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -132,19 +135,20 @@ class _Breakdown extends StatelessWidget {
       children: [
         _Line(
           label: tr('Harga Asli', 'Original Price'),
-          value: formatRupiah(quote.grossIdr),
+          value: quote.grossIdr,
           style: textTheme.bodyMedium,
         ),
         const SizedBox(height: 8),
         _Line(
           label: tr('Potongan Poin', 'Points Discount'),
-          value: '-${formatRupiah(quote.discountIdr)}',
+          value: quote.discountIdr,
+          format: _discount,
           style: textTheme.bodyMedium?.copyWith(color: context.palette.success),
         ),
         const SizedBox(height: 8),
         _Line(
           label: tr('Sisa Dibayar Rupiah', 'Rupiah Left to Pay'),
-          value: formatRupiah(quote.cashDue),
+          value: quote.cashDue,
           style: textTheme.titleSmall,
         ),
       ],
@@ -153,11 +157,17 @@ class _Breakdown extends StatelessWidget {
 }
 
 class _Line extends StatelessWidget {
-  const new({required this.label, required this.value, required this.style});
+  const new({
+    required this.label,
+    required this.value,
+    required this.style,
+    this.format = formatRupiah,
+  });
 
   final String label;
-  final String value;
+  final int value;
   final TextStyle? style;
+  final String Function(int value) format;
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +175,7 @@ class _Line extends StatelessWidget {
       children: [
         Expanded(child: Text(label, style: style)),
         const SizedBox(width: 12),
-        Text(value, style: style),
+        AnimatedAmount(value: value, format: format, style: style),
       ],
     );
   }

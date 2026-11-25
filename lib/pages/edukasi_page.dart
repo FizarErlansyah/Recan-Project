@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_apps_recan/features/tutorial/presentation/tutorial_banner.dart';
 import 'package:mobile_apps_recan/models/education_article.dart';
 import 'package:mobile_apps_recan/pages/article_detail_page.dart';
 import 'package:mobile_apps_recan/services/education_service.dart';
@@ -52,6 +53,7 @@ class _EdukasiPageState extends State<EdukasiPage> {
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
                   children: [
+                    const TutorialBanner(),
                     for (final category in _visibleCategories) ...[
                       const SizedBox(height: 16),
                       Text(category.label, style: textTheme.titleLarge),

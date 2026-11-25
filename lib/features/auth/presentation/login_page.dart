@@ -10,6 +10,7 @@ import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/motion/shake.dart';
+import 'package:mobile_apps_recan/widgets/motion/staggered_entrance.dart';
 import 'package:mobile_apps_recan/widgets/pull_up_overlap.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
@@ -218,7 +219,10 @@ class _AuthColumn extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         LoginHero(overlap: overlap),
-        PullUpOverlap(extent: overlap, child: sheet),
+        PullUpOverlap(
+          extent: overlap,
+          child: StaggeredEntrance(index: 1, rise: 64, child: sheet),
+        ),
       ],
     );
   }

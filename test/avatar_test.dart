@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +23,32 @@ final List<int> _png = base64Decode(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA'
   '60e6kgAAAABJRU5ErkJggg==',
 );
+
+/// A solid [width] x [height] PNG written next to the other test files.
+Future<File> _photo(Directory folder, int width, int height) async {
+  final recorder = ui.PictureRecorder();
+  Canvas(recorder).drawRect(
+    Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()),
+    Paint()..color = const Color(0xFF284B63),
+  );
+  final image = await recorder.endRecording().toImage(width, height);
+  final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+  final file = File('${folder.path}/photo_${width}x$height.png');
+  return await file.writeAsBytes(bytes!.buffer.asUint8List());
+}
+
+Future<ui.Image> _decoded(ImageProvider provider) {
+  final done = Completer<ui.Image>();
+  provider
+      .resolve(ImageConfiguration.empty)
+      .addListener(
+        ImageStreamListener(
+          (info, _) => done.complete(info.image),
+          onError: done.completeError,
+        ),
+      );
+  return done.future;
+}
 
 void main() {
   late Directory sandbox;
@@ -149,6 +177,40 @@ void main() {
       expect(find.byType(Image), findsOneWidget);
       expect(find.text('GU'), findsNothing);
     });
+
+    for (final (width, height) in [(400, 200), (300, 400)]) {
+      testWidgets('keeps the shape of a $width x $height photo', (
+        tester,
+      ) async {
+        late File photo;
+        await tester.runAsync(() async {
+          photo = await _photo(sandbox, width, height);
+        });
+        await pumpAvatar(tester, AvatarRef(path: photo.path));
+        final shown = tester.widget<Image>(find.byType(Image));
+
+        late ui.Image decoded;
+        // The widget's own load started under fake time and never finishes, so
+        // the cache is emptied to decode afresh on the real event loop.
+        PaintingBinding.instance.imageCache
+          ..clear()
+          ..clearLiveImages();
+        await tester.runAsync(() async {
+          decoded = await _decoded(shown.image);
+        });
+
+        expect(decoded.width / decoded.height, closeTo(width / height, 0.02));
+        expect(shown.fit, BoxFit.cover);
+
+        // Windows refuses to delete a file the first load still holds open.
+        for (var i = 0; i < 5; i++) {
+          await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 20)),
+          );
+          await tester.pump();
+        }
+      });
+    }
   });
 
   group('HomeHeroHeader avatar', () {

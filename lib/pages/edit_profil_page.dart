@@ -186,7 +186,7 @@ class _EditProfilPageState extends State<EditProfilPage> {
             child: Text(
               tr('Simpan Perubahan', 'Save Changes'),
               style: Theme.of(context).textTheme.labelLarge
-                  ?.copyWith(color: AppColors.white),
+                  ?.copyWith(color: context.palette.onPrimary),
             ),
           ),
         ],
@@ -215,32 +215,36 @@ class _AvatarPicker extends StatelessWidget {
           onTap: onTap,
           child: ProfileAvatar(initials: initials, avatar: avatar, size: 104),
         ),
-        Positioned(
-          right: 0,
-          bottom: 0,
-          child: Material(
-            color: AppColors.primary,
-            shape: CircleBorder(
-              side: BorderSide(color: context.palette.surface, width: 2),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: onTap,
-              child: const SizedBox(
-                width: 36,
-                height: 36,
-                child: Center(
-                  child: HugeIcon(
-                    icon: AppIcons.camera,
-                    size: 18,
-                    color: AppColors.white,
-                  ),
-                ),
-              ),
-            ),
+        Positioned(right: 0, bottom: 0, child: _CameraBadge(onTap: onTap)),
+      ],
+    );
+  }
+}
+
+class _CameraBadge extends StatelessWidget {
+  const new({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.primary,
+      shape: CircleBorder(
+        side: BorderSide(color: context.palette.surface, width: 2),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: const Padding(
+          padding: EdgeInsets.all(9),
+          child: HugeIcon(
+            icon: AppIcons.camera,
+            size: 18,
+            color: AppColors.white,
           ),
         ),
-      ],
+      ),
     );
   }
 }

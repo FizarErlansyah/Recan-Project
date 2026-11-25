@@ -5,11 +5,19 @@ import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/widgets/motion/bouncy_tap.dart';
 
 class CategoryMenuEntry {
-  const new({required this.icon, required this.label, required this.onTap});
+  const new({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.anchor,
+  });
 
   final AppIconBuilder icon;
   final String label;
   final VoidCallback onTap;
+
+  /// Marks the entry for something that needs to find it on screen.
+  final Key? anchor;
 }
 
 class CategoryMenu extends StatelessWidget {
@@ -25,7 +33,12 @@ class CategoryMenu extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (final entry in entries) ...[
-            Expanded(child: _CategoryButton(entry: entry)),
+            Expanded(
+              child: KeyedSubtree(
+                key: entry.anchor,
+                child: _CategoryButton(entry: entry),
+              ),
+            ),
           ],
         ],
       ),
@@ -68,12 +81,15 @@ class _CategoryFace extends StatelessWidget {
         children: [
           _IconTile(icon: entry.icon),
           const SizedBox(height: 8),
-          Text(
-            entry.label,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.labelMedium,
+          // One line each, so the four labels stay level: a long one shrinks
+          // instead of wrapping.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              entry.label,
+              maxLines: 1,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
           ),
         ],
       ),

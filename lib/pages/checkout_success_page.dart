@@ -17,17 +17,35 @@ import 'package:mobile_apps_recan/widgets/animated_check.dart';
 import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+/// The next thing to do with what was just bought.
+class ReceiptAction {
+  const new({required this.label, required this.onPressed});
+
+  final String label;
+  final void Function(BuildContext context) onPressed;
+}
+
 class CheckoutSuccessPage extends StatefulWidget {
-  const new({required this.productName, required this.receipt, super.key});
+  const new({
+    required this.productName,
+    required this.receipt,
+    super.key,
+    this.followUp,
+  });
 
   static void show(
     BuildContext context, {
     required String productName,
     required PurchaseReceipt receipt,
     bool replaceCurrent = false,
+    ReceiptAction? followUp,
   }) {
     final route = RecanPageRoute<void>(
-      page: CheckoutSuccessPage(productName: productName, receipt: receipt),
+      page: CheckoutSuccessPage(
+        productName: productName,
+        receipt: receipt,
+        followUp: followUp,
+      ),
     );
     final navigator = Navigator.of(context);
     if (replaceCurrent) {
@@ -39,6 +57,7 @@ class CheckoutSuccessPage extends StatefulWidget {
 
   final String productName;
   final PurchaseReceipt receipt;
+  final ReceiptAction? followUp;
 
   @override
   State<CheckoutSuccessPage> createState() => _CheckoutSuccessPageState();
@@ -80,31 +99,42 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage> {
       },
       child: Scaffold(
         backgroundColor: context.palette.background,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      child: _ReceiptPaper(
-                        productName: widget.productName,
-                        receipt: widget.receipt,
-                        redeemedAt: _redeemedAt,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                _ActionButtons(
-                  onBackToHome: _backToHome,
-                  onCopyCode: () => unawaited(_copyReference()),
-                ),
-              ],
-            ),
+        body: _ReceiptBody(
+          paper: _ReceiptPaper(
+            productName: widget.productName,
+            receipt: widget.receipt,
+            redeemedAt: _redeemedAt,
+          ),
+          actions: _ActionButtons(
+            followUp: widget.followUp,
+            onBackToHome: _backToHome,
+            onCopyCode: () => unawaited(_copyReference()),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The receipt scrolls in the space above the buttons.
+class _ReceiptBody extends StatelessWidget {
+  const new({required this.paper, required this.actions});
+
+  final Widget paper;
+  final Widget actions;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      minimum: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          Expanded(
+            child: Center(child: SingleChildScrollView(child: paper)),
+          ),
+          const SizedBox(height: 24),
+          actions,
+        ],
       ),
     );
   }
@@ -235,7 +265,7 @@ class _DetailRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: textTheme.bodyMedium),
+        Flexible(child: Text(label, style: textTheme.bodyMedium)),
         const SizedBox(width: 16),
         Expanded(
           child: Text(
@@ -274,33 +304,53 @@ class _DashedDivider extends StatelessWidget {
 }
 
 class _ActionButtons extends StatelessWidget {
-  const new({required this.onBackToHome, required this.onCopyCode});
+  const new({
+    required this.onBackToHome,
+    required this.onCopyCode,
+    required this.followUp,
+  });
 
   final VoidCallback onBackToHome;
   final VoidCallback onCopyCode;
+  final ReceiptAction? followUp;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final next = followUp;
 
     return Column(
       children: [
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton(
-            onPressed: onBackToHome,
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(52),
-              backgroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+        if (next != null) ...[
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: () => next.onPressed(context),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(52),
               ),
-            ),
-            child: Text(
-              tr('Kembali ke Beranda', 'Back to Home'),
-              style: textTheme.labelLarge?.copyWith(color: AppColors.white),
+              child: Text(next.label),
             ),
           ),
+          const SizedBox(height: 12),
+        ],
+        SizedBox(
+          width: double.infinity,
+          child: next == null
+              ? FilledButton(
+                  onPressed: onBackToHome,
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(52),
+                  ),
+                  child: Text(tr('Kembali ke Beranda', 'Back to Home')),
+                )
+              : OutlinedButton(
+                  onPressed: onBackToHome,
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(52),
+                  ),
+                  child: Text(tr('Kembali ke Beranda', 'Back to Home')),
+                ),
         ),
         const SizedBox(height: 12),
         SizedBox(

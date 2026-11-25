@@ -37,9 +37,11 @@ class ArticleInfographic extends StatelessWidget {
                 size: 20,
               ),
               const SizedBox(width: 8),
-              Text(
-                tr('Infografis Ringkas', 'Quick Infographic'),
-                style: textTheme.labelLarge?.copyWith(color: AppColors.white),
+              Flexible(
+                child: Text(
+                  tr('Infografis Ringkas', 'Quick Infographic'),
+                  style: textTheme.labelLarge?.copyWith(color: AppColors.white),
+                ),
               ),
             ],
           ),

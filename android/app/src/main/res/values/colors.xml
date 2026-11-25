@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Mirrors AppColors.forest so the native launch screen and the Flutter
-         splash meet without a flash. -->
-    <color name="splash_background">#123D31</color>
+    <!-- The middle of AppColors.heroGradient, so the native launch screen and
+         the Flutter splash meet without a flash. -->
+    <color name="splash_background">#1F3B4F</color>
 </resources>

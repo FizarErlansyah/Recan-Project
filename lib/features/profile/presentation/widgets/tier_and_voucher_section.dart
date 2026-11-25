@@ -18,7 +18,6 @@ class TierAndVoucherSection extends StatelessWidget {
     super.key,
   });
 
-  static const double height = 128;
   static const double _gap = 12;
 
   final int points;
@@ -28,9 +27,9 @@ class TierAndVoucherSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
+    return IntrinsicHeight(
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
             flex: 3,
@@ -83,7 +82,7 @@ class _TierCardBody extends StatelessWidget {
       children: [
         Row(
           children: [
-            _TierMedal(accent: accent),
+            _TierMedal(key: const ValueKey('tier-medal'), accent: accent),
             const Spacer(),
             hugeIcon(HugeIcons.strokeRoundedArrowRight01)(
               color: AppColors.silverLight,
@@ -91,6 +90,7 @@ class _TierCardBody extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -104,8 +104,10 @@ class _TierCardBody extends StatelessWidget {
                 '${PointsHeader.formatNumber(points)} poin',
                 '${PointsHeader.formatNumber(points)} points',
               ),
-              style: textTheme.labelLarge?.copyWith(color: AppColors.goldLight),
+              style: textTheme.labelLarge?.copyWith(color: AppColors.warm),
             ),
+            const SizedBox(height: 12),
+            _NextTier(tier: tier, points: points),
           ],
         ),
       ],
@@ -113,8 +115,66 @@ class _TierCardBody extends StatelessWidget {
   }
 }
 
+/// How far the next tier is, as a bar and in points.
+class _NextTier extends StatelessWidget {
+  const new({required this.tier, required this.points});
+
+  final MemberTier tier;
+  final int points;
+
+  @override
+  Widget build(BuildContext context) {
+    final goal = tier.target;
+    final style = Theme.of(context).textTheme.labelSmall
+        ?.copyWith(color: AppColors.silverLight);
+    if (goal == null) {
+      return Text(tr('Tier tertinggi', 'Highest tier'), style: style);
+    }
+    final left = PointsHeader.formatNumber(goal - points);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _TierBar(progress: tier.progress(points)),
+        const SizedBox(height: 6),
+        Text(
+          tr(
+            '$left poin lagi ke ${tier.nextName}',
+            '$left points to ${tier.nextName}',
+          ),
+          style: style,
+        ),
+      ],
+    );
+  }
+}
+
+class _TierBar extends StatelessWidget {
+  const new({required this.progress});
+
+  final double progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final still = MediaQuery.disableAnimationsOf(context);
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: progress),
+      duration: still ? Duration.zero : const Duration(milliseconds: 900),
+      curve: Curves.easeOutCubic,
+      builder: (_, value, _) => LinearProgressIndicator(
+        value: value,
+        minHeight: 6,
+        color: AppColors.warm,
+        backgroundColor: AppColors.white.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(3),
+      ),
+    );
+  }
+}
+
 class _TierMedal extends StatelessWidget {
-  const new({required this.accent});
+  const new({required this.accent, super.key});
 
   final Color accent;
 

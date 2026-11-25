@@ -46,8 +46,6 @@ class OnboardingSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
@@ -56,51 +54,86 @@ class OnboardingSlide extends StatelessWidget {
 
         return Opacity(
           opacity: visibility,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Transform.translate(
-                  offset: Offset(offset * 40, 0),
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(text: data.titleLead),
-                        TextSpan(
-                          text: data.titleHighlight,
-                          style: TextStyle(color: context.palette.accent),
-                        ),
-                        TextSpan(text: data.titleTail),
-                      ],
-                    ),
-                    style: textTheme.displaySmall,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Transform.translate(
-                  offset: Offset(offset * 60, 0),
-                  child: Text(
-                    data.description,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: context.palette.textSecondary,
-                      height: 1.5,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                Align(
-                  child: Transform.translate(
-                    offset: Offset(offset * 140, 0),
-                    child: _Illustration(data: data),
-                  ),
-                ),
-              ],
+          // Centred while it fits, scrollable once large text does not.
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: _SlideBody(data: data, offset: offset),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+/// Title, description and picture, each drifting at its own speed.
+class _SlideBody extends StatelessWidget {
+  const new({required this.data, required this.offset});
+
+  final OnboardingSlideData data;
+  final double offset;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Transform.translate(
+          offset: Offset(offset * 40, 0),
+          child: _Title(data: data),
+        ),
+        const SizedBox(height: 16),
+        Transform.translate(
+          offset: Offset(offset * 60, 0),
+          child: _Description(text: data.description),
+        ),
+        const SizedBox(height: 32),
+        Align(
+          child: Transform.translate(
+            offset: Offset(offset * 140, 0),
+            child: _Illustration(data: data),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Title extends StatelessWidget {
+  const new({required this.data});
+
+  final OnboardingSlideData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: data.titleLead),
+          TextSpan(
+            text: data.titleHighlight,
+            style: TextStyle(color: context.palette.accent),
+          ),
+          TextSpan(text: data.titleTail),
+        ],
+      ),
+      style: Theme.of(context).textTheme.displaySmall,
+    );
+  }
+}
+
+class _Description extends StatelessWidget {
+  const new({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.bodyMedium
+          ?.copyWith(color: context.palette.textSecondary, height: 1.5),
     );
   }
 }

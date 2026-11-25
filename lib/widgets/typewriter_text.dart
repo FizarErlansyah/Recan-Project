@@ -29,9 +29,19 @@ class _TypewriterTextState extends State<TypewriterText> {
   int _visibleCount = 0;
 
   @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(_interval, (_) => _advance());
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_visibleCount >= _runes.length) return;
+    if (!MediaQuery.disableAnimationsOf(context)) {
+      _timer ??= Timer.periodic(_interval, (_) => _advance());
+      return;
+    }
+    _timer?.cancel();
+    _visibleCount = _runes.length;
+    // The owner usually rebuilds in answer, which it may not do mid-build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) widget.onDone?.call();
+    });
   }
 
   @override

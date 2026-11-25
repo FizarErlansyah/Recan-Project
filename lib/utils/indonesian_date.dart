@@ -33,6 +33,39 @@ class IndonesianDate {
     'Dec',
   ];
 
+  static const List<String> _fullMonthsId = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
+  ];
+
+  static const List<String> _fullMonthsEn = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  static String monthName(DateTime value) =>
+      trValue(_fullMonthsId, _fullMonthsEn)[value.month - 1];
+
   static String date(DateTime value) =>
       '${value.day} ${trValue(_monthsId, _monthsEn)[value.month - 1]} ${value.year}';
 

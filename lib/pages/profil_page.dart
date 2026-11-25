@@ -7,14 +7,16 @@ import 'package:mobile_apps_recan/features/auth/presentation/widgets/logout_dial
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/leaderboard_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/payment_methods_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/tier_and_voucher_section.dart';
-import 'package:mobile_apps_recan/features/profile/presentation/widgets/voucher_wallet_sheet.dart';
+import 'package:mobile_apps_recan/features/voucher/presentation/my_vouchers_page.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/about_recan_page.dart';
 import 'package:mobile_apps_recan/pages/edit_profil_page.dart';
 import 'package:mobile_apps_recan/pages/help_center_page.dart';
 import 'package:mobile_apps_recan/pages/legal_policies_page.dart';
 import 'package:mobile_apps_recan/pages/tier_info_page.dart';
+import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/data_refresh.dart';
+import 'package:mobile_apps_recan/services/home_navigation.dart';
 import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -28,6 +30,24 @@ class ProfilPage extends StatelessWidget {
   const new({required this.onLogout, super.key});
 
   final Future<void> Function() onLogout;
+
+  Future<void> _connectGoPay(BuildContext context) async {
+    try {
+      await ProfileService.connectGoPay();
+    } on ApiException catch (error) {
+      if (error.unauthorized) {
+        await onLogout();
+      } else if (context.mounted) {
+        AppSnackBar.show(context, error.message);
+      }
+      return;
+    }
+    if (!context.mounted) return;
+    AppSnackBar.show(
+      context,
+      tr('GoPay berhasil terhubung', 'GoPay connected successfully'),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,22 +79,16 @@ class ProfilPage extends StatelessWidget {
                 activeVouchers: overview.profile.activeVouchers,
                 onTierTap: () =>
                     TierInfoPage.open(context, overview.profile.points),
-                onVoucherTap: () => unawaited(VoucherWalletSheet.show(context)),
+                onVoucherTap: () => MyVouchersPage.open(
+                  context,
+                  onLogout: () => unawaited(onLogout()),
+                ),
               ),
               const SizedBox(height: 32),
               PaymentMethodsSection(
                 points: overview.profile.points,
                 gopayConnected: overview.profile.gopayConnected,
-                onConnectGoPay: () {
-                  unawaited(ProfileService.connectGoPay());
-                  AppSnackBar.show(
-                    context,
-                    tr(
-                      'GoPay berhasil terhubung',
-                      'GoPay connected successfully',
-                    ),
-                  );
-                },
+                onConnectGoPay: () => _connectGoPay(context),
               ),
               const SizedBox(height: 32),
               LeaderboardSection(entries: overview.leaderboard),
@@ -83,6 +97,7 @@ class ProfilPage extends StatelessWidget {
                 onEditProfile: () =>
                     EditProfilPage.open(context, overview.profile),
                 onHelp: () => HelpCenterPage.open(context),
+                onTour: HomeNavigation.replayTour,
                 languageLabel: tr('Language | Bahasa', 'Language | English'),
                 onLanguage: () => SettingsSheets.showLanguage(context),
                 onAppearance: () => SettingsSheets.showAppearance(context),
@@ -103,6 +118,7 @@ class _SettingsSection extends StatelessWidget {
   const new({
     required this.onEditProfile,
     required this.onHelp,
+    required this.onTour,
     required this.languageLabel,
     required this.onLanguage,
     required this.onAppearance,
@@ -113,6 +129,7 @@ class _SettingsSection extends StatelessWidget {
 
   final VoidCallback onEditProfile;
   final VoidCallback onHelp;
+  final VoidCallback onTour;
   final String languageLabel;
   final VoidCallback onLanguage;
   final VoidCallback onAppearance;
@@ -155,6 +172,12 @@ class _SettingsSection extends StatelessWidget {
                 icon: AppIcons.appearance,
                 label: tr('Tampilan', 'Appearance'),
                 onTap: onAppearance,
+              ),
+              divider,
+              SettingsTile(
+                icon: AppIcons.idea,
+                label: tr('Lihat Panduan Aplikasi', 'View App Tour'),
+                onTap: onTour,
               ),
               divider,
               SettingsTile(

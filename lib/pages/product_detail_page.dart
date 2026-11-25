@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/product_art.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/checkout_page.dart';
@@ -17,7 +18,16 @@ import 'package:mobile_apps_recan/widgets/product_card.dart';
 class ProductDetailPage extends StatelessWidget {
   const new({required this.product, super.key});
 
-  static const double _coverHeight = 350;
+  // A tall tablet must not be filled by the cover alone.
+  static const double _maxCoverShare = 0.6;
+
+  /// A 4:3 cover, counting the status bar the image bleeds behind.
+  static double _coverHeight(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final photo = (size.width * 3 / 4).clamp(0.0, size.height * _maxCoverShare);
+    return photo - MediaQuery.paddingOf(context).top;
+  }
+
   static String get _upcycleStory => tr(
     'Setiap karya ReCan bermula dari kaleng minuman bekas yang dikumpulkan '
         'di Drop Station. Kaleng dibersihkan, dipotong, lalu dibentuk satu per '
@@ -61,11 +71,15 @@ class ProductDetailPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           ParallaxCoverAppBar(
-            expandedHeight: _coverHeight,
+            expandedHeight: _coverHeight(context),
             title: product.name,
             cover: Hero(
               tag: ProductCard.heroTag(product),
-              child: CoverImage(url: product.imageUrl, seed: product.id),
+              child: CoverImage(
+                url: product.imageUrl,
+                seed: product.id,
+                art: ProductArt.of(product.category, product.id),
+              ),
             ),
           ),
           SliverPadding(

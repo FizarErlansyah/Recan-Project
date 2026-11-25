@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_apps_recan/core/theme/app_icon.dart';
-import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/features/home/domain/weekly_deposits.dart';
 import 'package:mobile_apps_recan/features/home/presentation/mission_ring_card.dart';
 import 'package:mobile_apps_recan/features/home/presentation/recent_activity_card.dart';
@@ -12,9 +10,11 @@ import 'package:mobile_apps_recan/pages/home_page.dart';
 import 'package:mobile_apps_recan/pages/scan_qr_page.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
 import 'package:mobile_apps_recan/widgets/category_menu.dart';
+import 'package:mobile_apps_recan/widgets/home_hero_header.dart';
 import 'package:mobile_apps_recan/widgets/main_nav_bar.dart';
 import 'package:mobile_apps_recan/widgets/motion/animated_count_up.dart';
 import 'package:mobile_apps_recan/widgets/motion/bouncy_tap.dart';
+import 'package:mobile_apps_recan/widgets/motion/rolling_number.dart';
 
 import 'support/screen.dart';
 
@@ -304,8 +304,8 @@ void main() {
         find.textContaining('Hai '),
         find.text('Saldo Tersedia'),
         find.byType(CategoryMenu),
-        find.byType(WeeklyDepositChart),
         find.byType(MissionRingCard),
+        find.byType(WeeklyDepositChart),
         find.byType(RecentActivityCard),
       ].map((finder) => tester.getTopLeft(finder).dy).toList();
 
@@ -318,12 +318,15 @@ void main() {
       MockStore.recordDeposit(60);
       await open(tester);
 
+      expect(
+        tester.widget<RollingNumber>(find.byType(RollingNumber)).value,
+        1500,
+      );
       final counters = tester
           .widgetList<AnimatedCountUp>(find.byType(AnimatedCountUp))
           .map((w) => w.value)
           .toList();
-      expect(counters, containsAll([1500, 60]));
-      expect(find.text('1.500'), findsWidgets);
+      expect(counters, contains(60));
       expect(find.textContaining('60 kaleng'), findsWidgets);
     });
 
@@ -339,19 +342,36 @@ void main() {
       );
     });
 
-    testWidgets('the nav bar scan button opens the scanner once', (
+    testWidgets('the balance card scan button opens the scanner once', (
       tester,
     ) async {
       await open(tester);
-      final scan = find.byKey(const ValueKey('nav-scan'));
+      final scan = find.byKey(const ValueKey('hero-scan'));
       expect(
-        find.ancestor(of: scan, matching: find.byType(MainNavBar)),
+        find.ancestor(of: scan, matching: find.byType(HomeHeroHeader)),
         findsOneWidget,
       );
       expect(
         find.descendant(of: scan, matching: find.byType(BouncyTap)),
         findsOneWidget,
       );
+      expect(
+        find.descendant(of: scan, matching: find.text('Pindai')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(MainNavBar),
+          matching: find.text('Pindai'),
+        ),
+        findsNothing,
+      );
+
+      // Compact beside the balance, yet still a full touch target.
+      final size = tester.getSize(scan);
+      // The test font is far wider than the real one, which gives about 60.
+      expect(size.width, inInclusiveRange(48, 90));
+      expect(size.height, inInclusiveRange(48, 60));
 
       await tester.tap(scan);
       await tester.tap(scan, warnIfMissed: false);
@@ -360,58 +380,5 @@ void main() {
 
       expect(find.byType(ScanQrPage), findsOneWidget);
     });
-  });
-
-  testWidgets('the scan label sits level with the tab labels', (tester) async {
-    await tester.pumpWidget(testApp(const HomePage()));
-    await pumpFrames(tester);
-
-    double labelCenter(String label) => tester
-        .getCenter(
-          find.descendant(
-            of: find.byType(MainNavBar),
-            matching: find.text(label),
-          ),
-        )
-        .dy;
-
-    expect(labelCenter('Pindai'), closeTo(labelCenter('Katalog'), 0.5));
-  });
-
-  testWidgets('a nav bar with a scan button keeps its tabs working', (
-    tester,
-  ) async {
-    final taps = <int>[];
-    var scans = 0;
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          bottomNavigationBar: MainNavBar(
-            items: [
-              for (final label in ['A', 'B', 'C', 'D'])
-                MainNavItem(
-                  icon: hugeIcon(AppIcons.back),
-                  selectedIcon: hugeIcon(AppIcons.back),
-                  label: label,
-                ),
-            ],
-            currentIndex: 0,
-            onTap: taps.add,
-            onScan: () => scans++,
-          ),
-        ),
-      ),
-    );
-    final scan = find.byKey(const ValueKey('nav-scan'));
-    double x(Finder finder) => tester.getCenter(finder).dx;
-
-    expect(x(find.text('B')), lessThan(x(scan)));
-    expect(x(scan), lessThan(x(find.text('C'))));
-    expect(x(scan), closeTo(400, 1));
-
-    await tester.tap(find.text('C'));
-    await tester.tap(scan);
-    expect(taps, [2]);
-    expect(scans, 1);
   });
 }

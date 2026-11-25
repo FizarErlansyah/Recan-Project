@@ -36,11 +36,20 @@ class _DropSuccessPageState extends State<DropSuccessPage> {
     duration: const Duration(seconds: 3),
   );
 
+  bool _celebrated = false;
+
   @override
   void initState() {
     super.initState();
     unawaited(HapticFeedback.heavyImpact());
-    _confetti.play();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_celebrated) return;
+    _celebrated = true;
+    if (!MediaQuery.disableAnimationsOf(context)) _confetti.play();
   }
 
   @override
@@ -51,68 +60,92 @@ class _DropSuccessPageState extends State<DropSuccessPage> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return StatusBarIcons(
       light: true,
       child: Scaffold(
         backgroundColor: AppColors.primary,
         body: Stack(
           children: [
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: SingleChildScrollView(
-                          child: _Receipt(
-                            stationName: widget.stationName,
-                            summary: widget.summary,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: () =>
-                            Navigator.of(context)
-                                .popUntil((route) => route.isFirst),
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size.fromHeight(52),
-                          backgroundColor: AppColors.primarySoft,
-                          foregroundColor: AppColors.primary,
-                        ),
-                        child: Text(
-                          tr('Kembali ke Beranda', 'Back to Home'),
-                          style: textTheme.labelLarge?.copyWith(
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: IgnorePointer(
-                child: ConfettiWidget(
-                  confettiController: _confetti,
-                  blastDirection: pi / 2,
-                  emissionFrequency: 0.04,
-                  numberOfParticles: 18,
-                  maxBlastForce: 22,
-                  minBlastForce: 8,
-                  colors: _confettiColors,
-                ),
-              ),
-            ),
+            _Body(stationName: widget.stationName, summary: widget.summary),
+            _Rain(controller: _confetti, colors: _confettiColors),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Body extends StatelessWidget {
+  const new({required this.stationName, required this.summary});
+
+  final String stationName;
+  final DropSessionSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      minimum: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                child: _Receipt(stationName: stationName, summary: summary),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          const _HomeButton(),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeButton extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton(
+        onPressed: () =>
+            Navigator.of(context).popUntil((route) => route.isFirst),
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(52),
+          backgroundColor: AppColors.primarySoft,
+          foregroundColor: AppColors.primary,
+        ),
+        child: Text(
+          tr('Kembali ke Beranda', 'Back to Home'),
+          style: Theme.of(context).textTheme.labelLarge
+              ?.copyWith(color: AppColors.primary),
+        ),
+      ),
+    );
+  }
+}
+
+class _Rain extends StatelessWidget {
+  const new({required this.controller, required this.colors});
+
+  final ConfettiController controller;
+  final List<Color> colors;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: IgnorePointer(
+        child: ConfettiWidget(
+          confettiController: controller,
+          blastDirection: pi / 2,
+          emissionFrequency: 0.04,
+          numberOfParticles: 18,
+          maxBlastForce: 22,
+          minBlastForce: 8,
+          colors: colors,
         ),
       ),
     );
@@ -206,7 +239,14 @@ class _DetailRow extends StatelessWidget {
         HugeIcon(icon: icon, size: 20, color: context.palette.accent),
         const SizedBox(width: 12),
         Expanded(child: Text(label, style: textTheme.bodyMedium)),
-        Text(value, style: textTheme.titleMedium),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: textTheme.titleMedium,
+          ),
+        ),
       ],
     );
   }

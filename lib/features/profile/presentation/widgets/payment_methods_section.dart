@@ -4,6 +4,7 @@ import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/widgets/single_flight.dart';
 
 class PaymentMethodsSection extends StatelessWidget {
   const new({
@@ -13,12 +14,13 @@ class PaymentMethodsSection extends StatelessWidget {
     super.key,
   });
 
-  static const double cardHeight = 144;
   static const double _gap = 12;
 
   final int points;
   final bool gopayConnected;
-  final VoidCallback onConnectGoPay;
+
+  /// Completes when the server has answered; the button waits for it.
+  final Future<void> Function() onConnectGoPay;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +34,10 @@ class PaymentMethodsSection extends StatelessWidget {
           style: textTheme.titleLarge,
         ),
         const SizedBox(height: 12),
-        SizedBox(
-          height: cardHeight,
+        // Both cards take the height of the fuller one, and no more.
+        IntrinsicHeight(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
                 child: _PaymentCard(
@@ -79,6 +82,7 @@ class _PaymentCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _PaymentCardTitle(icon: icon, title: title),
+            const SizedBox(height: 12),
             footer,
           ],
         ),
@@ -135,6 +139,8 @@ class _BalanceText extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         formatPoints(points),
+        // One line, or the intrinsic height reserves a second one.
+        maxLines: 1,
         style: Theme.of(context).textTheme.headlineSmall,
       ),
     );
@@ -145,47 +151,101 @@ class _GoPayStatus extends StatelessWidget {
   const new({required this.connected, required this.onConnect});
 
   final bool connected;
-  final VoidCallback onConnect;
+  final Future<void> Function() onConnect;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    if (connected) return const _Connected();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          connected
-              ? tr('Terhubung', 'Connected')
-              : tr('Belum terhubung', 'Not connected'),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: textTheme.bodySmall,
+          tr('Belum terhubung', 'Not connected'),
+          style: Theme.of(context).textTheme.bodySmall,
         ),
         const SizedBox(height: 8),
-        if (connected)
-          hugeIcon(HugeIcons.strokeRoundedTick02)(
-            color: context.palette.success,
-            size: 24,
-          )
-        else
-          SizedBox(
-            height: 36,
-            child: FilledButton(
-              onPressed: onConnect,
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(0, 36),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                shape: const StadiumBorder(),
-              ),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(tr('Hubungkan', 'Connect')),
-              ),
-            ),
-          ),
+        _ConnectButton(onConnect: onConnect),
       ],
+    );
+  }
+}
+
+class _Connected extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    final color = context.palette.success;
+
+    return Row(
+      children: [
+        SizedBox.square(
+          key: const ValueKey('gopay-tick'),
+          dimension: 20,
+          child: hugeIcon(HugeIcons.strokeRoundedCheckmarkCircle02)(
+            color: color,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            tr('Terhubung', 'Connected'),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleSmall
+                ?.copyWith(color: color),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ConnectButton extends StatelessWidget {
+  const new({required this.onConnect});
+
+  final Future<void> Function() onConnect;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleFlight(
+      action: onConnect,
+      builder: (context, run) => FilledButton(
+        key: const ValueKey('gopay-connect'),
+        onPressed: run,
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(0, 36),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          shape: const StadiumBorder(),
+        ),
+        child: _ConnectLabel(busy: run == null),
+      ),
+    );
+  }
+}
+
+class _ConnectLabel extends StatelessWidget {
+  const new({required this.busy});
+
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    if (busy) {
+      return SizedBox.square(
+        dimension: 18,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: context.palette.textSecondary,
+        ),
+      );
+    }
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(tr('Hubungkan', 'Connect')),
     );
   }
 }

@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/utils/weight_format.dart';
 import 'package:mobile_apps_recan/widgets/ai_ask_pill.dart';
+import 'package:mobile_apps_recan/widgets/brushed_metal.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
 import 'package:mobile_apps_recan/widgets/count_up.dart';
-import 'package:mobile_apps_recan/widgets/metallic_card.dart';
 import 'package:mobile_apps_recan/widgets/motion/animated_count_up.dart';
+import 'package:mobile_apps_recan/widgets/motion/balance_hero.dart';
 import 'package:mobile_apps_recan/widgets/motion/bouncy_tap.dart';
 import 'package:mobile_apps_recan/widgets/motion/brand_hero.dart';
+import 'package:mobile_apps_recan/widgets/motion/rolling_number.dart';
 import 'package:mobile_apps_recan/widgets/motion/staggered_entrance.dart';
 import 'package:mobile_apps_recan/widgets/pressable.dart';
 import 'package:mobile_apps_recan/widgets/profile_avatar.dart';
 import 'package:mobile_apps_recan/widgets/pull_up_overlap.dart';
+import 'package:mobile_apps_recan/widgets/recan_logo.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 class HomeHeroHeader extends StatelessWidget {
@@ -27,6 +32,7 @@ class HomeHeroHeader extends StatelessWidget {
     required this.onScan,
     required this.onOpenProfile,
     super.key,
+    this.cardAnchor,
   });
 
   final UserProfile user;
@@ -34,6 +40,9 @@ class HomeHeroHeader extends StatelessWidget {
   final VoidCallback onAskAi;
   final VoidCallback onScan;
   final VoidCallback onOpenProfile;
+
+  /// Marks the balance card for something that needs to find it on screen.
+  final Key? cardAnchor;
 
   static const List<String> _daysId = [
     'Senin',
@@ -90,7 +99,7 @@ class HomeHeroHeader extends StatelessWidget {
   }
 
   static const double _curveDepth = 32;
-  static const double _greenExtraHeight = 56;
+  static const double _bandExtraHeight = 36;
   static const double _overlap = 52;
 
   @override
@@ -110,6 +119,7 @@ class HomeHeroHeader extends StatelessWidget {
         PullUpOverlap(
           extent: _overlap,
           child: _BalanceSection(
+            cardAnchor: cardAnchor,
             points: user.pointsBalance,
             cans: cansDeposited,
             onScan: onScan,
@@ -136,12 +146,12 @@ class _GreetingBand extends StatelessWidget {
         clipper: const _CurvedBottomClipper(depth: depth),
         child: Container(
           width: double.infinity,
-          color: AppColors.primary,
+          decoration: AppDecorations.hero(radius: 0),
           padding: EdgeInsets.fromLTRB(
             24,
             topInset + 16,
             24,
-            depth + HomeHeroHeader._greenExtraHeight,
+            depth + HomeHeroHeader._bandExtraHeight,
           ),
           child: child,
         ),
@@ -151,11 +161,17 @@ class _GreetingBand extends StatelessWidget {
 }
 
 class _BalanceSection extends StatelessWidget {
-  const new({required this.points, required this.cans, required this.onScan});
+  const new({
+    required this.points,
+    required this.cans,
+    required this.onScan,
+    required this.cardAnchor,
+  });
 
   final int points;
   final int cans;
   final VoidCallback onScan;
+  final Key? cardAnchor;
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +179,10 @@ class _BalanceSection extends StatelessWidget {
       index: 1,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: _BalanceCard(points: points, cans: cans, onScan: onScan),
+        child: KeyedSubtree(
+          key: cardAnchor,
+          child: _BalanceCard(points: points, cans: cans, onScan: onScan),
+        ),
       ),
     );
   }
@@ -205,15 +224,18 @@ class _GreetingRow extends StatelessWidget {
                 tr('Hai $firstName', 'Hi $firstName'),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: textTheme.headlineSmall?.copyWith(
-                  color: AppColors.white,
-                ),
+                style: textTheme.titleLarge?.copyWith(color: AppColors.white),
               ),
             ],
           ),
         ),
         const SizedBox(width: 12),
-        AiAskPill(onTap: onAskAi),
+        // The pill has a fixed height, so its label stops growing before it
+        // pushes the greeting off the row.
+        MediaQuery.withClampedTextScaling(
+          maxScaleFactor: 1.3,
+          child: AiAskPill(onTap: onAskAi),
+        ),
       ],
     );
   }
@@ -292,16 +314,20 @@ class _BalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MetallicCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _BalanceRow(points: points, onScan: onScan),
-          const SizedBox(height: 20),
-          const _SilverRule.horizontal(),
-          const SizedBox(height: 16),
-          _MetricsRow(cans: cans),
-        ],
+    // A metal card on the navy band is the one focal point of the screen, and
+    // where the splash plate lands.
+    return BalanceHero(
+      child: BrushedMetal(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _BalanceRow(points: points, onScan: onScan),
+            const SizedBox(height: 16),
+            const Divider(height: 1),
+            const SizedBox(height: 16),
+            _MetricsRow(cans: cans),
+          ],
+        ),
       ),
     );
   }
@@ -340,16 +366,35 @@ class _BalanceLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = Theme.of(context).textTheme.labelLarge
-        ?.copyWith(color: AppColors.silverLight);
+        ?.copyWith(color: context.palette.textSecondary);
 
     return Row(
       children: [
-        const BrandHero(size: 20),
+        const _BrandDisc(),
         const SizedBox(width: 8),
         Flexible(
           child: Text(tr('Saldo Tersedia', 'Available Balance'), style: style),
         ),
       ],
+    );
+  }
+}
+
+/// The white mark needs a navy ground on a light card.
+class _BrandDisc extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 28,
+      height: 28,
+      alignment: Alignment.center,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.primary,
+      ),
+      child: const ReCanLogo(size: 18, asset: BrandHero.asset),
     );
   }
 }
@@ -361,25 +406,39 @@ class _PointsValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final style = Theme.of(context).textTheme.displayMedium
+        ?.copyWith(color: context.palette.textPrimary);
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
+    return Wrap(
+      spacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        AnimatedCountUp(
-          value: points,
-          style: textTheme.displaySmall?.copyWith(
-            color: AppColors.white,
-            fontWeight: FontWeight.w800,
-          ),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: RollingNumber(value: points, style: style),
         ),
-        const SizedBox(width: 8),
-        Text(
-          tr('Poin', 'Points'),
-          style: textTheme.titleMedium?.copyWith(color: AppColors.goldLight),
-        ),
+        const _PointsUnit(),
       ],
+    );
+  }
+}
+
+class _PointsUnit extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: ShapeDecoration(
+        color: context.palette.warm,
+        shape: const StadiumBorder(),
+      ),
+      child: Text(
+        tr('Poin', 'Points'),
+        style: Theme.of(context).textTheme.labelLarge
+            ?.copyWith(color: context.palette.onWarm),
+      ),
     );
   }
 }
@@ -393,8 +452,10 @@ class _MetricsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final weightGrams = cans * DropSessionSummary.gramsPerCan;
     final carbonKg = cans * DropSessionSummary.carbonKgPerCan;
-    final valueStyle = Theme.of(context).textTheme.titleSmall
-        ?.copyWith(color: AppColors.white, fontWeight: FontWeight.w700);
+    final valueStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
+      color: context.palette.textPrimary,
+      fontWeight: FontWeight.w700,
+    );
 
     // Top-aligned so a label that wraps to two lines never lifts its icon
     // and value out of line with the neighbouring metrics.
@@ -408,7 +469,7 @@ class _MetricsRow extends StatelessWidget {
             value: AnimatedCountUp(value: cans, style: valueStyle),
           ),
         ),
-        const _SilverRule.vertical(),
+        const _MetricRule(),
         Expanded(
           child: _Metric(
             icon: hugeIcon(HugeIcons.strokeRoundedWeightScale),
@@ -421,7 +482,7 @@ class _MetricsRow extends StatelessWidget {
             ),
           ),
         ),
-        const _SilverRule.vertical(),
+        const _MetricRule(),
         Expanded(
           child: _Metric(
             icon: hugeIcon(HugeIcons.strokeRoundedLeaf01),
@@ -439,21 +500,17 @@ class _MetricsRow extends StatelessWidget {
   }
 }
 
-class _SilverRule extends StatelessWidget {
-  const new horizontal() : isVertical = false;
-  const new vertical() : isVertical = true;
-
-  final bool isVertical;
+class _MetricRule extends StatelessWidget {
+  const new();
 
   @override
   Widget build(BuildContext context) {
-    final color = AppColors.silverLight.withValues(alpha: 0.22);
-    if (!isVertical) return Container(height: 1, color: color);
     return Container(
       width: 1,
       height: 40,
       margin: const EdgeInsets.symmetric(horizontal: 8),
-      color: color,
+      // The border tone vanishes where the reflection crosses the card.
+      color: context.palette.textSecondary.withValues(alpha: 0.25),
     );
   }
 }
@@ -466,6 +523,7 @@ class _ScanButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
+      key: const ValueKey('hero-scan'),
       message: tr('Pindai QR', 'Scan QR'),
       child: BouncyTap(haptic: true, child: _ScanSurface(onTap: onTap)),
     );
@@ -480,20 +538,40 @@ class _ScanSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.primaryDeep,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: AppColors.silverLight.withValues(alpha: 0.4)),
-      ),
+      color: context.palette.primary,
+      elevation: 4,
+      shadowColor: AppColors.shadowStrong,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(
-            color: AppColors.white,
-            size: 24,
-          ),
+      child: InkWell(onTap: onTap, child: const _ScanFace()),
+    );
+  }
+}
+
+/// The only scan action on Beranda, so it says what it does.
+class _ScanFace extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    final color = context.palette.onPrimary;
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 56, minHeight: 52),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(color: color, size: 22),
+            const SizedBox(height: 2),
+            Text(
+              tr('Pindai', 'Scan'),
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: color, fontWeight: FontWeight.w700),
+            ),
+          ],
         ),
       ),
     );
@@ -513,7 +591,7 @@ class _Metric extends StatelessWidget {
 
     return Column(
       children: [
-        icon(color: AppColors.silverLight, size: 18),
+        icon(color: context.palette.accent, size: 20),
         const SizedBox(height: 6),
         value,
         const SizedBox(height: 2),
@@ -522,7 +600,9 @@ class _Metric extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          style: textTheme.labelSmall?.copyWith(color: AppColors.silverLight),
+          style: textTheme.labelSmall?.copyWith(
+            color: context.palette.textSecondary,
+          ),
         ),
       ],
     );

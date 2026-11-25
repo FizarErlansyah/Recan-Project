@@ -47,6 +47,7 @@ class LeaderboardEntry {
     required this.name,
     required this.totalKg,
     required this.isCurrentUser,
+    this.avatar = AvatarRef.none,
   });
 
   /// Reads a row of the `public_leaderboard` view.
@@ -55,12 +56,16 @@ class LeaderboardEntry {
     name: json['full_name'] as String,
     totalKg: (json['total_kg'] as num).toDouble(),
     isCurrentUser: json['is_current_user'] as bool? ?? false,
+    avatar: AvatarRef(url: json['avatar_url'] as String?),
   );
 
   final int rank;
   final String name;
   final double totalKg;
   final bool isCurrentUser;
+  final AvatarRef avatar;
+
+  String get initials => initialsOf(name);
 }
 
 class ProfileOverview {

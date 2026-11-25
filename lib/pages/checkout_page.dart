@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/product_art.dart';
 import 'package:mobile_apps_recan/features/catalog/presentation/payment_channel_picker.dart';
 import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
 import 'package:mobile_apps_recan/features/catalog/presentation/points_usage_card.dart';
@@ -16,6 +16,7 @@ import 'package:mobile_apps_recan/services/transaction_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/cover_image.dart';
+import 'package:mobile_apps_recan/widgets/motion/animated_amount.dart';
 import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:mobile_apps_recan/widgets/quantity_stepper.dart';
@@ -303,7 +304,11 @@ class _OrderSummary extends StatelessWidget {
                 child: SizedBox(
                   width: _imageSize,
                   height: _imageSize,
-                  child: CoverImage(url: product.imageUrl, seed: product.id),
+                  child: CoverImage(
+                    url: product.imageUrl,
+                    seed: product.id,
+                    art: ProductArt.of(product.category, product.id),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -394,54 +399,82 @@ class _ConfirmBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = quote.cashDue > 0
-        ? tr('Bayar (Simulasi)', 'Pay (Simulated)')
-        : tr('Tukar dengan Poin', 'Redeem with Points');
-
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: context.palette.surface,
         border: Border(top: BorderSide(color: context.palette.border)),
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _TotalRow(quote: quote),
-              const SizedBox(height: 12),
-              FilledButton(
-                key: const ValueKey('checkout-confirm'),
-                onPressed: enabled ? onPressed : null,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(52),
-                  disabledBackgroundColor: isSubmitting
-                      ? AppColors.primary
-                      : context.palette.border,
-                ),
-                child: isSubmitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.white,
-                        ),
-                      )
-                    : Text(
-                        label,
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: enabled
-                              ? AppColors.white
-                              : context.palette.textSecondary,
-                        ),
-                      ),
-              ),
-            ],
-          ),
+        minimum: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _TotalRow(quote: quote),
+            const SizedBox(height: 12),
+            _ConfirmButton(
+              label: quote.cashDue > 0
+                  ? tr('Bayar (Simulasi)', 'Pay (Simulated)')
+                  : tr('Tukar dengan Poin', 'Redeem with Points'),
+              enabled: enabled,
+              isSubmitting: isSubmitting,
+              onPressed: onPressed,
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _ConfirmButton extends StatelessWidget {
+  const new({
+    required this.label,
+    required this.enabled,
+    required this.isSubmitting,
+    required this.onPressed,
+  });
+
+  final String label;
+  final bool enabled;
+  final bool isSubmitting;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      key: const ValueKey('checkout-confirm'),
+      onPressed: enabled ? onPressed : null,
+      style: FilledButton.styleFrom(
+        minimumSize: const Size.fromHeight(52),
+        disabledBackgroundColor: isSubmitting
+            ? context.palette.primary
+            : context.palette.border,
+      ),
+      child: isSubmitting
+          ? const _Submitting()
+          : Text(
+              label,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: enabled
+                    ? context.palette.onPrimary
+                    : context.palette.textSecondary,
+              ),
+            ),
+    );
+  }
+}
+
+class _Submitting extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: 20,
+      child: CircularProgressIndicator(
+        strokeWidth: 2,
+        color: context.palette.onPrimary,
       ),
     );
   }
@@ -467,9 +500,10 @@ class _TotalRow extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              formatRupiah(quote.cashDue),
-              key: const ValueKey('checkout-total'),
+            AnimatedAmount(
+              value: quote.cashDue,
+              format: formatRupiah,
+              textKey: const ValueKey('checkout-total'),
               style: textTheme.titleMedium,
             ),
             if (quote.pointsUsed > 0)

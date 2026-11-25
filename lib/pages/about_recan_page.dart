@@ -117,7 +117,10 @@ class _ProblemCard extends StatelessWidget {
               color: context.palette.dangerSoft,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
                   '80 – 200',
@@ -125,15 +128,13 @@ class _ProblemCard extends StatelessWidget {
                     color: context.palette.danger,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    tr(
-                      'tahun waktu yang dibutuhkan satu kaleng untuk terurai secara alami.',
-                      'years for a single can to decompose naturally.',
-                    ),
-                    style: textTheme.bodyMedium,
+                Text(
+                  tr(
+                    'tahun waktu yang dibutuhkan satu kaleng untuk terurai '
+                        'secara alami.',
+                    'years for a single can to decompose naturally.',
                   ),
+                  style: textTheme.bodyMedium,
                 ),
               ],
             ),

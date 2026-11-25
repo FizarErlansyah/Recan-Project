@@ -5,6 +5,7 @@ import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
 import 'package:mobile_apps_recan/features/rewards/domain/wib_calendar.dart';
+import 'package:mobile_apps_recan/features/voucher/domain/voucher.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
@@ -14,8 +15,8 @@ import 'package:mobile_apps_recan/models/ewallet_option.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
-import 'package:mobile_apps_recan/models/voucher.dart';
 import 'package:mobile_apps_recan/services/mock_stations.dart';
+import 'package:mobile_apps_recan/services/mock_voucher_partners.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 class MockStore {
@@ -258,6 +259,19 @@ class MockStore {
       descriptionEn: 'Valid at ReCan partner food and beverage outlets.',
       pointsCost: 500,
       icon: AppIcons.meal,
+      partners: MockVoucherPartners.meal,
+      termsId: [
+        'Berlaku untuk satu transaksi makan atau minum di gerai mitra.',
+        'Potongan 20%, maksimal Rp 20.000.',
+        'Tidak dapat digabung dengan promo lain dan tidak dapat diuangkan.',
+        'Tunjukkan voucher ke kasir sebelum membayar.',
+      ],
+      termsEn: [
+        'Valid for one food or drink purchase at a partner outlet.',
+        '20% off, up to Rp 20,000.',
+        'Cannot be combined with other promos and has no cash value.',
+        'Show the voucher to the cashier before paying.',
+      ],
       colors: [AppColors.gold, AppColors.goldDeep],
     ),
     const Voucher(
@@ -268,6 +282,19 @@ class MockStore {
       descriptionEn: 'One day of free motorbike parking at partner locations.',
       pointsCost: 800,
       icon: AppIcons.parking,
+      partners: MockVoucherPartners.parking,
+      termsId: [
+        'Berlaku untuk satu motor selama satu hari di lokasi parkir mitra.',
+        'Tunjukkan voucher ke petugas parkir sebelum keluar.',
+        'Tidak berlaku untuk mobil dan parkir menginap.',
+        'Tidak dapat diuangkan.',
+      ],
+      termsEn: [
+        'Valid for one motorbike for one day at a partner parking lot.',
+        'Show the voucher to the attendant before leaving.',
+        'Not valid for cars or overnight parking.',
+        'Has no cash value.',
+      ],
       colors: [AppColors.primary, AppColors.primaryDark],
     ),
     const Voucher(
@@ -278,6 +305,19 @@ class MockStore {
       descriptionEn: 'Discount on copying and printing at partner shops.',
       pointsCost: 300,
       icon: AppIcons.print,
+      partners: MockVoucherPartners.print,
+      termsId: [
+        'Berlaku untuk satu transaksi fotokopi atau cetak di gerai mitra.',
+        'Potongan 30%, maksimal Rp 15.000.',
+        'Tidak berlaku untuk jilid dan laminasi.',
+        'Tunjukkan voucher ke kasir sebelum membayar.',
+      ],
+      termsEn: [
+        'Valid for one copy or print order at a partner shop.',
+        '30% off, up to Rp 15,000.',
+        'Binding and lamination are not included.',
+        'Show the voucher to the cashier before paying.',
+      ],
       colors: [AppColors.primaryDark, AppColors.primaryLight],
     ),
   ];
@@ -301,7 +341,9 @@ class MockStore {
     tier: MemberTier.of(points).name,
     phone: userPhone,
     gopayConnected: gopayConnected,
-    activeVouchers: ownedVouchers.length,
+    activeVouchers: ownedVouchers
+        .where((v) => v.statusAt(DateTime.now()) == VoucherStatus.active)
+        .length,
     avatar: avatar,
   );
 
@@ -342,6 +384,7 @@ class MockStore {
           name: rows[i].$1,
           totalKg: rows[i].$2,
           isCurrentUser: rows[i].$3,
+          avatar: rows[i].$3 ? avatar : AvatarRef.none,
         ),
     ];
   }
@@ -609,17 +652,38 @@ class MockStore {
     );
     final reference = result.transactionId;
     if (result.failure == null && reference != null) {
+      final now = DateTime.now();
       ownedVouchers.insert(
         0,
         OwnedVoucher(
           voucher: voucher,
           reference: reference,
-          redeemedAt: DateTime.now(),
+          redeemedAt: now,
+          expiresAt: now.add(Duration(days: voucher.validityDays)),
         ),
       );
       _advanceQuests(QuestMetric.voucher, 1);
     }
     return result;
+  }
+
+  /// Mirrors `use_voucher()`; returns why it refused, or null when done.
+  static String? useVoucher(String reference) {
+    final index = ownedVouchers.indexWhere((v) => v.reference == reference);
+    if (index < 0) {
+      return tr('Voucher tidak ditemukan.', 'Voucher not found.');
+    }
+    final now = DateTime.now();
+    final owned = ownedVouchers[index];
+    switch (owned.statusAt(now)) {
+      case VoucherStatus.used:
+        return tr('Voucher sudah dipakai.', 'This voucher is already used.');
+      case VoucherStatus.expired:
+        return tr('Voucher sudah kedaluwarsa.', 'This voucher has expired.');
+      case VoucherStatus.active:
+        ownedVouchers[index] = owned.markedUsed(now);
+        return null;
+    }
   }
 
   static ({String? failure, String? transactionId}) recordEWalletRedeem(

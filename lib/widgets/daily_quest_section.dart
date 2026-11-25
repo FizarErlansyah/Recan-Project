@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/rewards/presentation/reward_burst.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/gamification_service.dart';
@@ -50,6 +52,7 @@ class _DailyQuestSectionState extends State<DailyQuestSection> {
         _claimedIds.add(quest.id);
       });
       unawaited(HapticFeedback.mediumImpact());
+      RewardBurst.show(context, quest.rewardPoints);
       AppSnackBar.show(
         context,
         tr('Misi berhasil diklaim!', 'Mission claimed successfully!'),
@@ -191,11 +194,7 @@ class _QuestMessage extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: context.palette.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.palette.border),
-      ),
+      decoration: AppDecorations.card(context),
       child: Column(
         children: [
           Text(

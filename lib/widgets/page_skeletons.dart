@@ -10,17 +10,23 @@ class CatalogSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer(
-      child: GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          mainAxisExtent: ProductCard.height,
-        ),
-        itemCount: _placeholderCount,
-        itemBuilder: (_, _) => const ShimmerBox(height: ProductCard.height),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // The same cell the loaded grid uses, so nothing jumps.
+          final cell = (constraints.maxWidth - 60) / 2;
+          return GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              mainAxisExtent: ProductCard.heightOf(context, cell),
+            ),
+            itemCount: _placeholderCount,
+            itemBuilder: (_, _) => const ShimmerBox(height: double.infinity),
+          );
+        },
       ),
     );
   }
@@ -73,13 +79,9 @@ class ProfileSkeleton extends StatelessWidget {
         padding: EdgeInsets.all(24),
         child: Column(
           children: [
-            ShimmerBox(width: 88, height: 88, radius: 44),
-            SizedBox(height: 16),
-            ShimmerBox(width: 160, height: 18),
-            SizedBox(height: 8),
-            ShimmerBox(width: 200, height: 12),
+            ShimmerBox(height: 168, radius: 20),
             SizedBox(height: 24),
-            ShimmerBox(height: 152),
+            ShimmerBox(height: 164, radius: 20),
             SizedBox(height: 32),
             ShimmerBox(height: 280),
           ],

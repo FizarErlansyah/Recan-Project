@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/core/theme/app_text_styles.dart';
 
 class AppTheme {
   const new _();
 
-  static const double radius = 16;
-  static const double controlRadius = 12;
-  static const double fieldRadius = 16;
+  static const double radius = AppDecorations.radius;
+  static const double controlRadius = AppDecorations.controlRadius;
+  static const double fieldRadius = 14;
 
   static ThemeData get light => _build(AppPalette.light, Brightness.light);
 
@@ -23,8 +24,8 @@ class AppTheme {
         : SystemUiOverlayStyle.dark;
     final makeScheme = isDark ? ColorScheme.dark : ColorScheme.light;
     final scheme = makeScheme(
-      primary: AppColors.primary,
-      onPrimary: AppColors.white,
+      primary: palette.primary,
+      onPrimary: palette.onPrimary,
       surface: palette.surface,
       primaryContainer: palette.tint,
       onPrimaryContainer: isDark ? palette.accent : AppColors.primaryDeep,
@@ -34,8 +35,8 @@ class AppTheme {
       onSecondaryContainer: isDark
           ? palette.textSecondary
           : AppColors.slateDeep,
-      tertiary: AppColors.gold,
-      onTertiary: AppColors.primaryDeep,
+      tertiary: palette.warm,
+      onTertiary: palette.onWarm,
       onSurface: palette.textPrimary,
       onSurfaceVariant: palette.textSecondary,
       surfaceContainerHighest: palette.surfaceMuted,
@@ -90,18 +91,18 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: palette.surface,
         surfaceTintColor: AppColors.transparent,
-        elevation: 0,
+        shadowColor: palette.shadow,
+        elevation: 4,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radius),
-          side: BorderSide(color: palette.border),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.white,
+          backgroundColor: palette.primary,
+          foregroundColor: palette.onPrimary,
           disabledBackgroundColor: palette.surfaceMuted,
           disabledForegroundColor: palette.textTertiary,
           minimumSize: const Size(48, 48),
@@ -112,8 +113,8 @@ class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.white,
+          backgroundColor: palette.primary,
+          foregroundColor: palette.onPrimary,
           minimumSize: const Size(48, 48),
           padding: buttonPadding,
           shape: controlShape,
@@ -205,7 +206,9 @@ class AppTheme {
         showDragHandle: true,
         dragHandleColor: palette.border,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppDecorations.heroRadius),
+          ),
         ),
       ),
       dialogTheme: DialogThemeData(

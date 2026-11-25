@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/login_page.dart';
+import 'package:mobile_apps_recan/features/tour/data/tour_store.dart';
+import 'package:mobile_apps_recan/features/tour/presentation/coach_mark_overlay.dart';
+import 'package:mobile_apps_recan/features/tour/presentation/tour_anchors.dart';
 import 'package:mobile_apps_recan/pages/aktivitas_page.dart';
 import 'package:mobile_apps_recan/pages/beranda_page.dart';
 import 'package:mobile_apps_recan/pages/katalog_page.dart';
@@ -25,25 +29,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TourAnchors _anchors = TourAnchors();
+  String? _userId;
+  bool _touring = false;
+
   List<MainNavItem> get _items => [
     MainNavItem(
-      icon: hugeIcon(HugeIcons.strokeRoundedHome01),
-      selectedIcon: hugeIcon(HugeIcons.strokeRoundedHome01),
+      icon: materialIcon(Icons.home_outlined),
+      selectedIcon: materialIcon(Icons.home_rounded),
       label: tr('Beranda', 'Home'),
     ),
     MainNavItem(
-      icon: hugeIcon(HugeIcons.strokeRoundedShoppingCart01),
-      selectedIcon: hugeIcon(HugeIcons.strokeRoundedShoppingCart01),
+      icon: materialIcon(Icons.shopping_cart_outlined),
+      selectedIcon: materialIcon(Icons.shopping_cart_rounded),
       label: tr('Katalog', 'Catalog'),
     ),
     MainNavItem(
-      icon: hugeIcon(HugeIcons.strokeRoundedReceiptText),
-      selectedIcon: hugeIcon(HugeIcons.strokeRoundedReceiptText),
+      anchor: _anchors.activityTab,
+      icon: materialIcon(Icons.receipt_long_outlined),
+      selectedIcon: materialIcon(Icons.receipt_long_rounded),
       label: tr('Aktivitas', 'Activity'),
     ),
     MainNavItem(
-      icon: hugeIcon(HugeIcons.strokeRoundedUser),
-      selectedIcon: hugeIcon(HugeIcons.strokeRoundedUser),
+      anchor: _anchors.profileTab,
+      icon: materialIcon(Icons.person_outline_rounded),
+      selectedIcon: materialIcon(Icons.person_rounded),
       label: tr('Profil', 'Profile'),
     ),
   ];
@@ -66,11 +76,26 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     HomeNavigation.requestedTab.addListener(_handleTabRequest);
+    HomeNavigation.tourRequests.addListener(_replayTour);
+    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_warmTabs()));
+  }
+
+  /// Loads the other tabs early, so opening one later never shows a skeleton.
+  /// Building them during the entrance would stall the splash morph.
+  Future<void> _warmTabs() async {
+    await _routeSettled();
+    if (!mounted) return;
+    setState(() {
+      for (var i = 0; i < _items.length; i++) {
+        _visited.add(i);
+      }
+    });
   }
 
   @override
   void dispose() {
     HomeNavigation.requestedTab.removeListener(_handleTabRequest);
+    HomeNavigation.tourRequests.removeListener(_replayTour);
     super.dispose();
   }
 
@@ -79,6 +104,45 @@ class _HomePageState extends State<HomePage> {
     if (requested == null) return;
     HomeNavigation.requestedTab.value = null;
     _selectTab(requested);
+  }
+
+  /// Shows the tour to someone who has not seen it on this device.
+  Future<void> _offerTour(String userId) async {
+    _userId = userId;
+    if (await TourStore.current.isDone(userId)) return;
+    await _routeSettled();
+    // Someone who already moved on gets it on the next visit instead.
+    if (!mounted || _currentIndex != 0) return;
+    if (!(ModalRoute.of(context)?.isCurrent ?? true)) return;
+    setState(() => _touring = true);
+  }
+
+  /// Waits out the transition that brought this page in.
+  Future<void> _routeSettled() async {
+    if (!mounted) return;
+    final entrance = ModalRoute.of(context)?.animation;
+    if (entrance == null || entrance.isCompleted) return;
+    final done = Completer<void>();
+    void listen(AnimationStatus status) {
+      if (status.isCompleted && !done.isCompleted) done.complete();
+    }
+
+    entrance.addStatusListener(listen);
+    await done.future;
+    entrance.removeStatusListener(listen);
+  }
+
+  void _replayTour() {
+    _selectTab(0);
+    setState(() => _touring = true);
+  }
+
+  void _endTour() {
+    final page = _anchors.balance.currentContext;
+    if (page != null) Scrollable.maybeOf(page)?.position.jumpTo(0);
+    setState(() => _touring = false);
+    final userId = _userId;
+    if (userId != null) unawaited(TourStore.current.markDone(userId));
   }
 
   bool _loggingOut = false;
@@ -110,6 +174,8 @@ class _HomePageState extends State<HomePage> {
           onLogout: _logout,
           onSelectTab: _selectTab,
           onScan: _openScan,
+          tourAnchors: _anchors,
+          onReady: (userId) => unawaited(_offerTour(userId)),
         );
       case 1:
         return KatalogPage(onLogout: _logout);
@@ -120,9 +186,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Tabs build on first visit and then stay alive, so scroll position, loaded
-  // data and carousel state survive a tab switch. Each slot crossfades and
-  // goes offstage once hidden, so only the active tab is painted or hit.
+  // Tabs stay alive once built, so scroll position, loaded data and carousel
+  // state survive a tab switch. A hidden slot goes offstage, so only the open
+  // tab is painted or hit.
   Widget _buildTabs() {
     return Stack(
       fit: StackFit.expand,
@@ -130,6 +196,7 @@ class _HomePageState extends State<HomePage> {
         for (var i = 0; i < _items.length; i++)
           TabSlot(
             active: i == _currentIndex,
+            side: (i - _currentIndex).sign,
             child: _visited.contains(i)
                 ? _buildTab(i)
                 : const SizedBox.shrink(),
@@ -138,20 +205,35 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildShell() => Scaffold(
+    extendBody: true,
+    body: _buildTabs(),
+    bottomNavigationBar: MainNavBar(
+      items: _items,
+      currentIndex: _currentIndex,
+      onTap: _selectTab,
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
       valueListenable: MockStore.isEnglish,
       builder: (context, _, _) => StatusBarIcons(
-        light: context.isDark,
-        child: Scaffold(
-          extendBody: true,
-          body: _buildTabs(),
-          bottomNavigationBar: MainNavBar(
-            items: _items,
-            currentIndex: _currentIndex,
-            onTap: _selectTab,
-            onScan: _openScan,
+        light: context.isDark || _touring,
+        // Back closes the tour before it can leave the app.
+        child: PopScope(
+          canPop: !_touring,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop) _endTour();
+          },
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              _buildShell(),
+              if (_touring)
+                CoachMarkOverlay(anchors: _anchors, onDone: _endTour),
+            ],
           ),
         ),
       ),

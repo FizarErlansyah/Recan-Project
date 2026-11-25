@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
 import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
+import 'package:mobile_apps_recan/features/voucher/domain/voucher.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
@@ -13,7 +14,6 @@ import 'package:mobile_apps_recan/models/ewallet_option.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
-import 'package:mobile_apps_recan/models/voucher.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/auth_service.dart';
 import 'package:mobile_apps_recan/services/backend/app_backend.dart';
@@ -177,7 +177,8 @@ class SupabaseBackend implements AppBackend {
         .from('owned_vouchers')
         .select('id')
         .eq('user_id', _user.id)
-        .eq('status', 'active');
+        .eq('status', 'active')
+        .gt('expires_at', DateTime.now().toUtc().toIso8601String());
     return ProfileData.fromJson({...row, 'active_vouchers': vouchers.length});
   });
 
@@ -284,10 +285,13 @@ class SupabaseBackend implements AppBackend {
     return _rows(data);
   }
 
-  Future<List<Map<String, dynamic>>> _catalogRows(String type) async {
+  Future<List<Map<String, dynamic>>> _catalogRows(
+    String type, {
+    String columns = '*',
+  }) async {
     final data = await _client
         .from('catalog_items')
-        .select()
+        .select(columns)
         .eq('item_type', type)
         .eq('is_active', true)
         .order('sort_order', ascending: true);
@@ -344,7 +348,10 @@ class SupabaseBackend implements AppBackend {
 
   @override
   Future<List<Voucher>> vouchers() => _guard(() async {
-    final rows = await _catalogRows('voucher');
+    final rows = await _catalogRows(
+      'voucher',
+      columns: '*, voucher_partners(*)',
+    );
     return [for (final row in rows) Voucher.fromJson(row)];
   });
 
@@ -352,11 +359,18 @@ class SupabaseBackend implements AppBackend {
   Future<List<OwnedVoucher>> ownedVouchers() => _guard(() async {
     final data = await _client
         .from('owned_vouchers')
-        .select('*, catalog_items(*)')
+        .select('*, catalog_items(*, voucher_partners(*))')
         .eq('user_id', _user.id)
-        .eq('status', 'active')
         .order('redeemed_at', ascending: false);
     return [for (final row in _rows(data)) OwnedVoucher.fromJson(row)];
+  });
+
+  @override
+  Future<void> useVoucher(String reference) => _guard(() async {
+    await _client.rpc<dynamic>(
+      'use_voucher',
+      params: {'p_reference': reference},
+    );
   });
 
   @override

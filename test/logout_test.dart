@@ -35,6 +35,7 @@ class _SlowSignOut implements AppBackend {
   Object? noSuchMethod(Invocation invocation) {
     if (invocation.memberName == #profile) return _data.profile();
     if (invocation.memberName == #overview) return _data.overview();
+    if (invocation.memberName == #products) return _data.products();
     if (invocation.memberName == #dashboard) return _data.dashboard();
     if (invocation.memberName == #isRemote) return false;
     if (invocation.memberName == #cachedArticles) return _data.cachedArticles;
@@ -72,8 +73,11 @@ void main() {
     await pumpFrames(tester);
     await tester.tap(find.text('Profil'));
     await pumpFrames(tester);
-    await tester.drag(find.byType(ListView).last, const Offset(0, -3000));
-    await pumpFrames(tester);
+    // Twice: a lazy list only learns its full length while it scrolls.
+    for (var i = 0; i < 2; i++) {
+      await tester.drag(find.byType(ListView).last, const Offset(0, -3000));
+      await pumpFrames(tester);
+    }
   }
 
   final logoutTile = find.widgetWithText(SettingsTile, 'Keluar');
@@ -84,8 +88,7 @@ void main() {
   ) async {
     await openProfile(tester, bottomInset: 48);
 
-    final navTop =
-        tester.getRect(find.byType(MainNavBar)).top + MainNavBar.overhang;
+    final navTop = tester.getRect(find.byType(MainNavBar)).top;
     expect(tester.getRect(logoutTile).bottom, lessThanOrEqualTo(navTop));
 
     await tester.tap(logoutTile);
@@ -156,7 +159,7 @@ void main() {
   ) async {
     await tester.pumpWidget(testApp(const HomePage()));
     await pumpFrames(tester);
-    await tester.tap(find.text('Misi & Hadiah'));
+    await tester.tap(find.text('Misi'));
     await pumpFrames(tester);
 
     tester.widget<QuestPage>(find.byType(QuestPage)).onLogout();

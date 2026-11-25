@@ -1,6 +1,6 @@
 import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/voucher/domain/voucher.dart';
 import 'package:mobile_apps_recan/models/ewallet_option.dart';
-import 'package:mobile_apps_recan/models/voucher.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 import 'package:mobile_apps_recan/services/data_refresh.dart';

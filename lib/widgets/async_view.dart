@@ -28,12 +28,18 @@ class AsyncView<T> extends StatefulWidget {
   State<AsyncView<T>> createState() => _AsyncViewState<T>();
 }
 
-class _AsyncViewState<T> extends State<AsyncView<T>> {
+class _AsyncViewState<T> extends State<AsyncView<T>>
+    with AutomaticKeepAliveClientMixin {
   static const Duration _crossfade = Duration(milliseconds: 180);
 
   late Future<T> _future = widget.loader();
   T? _latestData;
   bool _keepLatestWhileLoading = false;
+
+  // Inside a lazy list or a tab view, being scrolled away must not throw the
+  // data out and flash the skeleton again.
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -79,6 +85,7 @@ class _AsyncViewState<T> extends State<AsyncView<T>> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return FutureBuilder<T>(

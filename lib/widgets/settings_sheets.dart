@@ -12,8 +12,8 @@ class SettingsSheets {
   const new _();
 
   // Both mirror `version:` in pubspec.yaml; a test fails when they drift.
-  static const String appVersion = '2.0.0';
-  static const String appBuild = '2';
+  static const String appVersion = '2.1.0';
+  static const String appBuild = '3';
 
   static Future<void> showLanguage(BuildContext context) {
     return showModalBottomSheet<void>(

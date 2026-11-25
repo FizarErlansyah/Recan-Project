@@ -15,8 +15,12 @@ class FaqTile extends StatelessWidget {
 
     return Container(
       decoration: AppDecorations.card(context),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+      // The tile paints its ink on the nearest Material, which must sit above
+      // the card colour.
+      child: Material(
+        type: MaterialType.transparency,
+        borderRadius: BorderRadius.circular(AppDecorations.radius),
+        clipBehavior: Clip.antiAlias,
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: AppColors.transparent),
           child: ExpansionTile(

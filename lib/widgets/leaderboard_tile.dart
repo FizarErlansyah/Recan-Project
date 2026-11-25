@@ -4,6 +4,7 @@ import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/utils/weight_format.dart';
+import 'package:mobile_apps_recan/widgets/profile_avatar.dart';
 
 class LeaderboardTile extends StatelessWidget {
   const new({required this.entry, super.key});
@@ -40,6 +41,13 @@ class LeaderboardTile extends StatelessWidget {
       child: Row(
         children: [
           _RankBadge(rank: entry.rank, medalColor: _medalColor),
+          const SizedBox(width: 12),
+          ProfileAvatar(
+            initials: entry.initials,
+            avatar: entry.avatar,
+            size: 36,
+            borderWidth: 1.5,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

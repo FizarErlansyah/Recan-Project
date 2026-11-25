@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/ewallet_option.dart';
@@ -71,22 +70,25 @@ class EWalletTile extends StatelessWidget {
               style: FilledButton.styleFrom(
                 minimumSize: const Size(96, 48),
                 backgroundColor: affordable
-                    ? AppColors.primary
+                    ? context.palette.primary
                     : context.palette.border,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
               child: busy
-                  ? const SizedBox.square(
+                  ? SizedBox.square(
                       dimension: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: context.palette.onPrimary,
+                      ),
                     )
                   : Text(
                       tr('Tukar', 'Redeem'),
                       style: textTheme.labelLarge?.copyWith(
                         color: affordable
-                            ? AppColors.white
+                            ? context.palette.onPrimary
                             : context.palette.textSecondary,
                       ),
                     ),

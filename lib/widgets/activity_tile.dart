@@ -17,8 +17,6 @@ class ActivityTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Column(
       children: [
         Material(
@@ -27,49 +25,7 @@ class ActivityTile extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: () => ActivityDetailSheet.show(context, transaction),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 72),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 8,
-                ),
-                child: Row(
-                  children: [
-                    ActivityIconBadge(transaction: transaction),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            transaction.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.titleSmall,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            transaction.transactionId,
-                            style: textTheme.labelSmall?.copyWith(
-                              color: context.palette.textSecondary,
-                              letterSpacing: 0.6,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            IndonesianDate.dateTime(transaction.timestamp),
-                            style: textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    _AmountColumn(transaction: transaction),
-                  ],
-                ),
-              ),
-            ),
+            child: _TileRow(transaction: transaction),
           ),
         ),
         if (!isLast)
@@ -79,6 +35,84 @@ class ActivityTile extends StatelessWidget {
             indent: 8 + _iconSize + 12,
           ),
       ],
+    );
+  }
+}
+
+class _TileRow extends StatelessWidget {
+  const new({required this.transaction});
+
+  final ActivityTransaction transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 72),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      child: Row(
+        children: [
+          ActivityIconBadge(transaction: transaction),
+          const SizedBox(width: 12),
+          Expanded(child: _TileText(transaction: transaction)),
+          const SizedBox(width: 12),
+          _Amount(transaction: transaction),
+        ],
+      ),
+    );
+  }
+}
+
+class _TileText extends StatelessWidget {
+  const new({required this.transaction});
+
+  final ActivityTransaction transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          transaction.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: textTheme.titleSmall,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          transaction.transactionId,
+          style: textTheme.labelSmall?.copyWith(
+            color: context.palette.textSecondary,
+            letterSpacing: 0.6,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          IndonesianDate.dateTime(transaction.timestamp),
+          style: textTheme.bodySmall,
+        ),
+      ],
+    );
+  }
+}
+
+/// Large text shrinks the amount before it can push the title off the row.
+class _Amount extends StatelessWidget {
+  const new({required this.transaction});
+
+  final ActivityTransaction transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 128),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerRight,
+        child: _AmountColumn(transaction: transaction),
+      ),
     );
   }
 }

@@ -37,6 +37,13 @@ class _WeeklyDepositChartState extends State<WeeklyDepositChart> {
     setState(() => _selected = _selected == index ? null : index);
   }
 
+  // Scrubbing only ever picks a day; lifting the finger leaves it picked.
+  void _scrub(int index) {
+    if (index == _selected) return;
+    Haptics.selection();
+    setState(() => _selected = index);
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -61,10 +68,41 @@ class _WeeklyDepositChartState extends State<WeeklyDepositChart> {
           const SizedBox(height: 12),
           _TooltipLane(week: week, selected: _selected),
           const SizedBox(height: 4),
-          _Bars(week: week, selected: _selected, onSelect: _select),
+          _ScrubArea(
+            onScrub: _scrub,
+            child: _Bars(week: week, selected: _selected, onSelect: _select),
+          ),
           if (week.total == 0) _EmptyNote(onScan: widget.onScan),
         ],
       ),
+    );
+  }
+}
+
+/// Maps a horizontal drag to the day under the finger.
+class _ScrubArea extends StatelessWidget {
+  const new({required this.onScrub, required this.child});
+
+  final ValueChanged<int> onScrub;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        void at(Offset position) {
+          final day = position.dx * WeeklyDeposits.length;
+          onScrub(
+            (day ~/ constraints.maxWidth).clamp(0, WeeklyDeposits.length - 1),
+          );
+        }
+
+        return GestureDetector(
+          onHorizontalDragStart: (details) => at(details.localPosition),
+          onHorizontalDragUpdate: (details) => at(details.localPosition),
+          child: child,
+        );
+      },
     );
   }
 }

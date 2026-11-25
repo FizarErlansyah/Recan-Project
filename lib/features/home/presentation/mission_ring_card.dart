@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
@@ -7,10 +9,10 @@ import 'package:mobile_apps_recan/widgets/recan_card.dart';
 /// One glance at the running missions: how many are done, what can be claimed
 /// and which one is closest.
 class MissionRingCard extends StatelessWidget {
-  const new({required this.quests, required this.onTap, super.key});
+  const new({required this.quests, super.key, this.onTap});
 
   final List<DailyQuest> quests;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +59,13 @@ class _ProgressRing extends StatelessWidget {
             tween: Tween(begin: 0, end: done / total),
             duration: still ? Duration.zero : const Duration(milliseconds: 900),
             curve: Curves.easeOutCubic,
-            builder: (context, value, _) => CircularProgressIndicator(
-              value: value,
-              strokeWidth: 7,
-              strokeCap: StrokeCap.round,
-              color: context.palette.accent,
-              backgroundColor: context.palette.surfaceMuted,
+            builder: (context, value, _) => CustomPaint(
+              painter: _RingPainter(
+                value: value,
+                track: context.palette.surfaceMuted,
+                from: context.palette.accent,
+                to: context.palette.success,
+              ),
             ),
           ),
           _RingCount(label: '$done/$total'),
@@ -70,6 +73,46 @@ class _ProgressRing extends StatelessWidget {
       ),
     );
   }
+}
+
+class _RingPainter extends CustomPainter {
+  const new({
+    required this.value,
+    required this.track,
+    required this.from,
+    required this.to,
+  });
+
+  static const double _stroke = 8;
+
+  final double value;
+  final Color track;
+  final Color from;
+  final Color to;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final ring = (Offset.zero & size).deflate(_stroke / 2);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _stroke
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(ring, 0, math.pi * 2, false, paint..color = track);
+    if (value <= 0) return;
+    // Starts at twelve o'clock; the gradient is turned to start there too.
+    paint.shader = SweepGradient(
+      colors: [from, to, from],
+      transform: const GradientRotation(-math.pi / 2),
+    ).createShader(ring);
+    canvas.drawArc(ring, -math.pi / 2, math.pi * 2 * value, false, paint);
+  }
+
+  @override
+  bool shouldRepaint(_RingPainter oldDelegate) =>
+      oldDelegate.value != value ||
+      oldDelegate.track != track ||
+      oldDelegate.from != from ||
+      oldDelegate.to != to;
 }
 
 class _RingCount extends StatelessWidget {

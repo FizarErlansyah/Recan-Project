@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/core/theme/app_text_styles.dart';
 import 'package:mobile_apps_recan/core/theme/app_theme.dart';
 import 'package:mobile_apps_recan/main.dart';
 import 'package:mobile_apps_recan/services/theme_preference.dart';
@@ -16,30 +20,100 @@ double contrast(Color a, Color b) {
 }
 
 void main() {
-  test('brand tokens match the official team palette', () {
+  test('brand tokens keep the official team palette', () {
     expect(AppColors.primary, const Color(0xFF284B63));
     expect(AppColors.primaryDark, const Color(0xFF1B3547));
     expect(AppColors.primaryDeep, const Color(0xFF162B3A));
     expect(AppColors.primarySoft, const Color(0xFFC9EDDC));
-    expect(AppColors.textPrimary, const Color(0xFF353535));
-    expect(AppColors.textSecondary, const Color(0xFF6A706E));
     expect(AppColors.gold, const Color(0xFFC8A252));
+    expect(AppColors.warm, const Color(0xFFFFC247));
   });
 
-  test('light palette maps the semantic colour tokens', () {
+  test('light palette follows the Aluminium Fintech sheet', () {
     const light = AppPalette.light;
 
-    expect(light.background, AppColors.background);
-    expect(light.surface, AppColors.surface);
-    expect(light.surfaceMuted, AppColors.surfaceMuted);
-    expect(light.border, AppColors.border);
-    expect(light.textPrimary, AppColors.textPrimary);
-    expect(light.textSecondary, AppColors.textSecondary);
-    expect(light.textTertiary, AppColors.textTertiary);
-    expect(light.background, const Color(0xFFF5F8FA));
-    expect(light.border, const Color(0xFFD6DFE5));
-    expect(light.accent, AppColors.primary);
-    expect(light.tint, AppColors.primarySoft);
+    expect(light.background, const Color(0xFFEEF3F6));
+    expect(light.surface, const Color(0xFFFFFFFF));
+    expect(light.tint, const Color(0xFFDDF3E8));
+    expect(light.border, const Color(0xFFD5E0E7));
+    expect(light.textPrimary, const Color(0xFF14232E));
+    expect(light.textSecondary, const Color(0xFF4F606C));
+    expect(light.primary, AppColors.primary);
+    expect(light.onPrimary, AppColors.white);
+    expect(light.warm, AppColors.warm);
+    expect(light.goldText, const Color(0xFF835500));
+  });
+
+  for (final (name, palette) in [
+    ('light', AppPalette.light),
+    ('dark', AppPalette.dark),
+  ]) {
+    test('$name fills carry readable labels', () {
+      for (final (label, fill) in [
+        (palette.onPrimary, palette.primary),
+        (palette.onWarm, palette.warm),
+        (palette.accent, palette.tint),
+        (palette.textSecondary, palette.tint),
+      ]) {
+        expect(contrast(label, fill), greaterThanOrEqualTo(4.5));
+      }
+    });
+
+    test('$name buttons stand out from the card they sit on', () {
+      expect(
+        contrast(palette.primary, palette.surface),
+        greaterThanOrEqualTo(3),
+      );
+    });
+  }
+
+  test('themed buttons use the primary of their own mode', () {
+    for (final (theme, palette) in [
+      (AppTheme.light, AppPalette.light),
+      (AppTheme.dark, AppPalette.dark),
+    ]) {
+      final style = theme.filledButtonTheme.style!;
+      expect(style.backgroundColor!.resolve({}), palette.primary);
+      expect(style.foregroundColor!.resolve({}), palette.onPrimary);
+    }
+  });
+
+  test('the type scale separates balance, page, section, card and body', () {
+    final text = AppTheme.light.textTheme;
+
+    expect(
+      [
+        text.displayMedium,
+        text.headlineSmall,
+        text.titleLarge,
+        text.titleMedium,
+        text.bodyMedium,
+        text.bodySmall,
+      ].map((style) => style!.fontSize),
+      [40, 24, 18, 15, 14, 12],
+    );
+  });
+
+  test('tabular figures give every digit the same width', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final bytes = File('assets/fonts/PlusJakartaSans.ttf').readAsBytesSync();
+    final loader = FontLoader(AppTextStyles.fontFamily)
+      ..addFont(Future.value(ByteData.sublistView(bytes)));
+    await loader.load();
+
+    double width(String digits, TextStyle style) {
+      final painter = TextPainter(
+        text: TextSpan(text: digits, style: style),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      return painter.width;
+    }
+
+    final plain = AppTheme.light.textTheme.displayMedium!;
+    final tabular = AppTextStyles.tabular(plain);
+
+    expect(width('1111', plain), isNot(closeTo(width('0000', plain), 0.5)));
+    expect(width('1111', tabular), closeTo(width('0000', tabular), 0.5));
   });
 
   test('light text, accent and status roles clear 4.5:1', () {
@@ -97,9 +171,29 @@ void main() {
     );
   });
 
-  test('forest surfaces keep their text readable', () {
-    for (final ground in [AppColors.forest, AppColors.forestDeep]) {
-      for (final text in [AppColors.white, AppColors.primarySoft]) {
+  test('the native splash colour matches the middle of the Flutter one', () {
+    final middle = Color.lerp(
+      AppColors.heroGradient.first,
+      AppColors.heroGradient.last,
+      0.5,
+    )!;
+    final hex = (middle.toARGB32() & 0xFFFFFF)
+        .toRadixString(16)
+        .padLeft(6, '0')
+        .toUpperCase();
+    final colors = File('android/app/src/main/res/values/colors.xml')
+        .readAsStringSync();
+
+    expect(colors, contains('<color name="splash_background">#$hex</color>'));
+  });
+
+  test('hero surfaces keep their text readable', () {
+    for (final ground in AppColors.heroGradient) {
+      for (final text in [
+        AppColors.white,
+        AppColors.primarySoft,
+        AppColors.warm,
+      ]) {
         expect(contrast(text, ground), greaterThanOrEqualTo(4.5));
       }
     }
@@ -185,10 +279,11 @@ void main() {
       expect(contrast(dark.goldText, dark.goldSoft), greaterThanOrEqualTo(4.5));
     });
 
-    test('Pearl Aqua is the dark accent', () {
-      expect(AppPalette.dark.accent, const Color(0xFFC9EDDC));
-      expect(AppPalette.dark.background, const Color(0xFF0D161D));
-      expect(AppPalette.dark.surface, const Color(0xFF15222C));
+    test('aqua leads on a deep navy ground', () {
+      expect(AppPalette.dark.accent, const Color(0xFFA8E6CF));
+      expect(AppPalette.dark.primary, const Color(0xFFA8E6CF));
+      expect(AppPalette.dark.background, const Color(0xFF0A131A));
+      expect(AppPalette.dark.surface, const Color(0xFF14222D));
     });
   });
 

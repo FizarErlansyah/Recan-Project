@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
-import 'package:mobile_apps_recan/widgets/motion/brand_hero.dart';
+import 'package:mobile_apps_recan/widgets/brushed_metal.dart';
+import 'package:mobile_apps_recan/widgets/motion/balance_hero.dart';
 import 'package:mobile_apps_recan/widgets/motion/shimmer.dart';
 import 'package:mobile_apps_recan/widgets/product_card.dart';
 
@@ -90,17 +90,17 @@ class DashboardSkeleton extends StatelessWidget {
   }
 }
 
-/// Stands where the greeting and balance card will be, with the brand mark
+/// Stands where the greeting and balance card will be, with the metal plate
 /// already in place for the splash to fly into.
 class _HeaderPlaceholder extends StatelessWidget {
   const new();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Shimmer(
+        Shimmer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -110,17 +110,8 @@ class _HeaderPlaceholder extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 42),
-        Container(
-          height: 196,
-          padding: const EdgeInsets.all(21),
-          alignment: Alignment.topLeft,
-          decoration: BoxDecoration(
-            color: AppColors.primary,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: const BrandHero(size: 20),
-        ),
+        SizedBox(height: 22),
+        BalanceHero(child: BrushedMetal(child: SizedBox(height: 180))),
       ],
     );
   }

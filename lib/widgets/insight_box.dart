@@ -30,10 +30,12 @@ class InsightBox extends StatelessWidget {
             children: [
               HugeIcon(icon: AppIcons.idea, color: accent, size: 20),
               const SizedBox(width: 8),
-              Text(
-                tr('Wawasan Interaktif', 'Interactive Insight'),
-                style: textTheme.labelLarge?.copyWith(
-                  color: context.palette.textPrimary,
+              Flexible(
+                child: Text(
+                  tr('Wawasan Interaktif', 'Interactive Insight'),
+                  style: textTheme.labelLarge?.copyWith(
+                    color: context.palette.textPrimary,
+                  ),
                 ),
               ),
             ],

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/rewards/domain/wib_calendar.dart';
+import 'package:mobile_apps_recan/features/rewards/presentation/reward_burst.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/gamification_service.dart';
@@ -43,6 +45,7 @@ class _DailyCheckInSectionState extends State<DailyCheckInSection> {
     unawaited(HapticFeedback.mediumImpact());
     if (!mounted) return;
     setState(() => _claimedFrom = shown);
+    RewardBurst.show(context, shown.todayReward);
     AppSnackBar.show(
       context,
       tr('Hadiah harian berhasil diklaim!', 'Daily reward claimed!'),
@@ -98,11 +101,7 @@ class _CheckInCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.palette.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.palette.border),
-      ),
+      decoration: AppDecorations.card(context),
       child: Column(
         children: [
           _CoinRow(checkIn: checkIn),
@@ -172,7 +171,7 @@ class _ClaimButton extends StatelessWidget {
         key: const ValueKey('checkin-claim'),
         onPressed: claimed ? null : onClaim,
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.gold,
+          backgroundColor: context.palette.warm,
           disabledBackgroundColor: context.palette.goldSoft,
           shape: const StadiumBorder(),
         ),
@@ -189,7 +188,7 @@ class _ClaimButton extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: claimed
                       ? context.palette.goldText
-                      : AppColors.primaryDeep,
+                      : context.palette.onWarm,
                 ),
               ),
       ),
@@ -293,7 +292,7 @@ class _Coin extends StatelessWidget {
             : const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppColors.gold, AppColors.goldDeep],
+                colors: [AppColors.warm, AppColors.gold],
               ),
         boxShadow: isCurrent && !isClaimed
             ? const [

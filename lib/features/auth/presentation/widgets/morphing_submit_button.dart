@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 /// A full-width submit button that draws itself into a round spinner while the
 /// request runs, and opens up again if it fails.
@@ -64,8 +64,8 @@ class _Face extends StatelessWidget {
       onPressed: loading ? null : onPressed,
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.zero,
-        disabledBackgroundColor: AppColors.primary,
-        disabledForegroundColor: AppColors.white,
+        disabledBackgroundColor: context.palette.primary,
+        disabledForegroundColor: context.palette.onPrimary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(loading ? round : 16),
         ),
@@ -93,7 +93,7 @@ class _Spinner extends StatelessWidget {
       child: CircularProgressIndicator(
         value: still ? 0.7 : null,
         strokeWidth: 2.5,
-        color: AppColors.white,
+        color: context.palette.onPrimary,
       ),
     );
   }

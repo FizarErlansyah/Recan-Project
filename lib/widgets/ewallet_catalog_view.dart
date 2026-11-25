@@ -61,7 +61,12 @@ class EWalletCatalogView extends StatelessWidget {
       onUnauthorized: onLogout,
       refreshOn: DataRefresh.revision,
       builder: (context, profile, reload) => ListView(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 120),
+        padding: EdgeInsets.fromLTRB(
+          24,
+          0,
+          24,
+          MediaQuery.paddingOf(context).bottom + 24,
+        ),
         children: [
           _BalanceBanner(points: profile.points),
           for (final provider in EWalletOption.providers) ...[

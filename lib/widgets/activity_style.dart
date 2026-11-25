@@ -42,7 +42,7 @@ extension ActivityStyle on ActivityTransaction {
       isSimulated ? tr('Simulasi', 'Simulated') : tr('Berhasil', 'Success');
 
   Color amountColor(BuildContext context) =>
-      isIncome ? context.palette.accent : context.palette.danger;
+      isIncome ? context.palette.success : context.palette.danger;
 
   String get amountLabel {
     if (points == 0 && _cash > 0) return '-${formatRupiah(_cash)}';

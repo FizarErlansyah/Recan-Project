@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_apps_recan/core/theme/app_text_styles.dart';
 
 /// Number that eases from its previous value to a new one.
 ///
@@ -82,16 +83,18 @@ class _CountUpState extends State<CountUp> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  TextStyle get _style =>
+      AppTextStyles.tabular(widget.style ?? const TextStyle());
+
   @override
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
     if (reduceMotion) {
-      return Text(widget.format(_to), style: widget.style);
+      return Text(widget.format(_to), style: _style);
     }
     return AnimatedBuilder(
       animation: _controller,
-      builder: (context, _) =>
-          Text(widget.format(_current), style: widget.style),
+      builder: (context, _) => Text(widget.format(_current), style: _style),
     );
   }
 }

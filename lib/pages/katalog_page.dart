@@ -1,20 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_icon.dart';
-import 'package:mobile_apps_recan/core/theme/app_palette.dart';
-import 'package:mobile_apps_recan/models/dashboard_data.dart';
-import 'package:mobile_apps_recan/pages/product_detail_page.dart';
-import 'package:mobile_apps_recan/services/data_refresh.dart';
-import 'package:mobile_apps_recan/services/product_service.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/craft_catalog_view.dart';
+import 'package:mobile_apps_recan/features/voucher/presentation/voucher_catalog_view.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/async_view.dart';
-import 'package:mobile_apps_recan/widgets/empty_state.dart';
 import 'package:mobile_apps_recan/widgets/ewallet_catalog_view.dart';
-import 'package:mobile_apps_recan/widgets/filter_chip_row.dart';
-import 'package:mobile_apps_recan/widgets/page_skeletons.dart';
-import 'package:mobile_apps_recan/widgets/product_card.dart';
 import 'package:mobile_apps_recan/widgets/segmented_pills.dart';
-import 'package:mobile_apps_recan/widgets/voucher_catalog_view.dart';
 
 class KatalogPage extends StatelessWidget {
   const new({required this.onLogout, super.key});
@@ -65,7 +54,7 @@ class KatalogPage extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  _CraftTab(onLogout: onLogout),
+                  CraftCatalogView(onLogout: onLogout),
                   EWalletCatalogView(onLogout: onLogout),
                   VoucherCatalogView(onLogout: onLogout),
                 ],
@@ -74,90 +63,6 @@ class KatalogPage extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _CraftTab extends StatefulWidget {
-  const new({required this.onLogout});
-
-  final VoidCallback onLogout;
-
-  @override
-  State<_CraftTab> createState() => _CraftTabState();
-}
-
-class _CraftTabState extends State<_CraftTab> {
-  int _selectedIndex = 0;
-
-  List<UpcycleProduct> _filter(List<UpcycleProduct> products) {
-    if (_selectedIndex == 0) return products;
-    final category = ProductCategory.values[_selectedIndex - 1];
-    return products.where((product) => product.category == category).toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final labels = [
-      tr('Semua', 'All'),
-      tr('Mainan', 'Toys'),
-      tr('Hiasan', 'Decor'),
-    ];
-
-    return AsyncView<List<UpcycleProduct>>(
-      loader: ProductService.fetch,
-      loading: const CatalogSkeleton(),
-      onUnauthorized: widget.onLogout,
-      refreshOn: DataRefresh.revision,
-      builder: (context, products, reload) {
-        if (products.isEmpty) {
-          return EmptyState(
-            icon: hugeIcon(HugeIcons.strokeRoundedShoppingBag01),
-            title: tr('Belum ada produk', 'No products yet'),
-            message: tr(
-              'Produk daur ulang akan segera tersedia.',
-              'Recycled products will be available soon.',
-            ),
-          );
-        }
-        final visible = _filter(products);
-        return Column(
-          children: [
-            FilterChipRow(
-              labels: labels,
-              selectedIndex: _selectedIndex,
-              onSelected: (index) => setState(() => _selectedIndex = index),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: RefreshIndicator(
-                color: context.palette.accent,
-                backgroundColor: context.palette.surface,
-                onRefresh: reload,
-                child: GridView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 120),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    mainAxisExtent: ProductCard.heightOf(context),
-                  ),
-                  itemCount: visible.length,
-                  itemBuilder: (context, index) {
-                    final product = visible[index];
-                    return ProductCard(
-                      product: product,
-                      fillWidth: true,
-                      onTap: () => ProductDetailPage.open(context, product),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

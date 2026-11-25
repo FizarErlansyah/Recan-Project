@@ -1,12 +1,18 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/core/theme/app_theme.dart';
 import 'package:mobile_apps_recan/widgets/count_up.dart';
 import 'package:mobile_apps_recan/widgets/main_nav_bar.dart';
 import 'package:mobile_apps_recan/widgets/pressable.dart';
 import 'package:mobile_apps_recan/widgets/tab_slot.dart';
+
+import 'palette_test.dart' show contrast;
 
 Widget _host(Widget child, {bool reduceMotion = false}) {
   return MaterialApp(
@@ -96,41 +102,220 @@ void main() {
       expect(haptics, ['HapticFeedbackType.selectionClick']);
     });
 
-    testWidgets('arcs upward mid-hop without leaving the bar bounds', (
+    Finder bubble() => find.byKey(const ValueKey('nav-bubble'));
+    Offset bubbleAt(WidgetTester tester) => tester.getCenter(bubble());
+    double labelX(WidgetTester tester, String label) =>
+        tester.getCenter(find.text(label)).dx;
+
+    testWidgets('floats one bubble over the open tab', (tester) async {
+      await pumpNav(tester);
+      final surface =
+          tester.getRect(find.byType(MainNavBar)).top + MainNavBar.overhang;
+
+      expect(bubble(), findsOneWidget);
+      expect(bubbleAt(tester).dx, closeTo(labelX(tester, 'Beranda'), 1));
+      expect(tester.getRect(bubble()).top, lessThan(surface - 20));
+
+      await tester.tap(find.text('Profil'));
+      await tester.pumpAndSettle();
+
+      expect(bubbleAt(tester).dx, closeTo(labelX(tester, 'Profil'), 1));
+    });
+
+    testWidgets('hops, passes its target a little and settles', (tester) async {
+      await pumpNav(tester);
+      final start = bubbleAt(tester);
+
+      await tester.tap(find.text('Aktivitas'));
+      await tester.pump();
+      final target = labelX(tester, 'Aktivitas');
+      var furthest = start.dx;
+      var highest = start.dy;
+      var lowest = start.dy;
+      var midway = false;
+      for (var ms = 0; ms < 700; ms += 16) {
+        await tester.pump(const Duration(milliseconds: 16));
+        final at = bubbleAt(tester);
+        if (at.dx > start.dx + 5 && at.dx < target - 5) midway = true;
+        furthest = math.max(furthest, at.dx);
+        highest = math.min(highest, at.dy);
+        lowest = math.max(lowest, at.dy);
+      }
+      await tester.pumpAndSettle();
+
+      expect(midway, isTrue);
+      expect(furthest, greaterThan(target + 1));
+      expect(furthest, lessThan(target + 24), reason: 'a light spring only');
+      expect(highest, lessThan(start.dy - 8), reason: 'it jumps');
+      expect(lowest, greaterThan(start.dy + 1), reason: 'it gives on landing');
+      expect(bubbleAt(tester).dx, closeTo(target, 0.5));
+      expect(bubbleAt(tester).dy, closeTo(start.dy, 0.5));
+    });
+
+    testWidgets('turns around mid-air without snapping', (tester) async {
+      await pumpNav(tester);
+      await tester.tap(find.text('Profil'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+      final before = bubbleAt(tester);
+
+      await tester.tap(find.text('Beranda'));
+      await tester.pump();
+
+      expect((bubbleAt(tester) - before).distance, lessThan(4));
+      await tester.pumpAndSettle();
+      expect(bubbleAt(tester).dx, closeTo(labelX(tester, 'Beranda'), 0.5));
+    });
+
+    for (final theme in [AppTheme.light, AppTheme.dark]) {
+      testWidgets('keeps the ${theme.brightness.name} bubble icon sharp', (
+        tester,
+      ) async {
+        Color? icon;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: theme,
+            home: Scaffold(
+              bottomNavigationBar: MainNavBar(
+                items: [
+                  for (final label in ['Beranda', 'Katalog'])
+                    MainNavItem(
+                      icon: hugeIcon(AppIcons.back),
+                      selectedIcon: ({required color, required size}) {
+                        icon = color;
+                        return const SizedBox.square(dimension: 24);
+                      },
+                      label: label,
+                    ),
+                ],
+                currentIndex: 0,
+                onTap: (_) {},
+              ),
+            ),
+          ),
+        );
+        final decoration =
+            tester.widget<Container>(bubble()).decoration! as BoxDecoration;
+        final surface = theme.brightness == Brightness.dark
+            ? AppPalette.dark.surface
+            : AppPalette.light.surface;
+
+        expect(contrast(icon!, decoration.color!), greaterThanOrEqualTo(4.5));
+        expect(contrast(decoration.color!, surface), greaterThanOrEqualTo(3));
+      });
+    }
+
+    testWidgets('lets taps through the space around the bubble', (
+      tester,
+    ) async {
+      var behind = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            extendBody: true,
+            body: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => behind++,
+              child: const SizedBox.expand(),
+            ),
+            bottomNavigationBar: MainNavBar(
+              items: _navItems(),
+              currentIndex: 0,
+              onTap: (_) {},
+            ),
+          ),
+        ),
+      );
+      final bar = tester.getRect(find.byType(MainNavBar));
+
+      await tester.tapAt(Offset(bar.width * 0.62, bar.top + 8));
+      expect(behind, 1);
+
+      await tester.tapAt(bubbleAt(tester));
+      expect(behind, 1, reason: 'the bubble itself is solid');
+    });
+
+    testWidgets('the open tab swaps its outline for a filled icon', (
       tester,
     ) async {
       await pumpNav(tester);
-      final bubble = find.byWidgetPredicate(
-        (w) =>
-            w is Container &&
-            w.constraints?.maxWidth == MainNavBar.bubbleSize &&
-            w.constraints?.maxHeight == MainNavBar.bubbleSize,
-      );
-      final barTop = tester.getRect(find.byType(MainNavBar)).top;
-      final restTop = tester.getRect(bubble).top;
+      Finder filled(int i) => find.byKey(ValueKey('nav-filled-$i'));
+      Finder outline(int i) => find.byKey(ValueKey('nav-outline-$i'));
+
+      expect(filled(0), findsOneWidget);
+      expect(outline(1), findsOneWidget);
 
       await tester.tap(find.text('Katalog'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 150));
-      final apexTop = tester.getRect(bubble).top;
-
-      expect(restTop - apexTop, closeTo(MainNavBar.lift, 0.5));
-      expect(apexTop, greaterThanOrEqualTo(barTop));
-
       await tester.pumpAndSettle();
-      expect(tester.getRect(bubble).top, closeTo(restTop, 0.01));
+
+      expect(filled(1), findsOneWidget);
+      expect(outline(0), findsOneWidget);
+      expect(filled(0), findsNothing);
     });
 
-    testWidgets('keeps the hop headroom inside its own bounds', (tester) async {
-      await pumpNav(tester);
-
-      final bar = tester.getRect(find.byType(MainNavBar));
-      expect(
-        bar.height,
-        MainNavBar.barHeight + MainNavBar.overhang,
-        reason: 'overhang must include the hop headroom',
+    testWidgets('jumps under reduced motion', (tester) async {
+      var current = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(disableAnimations: true),
+            child: child!,
+          ),
+          home: StatefulBuilder(
+            builder: (context, setState) => Scaffold(
+              bottomNavigationBar: MainNavBar(
+                items: _navItems(),
+                currentIndex: current,
+                onTap: (index) => setState(() => current = index),
+              ),
+            ),
+          ),
+        ),
       );
-      expect(MainNavBar.lift, inInclusiveRange(10, 14));
+
+      await tester.tap(find.text('Profil'));
+      await tester.pump();
+
+      expect(bubbleAt(tester).dx, closeTo(labelX(tester, 'Profil'), 1));
+    });
+
+    testWidgets('holds four equal tabs and no scan button', (tester) async {
+      await pumpNav(tester);
+      final bar = tester.getRect(find.byType(MainNavBar));
+      final centers = [
+        for (final label in ['Beranda', 'Katalog', 'Aktivitas', 'Profil'])
+          labelX(tester, label),
+      ];
+
+      expect(bar.height, MainNavBar.barHeight + MainNavBar.overhang);
+      for (var i = 0; i < 4; i++) {
+        expect(centers[i], closeTo(bar.width / 8 * (2 * i + 1), 1));
+      }
+      expect(find.byKey(const ValueKey('nav-scan')), findsNothing);
+    });
+
+    testWidgets('large text does not overflow the bar', (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(360, 780);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            bottomNavigationBar: MainNavBar(
+              items: _navItems(),
+              currentIndex: 2,
+              onTap: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
     });
   });
 

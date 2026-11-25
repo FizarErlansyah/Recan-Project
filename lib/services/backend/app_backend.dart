@@ -1,5 +1,6 @@
 import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
 import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
+import 'package:mobile_apps_recan/features/voucher/domain/voucher.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
@@ -9,7 +10,6 @@ import 'package:mobile_apps_recan/models/ewallet_option.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
-import 'package:mobile_apps_recan/models/voucher.dart';
 import 'package:mobile_apps_recan/services/backend/mock_backend.dart';
 
 /// Everything the services need from a data source. [MockBackend] keeps the
@@ -68,6 +68,9 @@ abstract interface class AppBackend {
   Future<List<Voucher>> vouchers();
 
   Future<List<OwnedVoucher>> ownedVouchers();
+
+  /// Marks the caller's voucher as used at a partner counter.
+  Future<void> useVoucher(String reference);
 
   Future<List<ActivityTransaction>> activities();
 

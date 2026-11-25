@@ -1,11 +1,11 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:flutter/physics.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/haptics.dart';
-import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/motion/bouncy_tap.dart';
 import 'package:mobile_apps_recan/widgets/pressable.dart';
 
 class MainNavItem {
@@ -13,58 +13,65 @@ class MainNavItem {
     required this.icon,
     required this.selectedIcon,
     required this.label,
+    this.anchor,
   });
 
+  /// Outline shown while the tab is closed.
   final AppIconBuilder icon;
+
+  /// Filled version carried by the bubble while it is open.
   final AppIconBuilder selectedIcon;
   final String label;
+
+  /// Marks the tab for something that needs to find it on screen.
+  final Key? anchor;
 }
 
+/// A bar notched under a floating bubble that hops between equal tabs. The
+/// space above the bar is see-through, so the page scrolls behind it.
 class MainNavBar extends StatefulWidget {
   const new({
     required this.items,
     required this.currentIndex,
     required this.onTap,
     super.key,
-    this.onScan,
   });
 
   static const double barHeight = 64;
   static const double bubbleSize = 54;
 
-  /// Apex of the selector hop. The widget reserves this much headroom above
-  /// the resting bubble, so the arc is never cut by the bar bounds.
+  /// Apex of the hop, reserved above the resting bubble so it is never cut.
   static const double lift = 12;
-  static const double _bubbleRest = 28;
 
   /// Space above the bar: the resting overhang plus the hop headroom.
-  static const double overhang = _bubbleRest + lift;
+  static const double overhang = 28 + lift;
 
   final List<MainNavItem> items;
   final int currentIndex;
   final ValueChanged<int> onTap;
-
-  /// Adds a scan button in the middle of the bar, between the two tab halves.
-  final VoidCallback? onScan;
 
   @override
   State<MainNavBar> createState() => _MainNavBarState();
 }
 
 class _MainNavBarState extends State<MainNavBar> with TickerProviderStateMixin {
-  static const Duration _travel = Duration(milliseconds: 300);
+  static const Duration _hopTime = Duration(milliseconds: 460);
 
-  // Horizontal travel and the hop are separate controllers: retargeting while
-  // the bubble is mid-air only restarts the hop from an equivalent height, so
-  // rapid taps never make the bubble snap down.
-  late final AnimationController _slide = AnimationController(
+  // Slightly under-damped: one soft pass beyond the tab, then rest.
+  static final SpringDescription _spring = SpringDescription.withDampingRatio(
+    mass: 1,
+    stiffness: 380,
+    ratio: 0.72,
+  );
+
+  /// Where the bubble is, in tabs.
+  late final AnimationController _slide = AnimationController.unbounded(
     vsync: this,
-    upperBound: (widget.items.length - 1).toDouble(),
     value: widget.currentIndex.toDouble(),
   );
   late final AnimationController _hop = AnimationController(
     vsync: this,
-    duration: _travel,
+    duration: _hopTime,
     value: 1,
   );
 
@@ -78,9 +85,17 @@ class _MainNavBarState extends State<MainNavBar> with TickerProviderStateMixin {
       _hop.value = 1;
       return;
     }
-    _slide.animateTo(target, duration: _travel, curve: Curves.easeInOut);
-    final phase = _hop.value;
-    _hop.forward(from: phase >= 1 ? 0 : (phase > 0.5 ? 1 - phase : phase));
+    // Starting from the current place and speed keeps rapid taps fluid.
+    _slide.animateWith(
+      SpringSimulation(
+        _spring,
+        _slide.value,
+        target,
+        _slide.velocity,
+        snapToEnd: true,
+      ),
+    );
+    _hop.forward(from: _Hop.resume(_hop.value));
   }
 
   @override
@@ -96,252 +111,289 @@ class _MainNavBarState extends State<MainNavBar> with TickerProviderStateMixin {
     widget.onTap(index);
   }
 
-  int get _middle => widget.items.length ~/ 2;
-
-  // Where tab position [item] sits once the middle slot is taken by the scan
-  // button. Between the two halves the bubble crosses a double-width gap.
-  double _slotOf(double item) {
-    if (widget.onScan == null || item <= _middle - 1) return item;
-    if (item >= _middle) return item + 1;
-    return _middle - 1 + (item - (_middle - 1)) * 2;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.paddingOf(context).bottom;
-    final count = widget.items.length;
-    final scan = widget.onScan;
+    final height =
+        MainNavBar.barHeight +
+        MainNavBar.overhang +
+        MediaQuery.paddingOf(context).bottom;
 
-    return SizedBox(
-      height: MainNavBar.barHeight + MainNavBar.overhang + bottomInset,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final slots = count + (scan == null ? 0 : 1);
-          final itemWidth = constraints.maxWidth / slots;
-
-          return AnimatedBuilder(
-            animation: Listenable.merge([_slide, _hop]),
-            builder: (context, _) {
-              final centerX = _slotOf(_slide.value) * itemWidth + itemWidth / 2;
-
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned.fill(
-                    child: CustomPaint(
-                      painter: _WavePainter(
-                        centerX: centerX,
-                        top: MainNavBar.overhang,
-                        lineColor: context.palette.border,
-                      ),
-                      child: ClipPath(
-                        clipper: _WaveClipper(
-                          centerX: centerX,
-                          top: MainNavBar.overhang,
-                        ),
-                        child: ColoredBox(color: context.palette.surface),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: MainNavBar.overhang,
-                    height: MainNavBar.barHeight,
-                    child: Row(
-                      children: [
-                        for (var i = 0; i < count; i++) ...[
-                          if (scan != null && i == _middle)
-                            Expanded(
-                              child: _ScanSlot(
-                                key: const ValueKey('nav-scan'),
-                                onTap: scan,
-                              ),
-                            ),
-                          Expanded(
-                            child: _NavButton(
-                              item: widget.items[i],
-                              selected: widget.currentIndex == i,
-                              onTap: () => _select(i),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    child: IgnorePointer(
-                      child: _SelectorBubble(
-                        centerX: centerX,
-                        hop: _hop.value,
-                        item: widget.items[widget.currentIndex],
-                        index: widget.currentIndex,
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _SelectorBubble extends StatelessWidget {
-  const new({
-    required this.centerX,
-    required this.hop,
-    required this.item,
-    required this.index,
-  });
-
-  final double centerX;
-
-  /// 0 to 1 across one hop; 1 is also the resting value.
-  final double hop;
-  final MainNavItem item;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    // 4t(1-t) is a parabola peaking at 1 mid-hop. A slight stretch while
-    // airborne sells the jump without squashing the glyph.
-    final arc = 4 * hop * (1 - hop);
-    final lifted = MainNavBar.lift * (1 - arc);
-
-    return Transform.translate(
-      offset: Offset(centerX - MainNavBar.bubbleSize / 2, lifted),
-      child: Transform.scale(
-        // Anchored at the top so the stretch grows into the bar, never above it.
-        alignment: Alignment.topCenter,
-        scaleX: 1 - 0.04 * arc,
-        scaleY: 1 + 0.06 * arc,
-        child: Container(
-          width: MainNavBar.bubbleSize,
-          height: MainNavBar.bubbleSize,
-          alignment: Alignment.center,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.primary,
-          ),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) =>
-                ScaleTransition(scale: animation, child: child),
-            child: KeyedSubtree(
-              key: ValueKey(index),
-              child: item.selectedIcon(color: AppColors.white, size: 22),
-            ),
-          ),
+    // The bar has a fixed height, so its labels stop growing before they
+    // would spill out of it.
+    return MediaQuery.withClampedTextScaling(
+      maxScaleFactor: 1.3,
+      child: SizedBox(
+        height: height,
+        child: LayoutBuilder(
+          builder: (context, constraints) => _frames(constraints.maxWidth),
         ),
       ),
     );
   }
-}
 
-class _ScanSlot extends StatelessWidget {
-  const new({required this.onTap, super.key});
+  Widget _frames(double width) {
+    final slot = width / widget.items.length;
 
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = tr('Pindai', 'Scan');
-
-    return Semantics(
-      button: true,
-      label: tr('Pindai QR', 'Scan QR'),
-      excludeSemantics: true,
-      onTap: onTap,
-      child: BouncyTap(
-        haptic: true,
-        onTap: onTap,
-        child: _ScanColumn(label: label),
+    return AnimatedBuilder(
+      animation: Listenable.merge([_slide, _hop]),
+      child: Positioned(
+        left: 0,
+        right: 0,
+        top: MainNavBar.overhang,
+        height: MainNavBar.barHeight,
+        child: _Tabs(
+          items: widget.items,
+          current: widget.currentIndex,
+          onSelect: _select,
+        ),
+      ),
+      builder: (context, tabs) => _Layers(
+        centerX: (_slide.value + 0.5) * slot,
+        height: _Hop.height(_hop.value),
+        item: widget.items[widget.currentIndex],
+        index: widget.currentIndex,
+        tabs: tabs!,
       ),
     );
   }
 }
 
-/// Same padding and icon slot as the tabs, so the labels line up while the
-/// button itself rises above the slot.
-class _ScanColumn extends StatelessWidget {
-  const new({required this.label});
+/// One hop over its run, as a share of [MainNavBar.lift]: up and down, then a
+/// small give on landing.
+abstract final class _Hop {
+  static const double _landing = 0.76;
+  static const double _give = 0.2;
 
-  final String label;
+  static double height(double t) => t < _landing
+      ? math.sin(math.pi * t / _landing)
+      : -_give * math.sin(math.pi * (t - _landing) / (1 - _landing));
+
+  /// Where a new hop starts, so a bubble already in the air does not drop.
+  static double resume(double t) =>
+      t < _landing ? math.min(t, _landing - t) : 0;
+}
+
+class _Layers extends StatelessWidget {
+  const new({
+    required this.centerX,
+    required this.height,
+    required this.item,
+    required this.index,
+    required this.tabs,
+  });
+
+  final double centerX;
+  final double height;
+  final MainNavItem item;
+  final int index;
+  final Widget tabs;
 
   @override
   Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: context.palette.textTertiary,
-      fontWeight: FontWeight.w500,
-    );
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 6),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const _RaisedBadge(),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: style,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned.fill(
+          child: CustomPaint(
+            painter: _NotchPainter(
+              centerX: centerX,
+              fill: context.palette.surface,
+              line: context.palette.border,
+            ),
           ),
-        ],
+        ),
+        tabs,
+        Positioned(
+          left: centerX - MainNavBar.bubbleSize / 2,
+          top: MainNavBar.lift * (1 - height),
+          child: _Bubble(item: item, index: index, stretch: height),
+        ),
+      ],
+    );
+  }
+}
+
+class _Bubble extends StatelessWidget {
+  const new({required this.item, required this.index, required this.stretch});
+
+  final MainNavItem item;
+  final int index;
+
+  /// Positive while airborne, negative as it lands.
+  final double stretch;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.scale(
+      // Anchored at the top so the stretch grows into the bar, never above it.
+      alignment: Alignment.topCenter,
+      scaleX: 1 - 0.05 * stretch,
+      scaleY: 1 + 0.07 * stretch,
+      child: Container(
+        key: const ValueKey('nav-bubble'),
+        width: MainNavBar.bubbleSize,
+        height: MainNavBar.bubbleSize,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: context.palette.primary,
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.shadowStrong,
+              blurRadius: 12,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
+        child: _BubbleIcon(item: item, index: index),
       ),
     );
   }
 }
 
-class _RaisedBadge extends StatelessWidget {
-  const new();
+class _BubbleIcon extends StatelessWidget {
+  const new({required this.item, required this.index});
+
+  final MainNavItem item;
+  final int index;
+
+  static Widget _pop(Widget child, Animation<double> animation) =>
+      ScaleTransition(
+        scale: Tween<double>(begin: 0.6, end: 1).animate(animation),
+        child: FadeTransition(opacity: animation, child: child),
+      );
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      height: 22,
-      child: OverflowBox(
-        maxHeight: _ScanBadge.height,
-        alignment: Alignment.bottomCenter,
-        child: _ScanBadge(),
+    final still = MediaQuery.disableAnimationsOf(context);
+
+    return AnimatedSwitcher(
+      duration: still ? Duration.zero : const Duration(milliseconds: 220),
+      transitionBuilder: _pop,
+      child: KeyedSubtree(
+        key: ValueKey('nav-filled-$index'),
+        child: item.selectedIcon(color: context.palette.onPrimary, size: 24),
       ),
     );
   }
 }
 
-class _ScanBadge extends StatelessWidget {
-  const new();
+class _NotchPainter extends CustomPainter {
+  const new({required this.centerX, required this.fill, required this.line});
 
-  static const double height = 32;
+  static const double _halfWidth = 54;
+  static const double _depth = 34;
+
+  final double centerX;
+  final Color fill;
+  final Color line;
+
+  Path _edge(Size size) {
+    const top = MainNavBar.overhang;
+
+    return Path()
+      ..moveTo(math.min(0, centerX - _halfWidth), top)
+      ..lineTo(centerX - _halfWidth, top)
+      ..cubicTo(
+        centerX - _halfWidth * 0.45,
+        top,
+        centerX - _halfWidth * 0.6,
+        top + _depth,
+        centerX,
+        top + _depth,
+      )
+      ..cubicTo(
+        centerX + _halfWidth * 0.6,
+        top + _depth,
+        centerX + _halfWidth * 0.45,
+        top,
+        centerX + _halfWidth,
+        top,
+      )
+      ..lineTo(math.max(size.width, centerX + _halfWidth), top);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final edge = _edge(size);
+    final end = math.max(size.width, centerX + _halfWidth);
+    final body = Path.from(edge)
+      ..lineTo(end, size.height)
+      ..lineTo(math.min(0, centerX - _halfWidth), size.height)
+      ..close();
+
+    canvas
+      // A soft lift lets the bar read over content scrolling behind it.
+      ..drawPath(
+        body.shift(const Offset(0, -2)),
+        Paint()
+          ..color = AppColors.shadowStrong
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+      )
+      ..drawPath(body, Paint()..color = fill)
+      ..drawPath(
+        edge,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1
+          ..color = line,
+      );
+  }
+
+  // Taps above the bar belong to the page showing through there.
+  @override
+  bool hitTest(Offset position) => position.dy >= MainNavBar.overhang;
+
+  @override
+  bool shouldRepaint(_NotchPainter oldDelegate) =>
+      oldDelegate.centerX != centerX ||
+      oldDelegate.fill != fill ||
+      oldDelegate.line != line;
+}
+
+class _Tabs extends StatelessWidget {
+  const new({
+    required this.items,
+    required this.current,
+    required this.onSelect,
+  });
+
+  final List<MainNavItem> items;
+  final int current;
+  final ValueChanged<int> onSelect;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: height,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(
-        color: AppColors.white,
-        size: 22,
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final (index, item) in items.indexed)
+          Expanded(
+            child: KeyedSubtree(
+              key: item.anchor,
+              child: _NavButton(
+                item: item,
+                index: index,
+                selected: current == index,
+                onTap: () => onSelect(index),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
 
 class _NavButton extends StatelessWidget {
-  const new({required this.item, required this.selected, required this.onTap});
+  const new({
+    required this.item,
+    required this.index,
+    required this.selected,
+    required this.onTap,
+  });
 
   final MainNavItem item;
+  final int index;
   final bool selected;
   final VoidCallback onTap;
 
@@ -351,118 +403,88 @@ class _NavButton extends StatelessWidget {
       button: true,
       selected: selected,
       label: item.label,
+      excludeSemantics: true,
+      onTap: onTap,
       child: Pressable(
+        scale: 0.92,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: selected ? 0 : 1,
-                  child: item.icon(
-                    color: context.palette.textTertiary,
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  item.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: selected
-                        ? context.palette.accent
-                        : context.palette.textTertiary,
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          child: _NavFace(item: item, index: index, selected: selected),
         ),
       ),
     );
   }
 }
 
-Path _waveEdge(Size size, double centerX, double top) {
-  const halfWidth = 54.0;
-  const depth = 34.0;
+class _NavFace extends StatelessWidget {
+  const new({required this.item, required this.index, required this.selected});
 
-  return Path()
-    ..moveTo(0, top)
-    ..lineTo(centerX - halfWidth, top)
-    ..cubicTo(
-      centerX - halfWidth * 0.45,
-      top,
-      centerX - halfWidth * 0.6,
-      top + depth,
-      centerX,
-      top + depth,
-    )
-    ..cubicTo(
-      centerX + halfWidth * 0.6,
-      top + depth,
-      centerX + halfWidth * 0.45,
-      top,
-      centerX + halfWidth,
-      top,
-    )
-    ..lineTo(size.width, top);
-}
-
-Path _wavePath(Size size, double centerX, double top) {
-  return _waveEdge(size, centerX, top)
-    ..lineTo(size.width, size.height)
-    ..lineTo(0, size.height)
-    ..close();
-}
-
-class _WaveClipper extends CustomClipper<Path> {
-  const new({required this.centerX, required this.top});
-
-  final double centerX;
-  final double top;
+  final MainNavItem item;
+  final int index;
+  final bool selected;
 
   @override
-  Path getClip(Size size) => _wavePath(size, centerX, top);
-
-  @override
-  bool shouldReclip(_WaveClipper oldClipper) =>
-      oldClipper.centerX != centerX || oldClipper.top != top;
-}
-
-class _WavePainter extends CustomPainter {
-  const new({
-    required this.centerX,
-    required this.top,
-    required this.lineColor,
-  });
-
-  final double centerX;
-  final double top;
-  final Color lineColor;
-
-  // A hairline on the wave edge separates the bar from content without
-  // adding a drop shadow.
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawPath(
-      _waveEdge(size, centerX, top),
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1
-        ..color = lineColor,
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 24,
+            child: _SlotIcon(item: item, index: index, hidden: selected),
+          ),
+          const SizedBox(height: 4),
+          _NavLabel(label: item.label, selected: selected),
+        ],
+      ),
     );
   }
+}
+
+/// The outline icon, which gives up its place once the bubble takes it.
+class _SlotIcon extends StatelessWidget {
+  const new({required this.item, required this.index, required this.hidden});
+
+  final MainNavItem item;
+  final int index;
+  final bool hidden;
 
   @override
-  bool shouldRepaint(_WavePainter oldDelegate) =>
-      oldDelegate.centerX != centerX ||
-      oldDelegate.top != top ||
-      oldDelegate.lineColor != lineColor;
+  Widget build(BuildContext context) {
+    final still = MediaQuery.disableAnimationsOf(context);
+
+    return AnimatedSwitcher(
+      duration: still ? Duration.zero : const Duration(milliseconds: 220),
+      child: hidden
+          ? const SizedBox.shrink()
+          : KeyedSubtree(
+              key: ValueKey('nav-outline-$index'),
+              child: item.icon(color: context.palette.textSecondary, size: 24),
+            ),
+    );
+  }
+}
+
+class _NavLabel extends StatelessWidget {
+  const new({required this.label, required this.selected});
+
+  final String label;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        color: selected
+            ? context.palette.accent
+            : context.palette.textSecondary,
+        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+      ),
+    );
+  }
 }
