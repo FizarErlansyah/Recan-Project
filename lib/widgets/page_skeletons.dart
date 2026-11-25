@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:mobile_apps_recan/widgets/motion/shimmer.dart';
 import 'package:mobile_apps_recan/widgets/product_card.dart';
-import 'package:mobile_apps_recan/widgets/shimmer.dart';
 
 class CatalogSkeleton extends StatelessWidget {
   const new({super.key});

@@ -29,6 +29,10 @@ class AppColors {
   static const Color textSecondary = Color(0xFF6A706E);
   static const Color textTertiary = textSecondary;
 
+  // Deep forest green of the first-run surfaces: splash and sign-in header.
+  static const Color forest = Color(0xFF123D31);
+  static const Color forestDeep = Color(0xFF0A271F);
+
   static const Color white = Color(0xFFFFFFFF);
   static const Color transparent = Color(0x00000000);
 

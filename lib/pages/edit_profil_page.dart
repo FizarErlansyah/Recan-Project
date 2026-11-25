@@ -11,8 +11,8 @@ import 'package:mobile_apps_recan/services/avatar_picker.dart';
 import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/field_glyph.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/profile_avatar.dart';
 
 class EditProfilPage extends StatefulWidget {
@@ -20,7 +20,7 @@ class EditProfilPage extends StatefulWidget {
 
   static void open(BuildContext context, ProfileData profile) {
     Navigator.of(context)
-        .push(FadePageRoute<void>(page: EditProfilPage(profile: profile)));
+        .push(RecanPageRoute<void>(page: EditProfilPage(profile: profile)));
   }
 
   final ProfileData profile;

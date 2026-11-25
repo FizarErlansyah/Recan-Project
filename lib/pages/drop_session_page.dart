@@ -15,7 +15,7 @@ import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/bounce_counter.dart';
 import 'package:mobile_apps_recan/widgets/can_preset_chips.dart';
 import 'package:mobile_apps_recan/widgets/drop_estimate_card.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 class DropSessionPage extends StatefulWidget {
@@ -80,7 +80,7 @@ class _DropSessionPageState extends State<DropSessionPage> {
 
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
-      FadePageRoute<void>(
+      RecanPageRoute<void>(
         page: DropSuccessPage(stationName: _station.name, summary: _summary),
       ),
     );

@@ -7,7 +7,7 @@ import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/login_page.dart';
 import 'package:mobile_apps_recan/services/onboarding_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/onboarding_slide.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -68,7 +68,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     await OnboardingService.markCompleted();
     if (!mounted) return;
     Navigator.of(context)
-        .pushReplacement(FadePageRoute<void>(page: const LoginPage()));
+        .pushReplacement(RecanPageRoute<void>(page: const LoginPage()));
   }
 
   void _next() {

@@ -36,8 +36,8 @@ flutter:
   assets:
     # Listed one by one: the other files in assets/images are design sources
     # (about 30 MB) that the app never loads.
-    - assets/images/recan_brandmak_aqua.png
-    - assets/images/recan_brandmak_white.png
+    - assets/images/recan_mark_aqua.png
+    - assets/images/recan_mark_white.png
   fonts:
     - family: PlusJakartaSans
       fonts:

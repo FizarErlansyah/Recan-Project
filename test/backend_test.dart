@@ -423,7 +423,7 @@ void main() {
       await tester.pumpWidget(const ReCanApp());
       await tester.pump(const Duration(seconds: 3));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Daftar'));
+      await tester.tap(find.byKey(const ValueKey('auth-tab-register')));
       await tester.pumpAndSettle();
     }
 
@@ -439,8 +439,8 @@ void main() {
       await tester.enterText(fields.at(1), 'budi@mail.com');
       await tester.enterText(fields.at(2), '0812');
       await tester.enterText(fields.at(3), '12345');
-      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Daftar'));
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Daftar'));
+      await tester.ensureVisible(find.byKey(const ValueKey('auth-submit')));
+      await tester.tap(find.byKey(const ValueKey('auth-submit')));
       await tester.pumpAndSettle();
 
       expect(find.text('Password minimal 6 karakter'), findsOneWidget);
@@ -459,13 +459,19 @@ void main() {
       await tester.enterText(fields.at(1), 'budi@mail.com');
       await tester.enterText(fields.at(2), '0812');
       await tester.enterText(fields.at(3), 'secret1');
-      await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Daftar'));
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Daftar'));
+      await tester.ensureVisible(find.byKey(const ValueKey('auth-submit')));
+      await tester.tap(find.byKey(const ValueKey('auth-submit')));
       await tester.pumpAndSettle();
 
       expect(backend.calls, hasLength(1));
       expect(find.textContaining('Cek emailmu'), findsOneWidget);
-      expect(find.widgetWithText(ElevatedButton, 'Masuk'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('auth-submit')),
+          matching: find.text('Masuk'),
+        ),
+        findsOneWidget,
+      );
       final emailField = tester.widget<TextFormField>(
         find.byType(TextFormField).first,
       );

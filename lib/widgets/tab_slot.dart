@@ -44,7 +44,11 @@ class _TabSlotState extends State<TabSlot> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     // TickerMode sits inside the fade so pausing a hidden tab's animations
     // never freezes the fade that is hiding it.
-    final page = TickerMode(enabled: widget.active, child: widget.child);
+    // Hidden tabs also keep their heroes out of route transitions.
+    final page = HeroMode(
+      enabled: widget.active,
+      child: TickerMode(enabled: widget.active, child: widget.child),
+    );
 
     return AnimatedBuilder(
       animation: _controller,

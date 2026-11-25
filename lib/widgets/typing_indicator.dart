@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/widgets/ai_avatar.dart';
-import 'package:mobile_apps_recan/widgets/shimmer.dart';
+import 'package:mobile_apps_recan/widgets/motion/shimmer.dart';
 
 class TypingIndicator extends StatefulWidget {
   const new({super.key});

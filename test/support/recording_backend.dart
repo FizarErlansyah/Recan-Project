@@ -16,6 +16,7 @@ class RecordingBackend extends Fake implements AppBackend {
     this.dropFailure,
     this.station,
     this.checkIn,
+    this.signInFailure,
   });
 
   final bool remote;
@@ -27,6 +28,7 @@ class RecordingBackend extends Fake implements AppBackend {
   final Exception? dropFailure;
   final ScannedStation? station;
   final DailyCheckIn? checkIn;
+  final Exception? signInFailure;
   final List<String> calls = [];
 
   @override
@@ -53,6 +55,9 @@ class RecordingBackend extends Fake implements AppBackend {
   @override
   Future<void> signIn({required String email, required String password}) async {
     calls.add('signIn:$email');
+    await pending;
+    final failure = signInFailure;
+    if (failure != null) throw failure;
   }
 
   @override

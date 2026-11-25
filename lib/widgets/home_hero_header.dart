@@ -10,7 +10,10 @@ import 'package:mobile_apps_recan/widgets/ai_ask_pill.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
 import 'package:mobile_apps_recan/widgets/count_up.dart';
 import 'package:mobile_apps_recan/widgets/metallic_card.dart';
-import 'package:mobile_apps_recan/widgets/points_header.dart';
+import 'package:mobile_apps_recan/widgets/motion/animated_count_up.dart';
+import 'package:mobile_apps_recan/widgets/motion/bouncy_tap.dart';
+import 'package:mobile_apps_recan/widgets/motion/brand_hero.dart';
+import 'package:mobile_apps_recan/widgets/motion/staggered_entrance.dart';
 import 'package:mobile_apps_recan/widgets/pressable.dart';
 import 'package:mobile_apps_recan/widgets/profile_avatar.dart';
 import 'package:mobile_apps_recan/widgets/pull_up_overlap.dart';
@@ -92,44 +95,76 @@ class HomeHeroHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topInset = MediaQuery.paddingOf(context).top;
-
     return Column(
       children: [
-        StatusBarIcons(
-          light: true,
-          child: ClipPath(
-            clipper: const _CurvedBottomClipper(depth: _curveDepth),
-            child: Container(
-              width: double.infinity,
-              color: AppColors.primary,
-              padding: EdgeInsets.fromLTRB(
-                24,
-                topInset + 16,
-                24,
-                _curveDepth + _greenExtraHeight,
-              ),
-              child: _GreetingRow(
-                user: user,
-                today: _formatToday(),
-                onOpenProfile: onOpenProfile,
-                onAskAi: onAskAi,
-              ),
+        _GreetingBand(
+          child: StaggeredEntrance(
+            child: _GreetingRow(
+              user: user,
+              today: _formatToday(),
+              onOpenProfile: onOpenProfile,
+              onAskAi: onAskAi,
             ),
           ),
         ),
         PullUpOverlap(
           extent: _overlap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: _BalanceCard(
-              points: user.pointsBalance,
-              cans: cansDeposited,
-              onScan: onScan,
-            ),
+          child: _BalanceSection(
+            points: user.pointsBalance,
+            cans: cansDeposited,
+            onScan: onScan,
           ),
         ),
       ],
+    );
+  }
+}
+
+class _GreetingBand extends StatelessWidget {
+  const new({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final topInset = MediaQuery.paddingOf(context).top;
+    const depth = HomeHeroHeader._curveDepth;
+
+    return StatusBarIcons(
+      light: true,
+      child: ClipPath(
+        clipper: const _CurvedBottomClipper(depth: depth),
+        child: Container(
+          width: double.infinity,
+          color: AppColors.primary,
+          padding: EdgeInsets.fromLTRB(
+            24,
+            topInset + 16,
+            24,
+            depth + HomeHeroHeader._greenExtraHeight,
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class _BalanceSection extends StatelessWidget {
+  const new({required this.points, required this.cans, required this.onScan});
+
+  final int points;
+  final int cans;
+  final VoidCallback onScan;
+
+  @override
+  Widget build(BuildContext context) {
+    return StaggeredEntrance(
+      index: 1,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: _BalanceCard(points: points, cans: cans, onScan: onScan),
+      ),
     );
   }
 }
@@ -280,20 +315,13 @@ class _BalanceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                tr('Saldo Tersedia', 'Available Balance'),
-                style: textTheme.labelLarge?.copyWith(
-                  color: AppColors.silverLight,
-                ),
-              ),
+              const _BalanceLabel(),
               const SizedBox(height: 8),
               _PointsValue(points: points),
             ],
@@ -301,6 +329,26 @@ class _BalanceRow extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         _ScanButton(onTap: onScan),
+      ],
+    );
+  }
+}
+
+class _BalanceLabel extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Theme.of(context).textTheme.labelLarge
+        ?.copyWith(color: AppColors.silverLight);
+
+    return Row(
+      children: [
+        const BrandHero(size: 20),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(tr('Saldo Tersedia', 'Available Balance'), style: style),
+        ),
       ],
     );
   }
@@ -319,10 +367,8 @@ class _PointsValue extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
       children: [
-        CountUp(
-          value: points.toDouble(),
-          memoryKey: 'hero.points',
-          format: (value) => PointsHeader.formatNumber(value.round()),
+        AnimatedCountUp(
+          value: points,
           style: textTheme.displaySmall?.copyWith(
             color: AppColors.white,
             fontWeight: FontWeight.w800,
@@ -347,6 +393,8 @@ class _MetricsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final weightGrams = cans * DropSessionSummary.gramsPerCan;
     final carbonKg = cans * DropSessionSummary.carbonKgPerCan;
+    final valueStyle = Theme.of(context).textTheme.titleSmall
+        ?.copyWith(color: AppColors.white, fontWeight: FontWeight.w700);
 
     // Top-aligned so a label that wraps to two lines never lifts its icon
     // and value out of line with the neighbouring metrics.
@@ -356,30 +404,34 @@ class _MetricsRow extends StatelessWidget {
         Expanded(
           child: _Metric(
             icon: hugeIcon(HugeIcons.strokeRoundedRecycle01),
-            target: cans.toDouble(),
-            format: (value) => PointsHeader.formatNumber(value.round()),
             label: tr('Setoran Kaleng', 'Cans Deposited'),
-            memoryKey: 'hero.cans',
+            value: AnimatedCountUp(value: cans, style: valueStyle),
           ),
         ),
         const _SilverRule.vertical(),
         Expanded(
           child: _Metric(
             icon: hugeIcon(HugeIcons.strokeRoundedWeightScale),
-            target: weightGrams.toDouble(),
-            format: formatWeight,
             label: tr('Berat', 'Weight'),
-            memoryKey: 'hero.weight',
+            value: CountUp(
+              value: weightGrams.toDouble(),
+              memoryKey: 'hero.weight',
+              format: formatWeight,
+              style: valueStyle,
+            ),
           ),
         ),
         const _SilverRule.vertical(),
         Expanded(
           child: _Metric(
             icon: hugeIcon(HugeIcons.strokeRoundedLeaf01),
-            target: carbonKg,
-            format: CarbonLineChart.formatKg,
             label: tr('Karbon Dicegah', 'Carbon Prevented'),
-            memoryKey: 'hero.carbon',
+            value: CountUp(
+              value: carbonKg,
+              memoryKey: 'hero.carbon',
+              format: CarbonLineChart.formatKg,
+              style: valueStyle,
+            ),
           ),
         ),
       ],
@@ -413,26 +465,34 @@ class _ScanButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Pressable(
-      haptic: PressHaptic.light,
-      child: Material(
-        color: AppColors.primaryDeep,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: AppColors.silverLight.withValues(alpha: 0.4)),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: SizedBox(
-            width: 44,
-            height: 44,
-            child: Center(
-              child: hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(
-                color: AppColors.white,
-                size: 22,
-              ),
-            ),
+    return Tooltip(
+      message: tr('Pindai QR', 'Scan QR'),
+      child: BouncyTap(haptic: true, child: _ScanSurface(onTap: onTap)),
+    );
+  }
+}
+
+class _ScanSurface extends StatelessWidget {
+  const new({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.primaryDeep,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: AppColors.silverLight.withValues(alpha: 0.4)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(
+            color: AppColors.white,
+            size: 24,
           ),
         ),
       ),
@@ -441,19 +501,11 @@ class _ScanButton extends StatelessWidget {
 }
 
 class _Metric extends StatelessWidget {
-  const new({
-    required this.icon,
-    required this.target,
-    required this.format,
-    required this.label,
-    required this.memoryKey,
-  });
+  const new({required this.icon, required this.value, required this.label});
 
   final AppIconBuilder icon;
-  final double target;
-  final String Function(double value) format;
+  final Widget value;
   final String label;
-  final String memoryKey;
 
   @override
   Widget build(BuildContext context) {
@@ -463,15 +515,7 @@ class _Metric extends StatelessWidget {
       children: [
         icon(color: AppColors.silverLight, size: 18),
         const SizedBox(height: 6),
-        CountUp(
-          value: target,
-          memoryKey: memoryKey,
-          format: format,
-          style: textTheme.titleSmall?.copyWith(
-            color: AppColors.white,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        value,
         const SizedBox(height: 2),
         Text(
           label,

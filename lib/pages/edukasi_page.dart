@@ -4,14 +4,14 @@ import 'package:mobile_apps_recan/pages/article_detail_page.dart';
 import 'package:mobile_apps_recan/services/education_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/education_card.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/filter_chip_row.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 
 class EdukasiPage extends StatefulWidget {
   const new({super.key});
 
   static void open(BuildContext context) {
-    Navigator.of(context).push(FadePageRoute<void>(page: const EdukasiPage()));
+    Navigator.of(context).push(RecanPageRoute<void>(page: const EdukasiPage()));
   }
 
   @override

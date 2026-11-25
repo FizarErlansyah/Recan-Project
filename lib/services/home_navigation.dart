@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 class HomeNavigation {
   const new _();
 
+  static const int activityTab = 2;
   static const int profileTab = 3;
 
   static final ValueNotifier<int?> requestedTab = ValueNotifier<int?>(null);

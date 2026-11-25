@@ -8,10 +8,10 @@ import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/gamification_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/widgets/motion/shimmer.dart';
 import 'package:mobile_apps_recan/widgets/quest_card.dart';
 import 'package:mobile_apps_recan/widgets/section_header.dart';
 import 'package:mobile_apps_recan/widgets/segmented_pills.dart';
-import 'package:mobile_apps_recan/widgets/shimmer.dart';
 
 class DailyQuestSection extends StatefulWidget {
   const new({

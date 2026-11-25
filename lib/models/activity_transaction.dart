@@ -24,6 +24,7 @@ class ActivityTransaction {
     required this.points,
     required this.weightKg,
     this.payment,
+    this.cans = 0,
   });
 
   /// Reads a `transactions` row.
@@ -35,6 +36,7 @@ class ActivityTransaction {
     timestamp: DateTime.parse(json['created_at'] as String).toLocal(),
     points: (json['points_delta'] as num).toInt(),
     weightKg: (json['weight_kg'] as num).toDouble(),
+    cans: (json['cans_delta'] as num?)?.toInt() ?? 0,
     payment: json['payment_method'] == null
         ? null
         : PurchaseReceipt.fromTransactionRow(json),
@@ -47,6 +49,9 @@ class ActivityTransaction {
   final DateTime timestamp;
   final int points;
   final double weightKg;
+
+  /// Cans deposited; zero for every other kind of row.
+  final int cans;
 
   /// How a catalog order was settled; null for every other kind of row.
   final PurchaseReceipt? payment;

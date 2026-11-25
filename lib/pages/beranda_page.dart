@@ -3,6 +3,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/home/presentation/home_insights_section.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/pages/ai_chat_page.dart';
 import 'package:mobile_apps_recan/pages/article_detail_page.dart';
@@ -21,14 +22,15 @@ import 'package:mobile_apps_recan/widgets/carbon_analytics_section.dart';
 import 'package:mobile_apps_recan/widgets/category_menu.dart';
 import 'package:mobile_apps_recan/widgets/dashboard_skeleton.dart';
 import 'package:mobile_apps_recan/widgets/education_card.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/home_hero_header.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/staggered_entrance.dart';
 import 'package:mobile_apps_recan/widgets/product_card.dart';
 import 'package:mobile_apps_recan/widgets/promo_banner_carousel.dart';
 import 'package:mobile_apps_recan/widgets/section_header.dart';
 import 'package:mobile_apps_recan/widgets/station_tracking_section.dart';
 
-class BerandaPage extends StatelessWidget {
+class BerandaPage extends StatefulWidget {
   const new({
     required this.onLogout,
     required this.onSelectTab,
@@ -41,18 +43,40 @@ class BerandaPage extends StatelessWidget {
   final VoidCallback onScan;
 
   @override
+  State<BerandaPage> createState() => _BerandaPageState();
+}
+
+class _BerandaPageState extends State<BerandaPage> {
+  // A pull-to-refresh has to reach the sections that load on their own too.
+  final ValueNotifier<int> _pulls = ValueNotifier(0);
+  late final Listenable _insightsRefresh = Listenable.merge([
+    DataRefresh.revision,
+    _pulls,
+  ]);
+
+  @override
+  void dispose() {
+    _pulls.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AsyncView<DashboardData>(
       loader: DashboardService.fetch,
       loading: const DashboardSkeleton(),
-      onUnauthorized: onLogout,
+      onUnauthorized: widget.onLogout,
       refreshOn: DataRefresh.revision,
       builder: (context, data, reload) => _Content(
         data: data,
-        onRefresh: reload,
-        onSelectTab: onSelectTab,
-        onLogout: onLogout,
-        onScan: onScan,
+        onRefresh: () {
+          _pulls.value++;
+          return reload();
+        },
+        insightsRefresh: _insightsRefresh,
+        onSelectTab: widget.onSelectTab,
+        onLogout: widget.onLogout,
+        onScan: widget.onScan,
       ),
     );
   }
@@ -62,6 +86,7 @@ class _Content extends StatelessWidget {
   const new({
     required this.data,
     required this.onRefresh,
+    required this.insightsRefresh,
     required this.onSelectTab,
     required this.onLogout,
     required this.onScan,
@@ -69,6 +94,7 @@ class _Content extends StatelessWidget {
 
   final DashboardData data;
   final Future<void> Function() onRefresh;
+  final Listenable insightsRefresh;
   final ValueChanged<int> onSelectTab;
   final VoidCallback onLogout;
   final VoidCallback onScan;
@@ -90,30 +116,41 @@ class _Content extends StatelessWidget {
             onOpenProfile: () => onSelectTab(HomeNavigation.profileTab),
           ),
           const SizedBox(height: 12),
-          CategoryMenu(
-            entries: [
-              CategoryMenuEntry(
-                icon: hugeIcon(HugeIcons.strokeRoundedGift),
-                label: tr('Tukar Poin', 'Redeem'),
-                onTap: () => onSelectTab(1),
-              ),
-              CategoryMenuEntry(
-                icon: hugeIcon(HugeIcons.strokeRoundedAward01),
-                label: tr('Misi & Hadiah', 'Quests'),
-                onTap: () => QuestPage.open(context, onLogout: onLogout),
-              ),
-              CategoryMenuEntry(
-                icon: hugeIcon(HugeIcons.strokeRoundedLocation01),
-                label: tr('Drop Station', 'Stations'),
-                onTap: () =>
-                    DropStationMapPage.open(context, onLogout: onLogout),
-              ),
-              CategoryMenuEntry(
-                icon: hugeIcon(HugeIcons.strokeRoundedBookOpen01),
-                label: tr('Edukasi', 'Learn'),
-                onTap: () => EdukasiPage.open(context),
-              ),
-            ],
+          StaggeredEntrance(
+            index: 2,
+            child: CategoryMenu(
+              entries: [
+                CategoryMenuEntry(
+                  icon: hugeIcon(HugeIcons.strokeRoundedGift),
+                  label: tr('Tukar Poin', 'Redeem'),
+                  onTap: () => onSelectTab(1),
+                ),
+                CategoryMenuEntry(
+                  icon: hugeIcon(HugeIcons.strokeRoundedAward01),
+                  label: tr('Misi & Hadiah', 'Quests'),
+                  onTap: () => QuestPage.open(context, onLogout: onLogout),
+                ),
+                CategoryMenuEntry(
+                  icon: hugeIcon(HugeIcons.strokeRoundedLocation01),
+                  label: tr('Drop Station', 'Stations'),
+                  onTap: () =>
+                      DropStationMapPage.open(context, onLogout: onLogout),
+                ),
+                CategoryMenuEntry(
+                  icon: hugeIcon(HugeIcons.strokeRoundedBookOpen01),
+                  label: tr('Edukasi', 'Learn'),
+                  onTap: () => EdukasiPage.open(context),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          HomeInsightsSection(
+            refreshOn: insightsRefresh,
+            onUnauthorized: onLogout,
+            onScan: onScan,
+            onOpenQuests: () => QuestPage.open(context, onLogout: onLogout),
+            onSeeAllActivity: () => onSelectTab(HomeNavigation.activityTab),
           ),
           const SizedBox(height: 24),
           PromoBannerCarousel(
@@ -141,7 +178,7 @@ class _Content extends StatelessWidget {
                 colors: const [AppColors.slateDeep, AppColors.primaryDeep],
                 onTap: () =>
                     Navigator.of(context)
-                        .push(FadePageRoute<void>(page: const ScanQrPage())),
+                        .push(RecanPageRoute<void>(page: const ScanQrPage())),
               ),
               PromoBanner(
                 title: tr('Kampanye SDG 11 & 12', 'SDG 11 & 12 Campaign'),

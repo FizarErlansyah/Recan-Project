@@ -11,9 +11,9 @@ import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/article_infographic.dart';
 import 'package:mobile_apps_recan/widgets/education_card.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/helpful_bonus_card.dart';
 import 'package:mobile_apps_recan/widgets/insight_box.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   const new({required this.article, super.key});
@@ -29,7 +29,7 @@ class ArticleDetailPage extends StatefulWidget {
     EducationArticle article, {
     bool replaceCurrent = false,
   }) {
-    final route = FadePageRoute<void>(
+    final route = RecanPageRoute<void>(
       page: ArticleDetailPage(article: article),
     );
     final navigator = Navigator.of(context);

@@ -16,7 +16,7 @@ import 'package:mobile_apps_recan/services/transaction_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/cover_image.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:mobile_apps_recan/widgets/quantity_stepper.dart';
 import 'package:mobile_apps_recan/widgets/recan_card.dart';
@@ -27,7 +27,7 @@ class CheckoutPage extends StatefulWidget {
 
   static void open(BuildContext context, UpcycleProduct product) {
     Navigator.of(context)
-        .push(FadePageRoute<void>(page: CheckoutPage(product: product)));
+        .push(RecanPageRoute<void>(page: CheckoutPage(product: product)));
   }
 
   final UpcycleProduct product;

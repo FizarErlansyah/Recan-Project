@@ -12,8 +12,8 @@ import 'package:mobile_apps_recan/services/auth_service.dart';
 import 'package:mobile_apps_recan/services/home_navigation.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/main_nav_bar.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 import 'package:mobile_apps_recan/widgets/tab_slot.dart';
 
@@ -48,8 +48,15 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
 
-  void _openScan() {
-    Navigator.of(context).push(FadePageRoute<void>(page: const ScanQrPage()));
+  bool _scanOpen = false;
+
+  // Two quick taps must not stack two cameras.
+  Future<void> _openScan() async {
+    if (_scanOpen) return;
+    _scanOpen = true;
+    await Navigator.of(context)
+        .push(RecanPageRoute<void>(page: const ScanQrPage()));
+    _scanOpen = false;
   }
 
   int _currentIndex = 0;
@@ -144,6 +151,7 @@ class _HomePageState extends State<HomePage> {
             items: _items,
             currentIndex: _currentIndex,
             onTap: _selectTab,
+            onScan: _openScan,
           ),
         ),
       ),

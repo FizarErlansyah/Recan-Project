@@ -17,12 +17,16 @@ class Pressable extends StatefulWidget {
     this.scale = 0.97,
     this.haptic = PressHaptic.none,
     this.enabled = true,
+    this.pressDuration = const Duration(milliseconds: 80),
+    this.releaseDuration = const Duration(milliseconds: 140),
   });
 
   final Widget child;
   final double scale;
   final PressHaptic haptic;
   final bool enabled;
+  final Duration pressDuration;
+  final Duration releaseDuration;
 
   @override
   State<Pressable> createState() => _PressableState();
@@ -30,8 +34,6 @@ class Pressable extends StatefulWidget {
 
 class _PressableState extends State<Pressable> {
   static const double _slop = 12;
-  static const Duration _pressIn = Duration(milliseconds: 80);
-  static const Duration _pressOut = Duration(milliseconds: 140);
 
   bool _pressed = false;
   Offset _origin = Offset.zero;
@@ -78,7 +80,7 @@ class _PressableState extends State<Pressable> {
       onPointerCancel: _handleCancel,
       child: AnimatedScale(
         scale: _pressed && !reduceMotion ? widget.scale : 1,
-        duration: _pressed ? _pressIn : _pressOut,
+        duration: _pressed ? widget.pressDuration : widget.releaseDuration,
         curve: Curves.easeOut,
         child: widget.child,
       ),

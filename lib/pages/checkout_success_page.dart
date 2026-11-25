@@ -14,7 +14,7 @@ import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/animated_check.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class CheckoutSuccessPage extends StatefulWidget {
@@ -26,7 +26,7 @@ class CheckoutSuccessPage extends StatefulWidget {
     required PurchaseReceipt receipt,
     bool replaceCurrent = false,
   }) {
-    final route = FadePageRoute<void>(
+    final route = RecanPageRoute<void>(
       page: CheckoutSuccessPage(productName: productName, receipt: receipt),
     );
     final navigator = Navigator.of(context);

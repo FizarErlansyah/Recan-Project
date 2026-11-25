@@ -17,14 +17,12 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Masuk'));
-    await tester.pumpAndSettle();
-
     final fields = find.byType(TextFormField);
     await tester.enterText(fields.at(0), 'tester@mail.com');
     await tester.enterText(fields.at(1), 'secret');
-    await tester.ensureVisible(find.text('Masuk'));
-    await tester.tap(find.text('Masuk'));
+    final submit = find.byKey(const ValueKey('auth-submit'));
+    await tester.ensureVisible(submit);
+    await tester.tap(submit);
 
     for (var i = 0; i < 100; i++) {
       await tester.pump(const Duration(milliseconds: 100));
@@ -32,8 +30,19 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.byType(BerandaPage), findsOneWidget);
-    expect(find.byType(PromoBannerCarousel), findsOneWidget);
     expect(find.text('Hai Tester'), findsOneWidget);
+
+    // The carousel sits below the personal sections, so it is built on scroll.
+    await tester.scrollUntilVisible(
+      find.byType(PromoBannerCarousel),
+      300,
+      scrollable: find
+          .descendant(
+            of: find.byType(BerandaPage),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
 
     for (var cycle = 0; cycle < 20; cycle++) {
       for (var i = 0; i < 42; i++) {

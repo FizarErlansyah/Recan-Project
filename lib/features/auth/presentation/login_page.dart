@@ -1,9 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
-import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/auth/presentation/widgets/auth_mode_toggle.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/widgets/login_form_widget.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/widgets/login_hero.dart';
 import 'package:mobile_apps_recan/features/auth/presentation/widgets/register_form_widget.dart';
@@ -11,9 +8,10 @@ import 'package:mobile_apps_recan/pages/home_page.dart';
 import 'package:mobile_apps_recan/services/auth_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/shake.dart';
+import 'package:mobile_apps_recan/widgets/pull_up_overlap.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
-
-enum _AuthMode { landing, login, register }
 
 class LoginPage extends StatefulWidget {
   const new({super.key});
@@ -23,10 +21,14 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  static const double _heroFraction = 0.35;
-  static const double _sheetOverlap = 32;
+  static const double _sheetOverlap = 28;
 
-  _AuthMode _mode = _AuthMode.landing;
+  AuthMode _mode = AuthMode.login;
+
+  // Raised on every refusal; the form shakes when it changes.
+  int _refusals = 0;
+  String? _loginError;
+  String? _registerError;
 
   final _loginFormKey = GlobalKey<FormState>();
   final _loginEmailController = TextEditingController();
@@ -53,19 +55,31 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _goTo(_AuthMode mode) => setState(() => _mode = mode);
+  void _goTo(AuthMode mode) => setState(() {
+    _mode = mode;
+    _loginError = null;
+    _registerError = null;
+  });
+
+  bool _isValid(GlobalKey<FormState> form) {
+    final valid = form.currentState!.validate();
+    if (!valid) setState(() => _refusals++);
+    return valid;
+  }
 
   Future<void> _openHome() async {
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const HomePage()),
-    );
+    await Navigator.of(context)
+        .pushReplacement(RecanPageRoute<void>(page: const HomePage()));
   }
 
   Future<void> _submitLogin() async {
-    if (!_loginFormKey.currentState!.validate()) return;
+    if (_loadingLogin || !_isValid(_loginFormKey)) return;
 
-    setState(() => _loadingLogin = true);
+    setState(() {
+      _loadingLogin = true;
+      _loginError = null;
+    });
     try {
       await AuthService.login(
         _loginEmailController.text.trim(),
@@ -74,16 +88,22 @@ class _LoginPageState extends State<LoginPage> {
       await _openHome();
     } on AuthException catch (e) {
       if (!mounted) return;
-      AppSnackBar.show(context, e.message);
+      setState(() {
+        _loginError = e.message;
+        _refusals++;
+      });
     } finally {
       if (mounted) setState(() => _loadingLogin = false);
     }
   }
 
   Future<void> _submitRegister() async {
-    if (!_registerFormKey.currentState!.validate()) return;
+    if (_loadingRegister || !_isValid(_registerFormKey)) return;
 
-    setState(() => _loadingRegister = true);
+    setState(() {
+      _loadingRegister = true;
+      _registerError = null;
+    });
     try {
       final email = _registerEmailController.text.trim();
       final signedIn = await AuthService.register(
@@ -98,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
       }
       if (!mounted) return;
       _loginEmailController.text = email;
-      _goTo(_AuthMode.login);
+      _goTo(AuthMode.login);
       AppSnackBar.show(
         context,
         tr(
@@ -108,7 +128,10 @@ class _LoginPageState extends State<LoginPage> {
       );
     } on AuthException catch (e) {
       if (!mounted) return;
-      AppSnackBar.show(context, e.message);
+      setState(() {
+        _registerError = e.message;
+        _refusals++;
+      });
     } finally {
       if (mounted) setState(() => _loadingRegister = false);
     }
@@ -116,90 +139,97 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Hero height comes from the full screen, not the layout constraints, so
-    // it stays fixed instead of shrinking when the keyboard opens.
-    final heroHeight = MediaQuery.sizeOf(context).height * _heroFraction;
+    final busy = _loadingLogin || _loadingRegister;
 
     return StatusBarIcons(
       light: true,
       child: Scaffold(
         backgroundColor: context.palette.surface,
-        body: LayoutBuilder(
-          builder: (context, constraints) => SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: heroHeight, child: const LoginHero()),
-                Transform.translate(
-                  offset: const Offset(0, -_sheetOverlap),
-                  child: _AuthSheet(
-                    minHeight: math.max(0, constraints.maxHeight - heroHeight),
-                    child: _buildSheetContent(),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        body: _FillViewport(
+          child: _AuthColumn(overlap: _sheetOverlap, sheet: _buildSheet(busy)),
         ),
       ),
     );
   }
 
-  Widget _buildSheetContent() {
-    switch (_mode) {
-      case _AuthMode.landing:
-        return _AuthLandingContent(
-          onLogin: () => _goTo(_AuthMode.login),
-          onRegister: () => _goTo(_AuthMode.register),
-        );
-      case _AuthMode.login:
-        return _AuthFormSection(
-          onBack: () => _goTo(_AuthMode.landing),
-          title: tr('Masuk ke ReCan', 'Sign in to ReCan'),
-          subtitle: tr(
-            'Masuk untuk setor kaleng dan pantau poinmu.',
-            'Sign in to drop cans and track your points.',
-          ),
-          form: LoginFormWidget(
-            formKey: _loginFormKey,
-            emailController: _loginEmailController,
-            passwordController: _loginPasswordController,
-            obscure: _obscureLogin,
-            loading: _loadingLogin,
-            onToggleObscure: () =>
-                setState(() => _obscureLogin = !_obscureLogin),
-            onSubmit: _submitLogin,
-          ),
-        );
-      case _AuthMode.register:
-        return _AuthFormSection(
-          onBack: () => _goTo(_AuthMode.landing),
-          title: tr('Daftar Akun ReCan', 'Create your ReCan account'),
-          subtitle: tr(
-            'Isi data berikut untuk mulai menyetor kaleng.',
-            'Fill in the details below to start depositing cans.',
-          ),
-          form: RegisterFormWidget(
-            formKey: _registerFormKey,
-            usernameController: _registerUsernameController,
-            emailController: _registerEmailController,
-            phoneController: _registerPhoneController,
-            passwordController: _registerPasswordController,
-            obscure: _obscureRegister,
-            loading: _loadingRegister,
-            onToggleObscure: () =>
-                setState(() => _obscureRegister = !_obscureRegister),
-            onSubmit: _submitRegister,
-          ),
-        );
-    }
+  Widget _buildSheet(bool busy) => _AuthSheet(
+    toggle: AuthModeToggle(mode: _mode, enabled: !busy, onChanged: _goTo),
+    form: Shake(signal: _refusals, child: _buildForm()),
+    mode: _mode,
+  );
+
+  Widget _buildForm() => switch (_mode) {
+    AuthMode.login => LoginFormWidget(
+      key: const ValueKey(AuthMode.login),
+      formKey: _loginFormKey,
+      emailController: _loginEmailController,
+      passwordController: _loginPasswordController,
+      obscure: _obscureLogin,
+      loading: _loadingLogin,
+      error: _loginError,
+      onToggleObscure: () => setState(() => _obscureLogin = !_obscureLogin),
+      onSubmit: _submitLogin,
+    ),
+    AuthMode.register => RegisterFormWidget(
+      key: const ValueKey(AuthMode.register),
+      formKey: _registerFormKey,
+      usernameController: _registerUsernameController,
+      emailController: _registerEmailController,
+      phoneController: _registerPhoneController,
+      passwordController: _registerPasswordController,
+      obscure: _obscureRegister,
+      loading: _loadingRegister,
+      error: _registerError,
+      onToggleObscure: () =>
+          setState(() => _obscureRegister = !_obscureRegister),
+      onSubmit: _submitRegister,
+    ),
+  };
+}
+
+/// Scrolls when the form outgrows the screen and fills it when it does not.
+class _FillViewport extends StatelessWidget {
+  const new({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class _AuthColumn extends StatelessWidget {
+  const new({required this.overlap, required this.sheet});
+
+  final double overlap;
+  final Widget sheet;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        LoginHero(overlap: overlap),
+        PullUpOverlap(extent: overlap, child: sheet),
+      ],
+    );
   }
 }
 
 class _AuthSheet extends StatelessWidget {
-  const new({required this.minHeight, required this.child});
+  const new({required this.toggle, required this.form, required this.mode});
 
-  final double minHeight;
-  final Widget child;
+  final Widget toggle;
+  final Widget form;
+  final AuthMode mode;
 
   @override
   Widget build(BuildContext context) {
@@ -207,121 +237,105 @@ class _AuthSheet extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      constraints: BoxConstraints(minHeight: minHeight),
-      padding: EdgeInsets.fromLTRB(24, 36, 24, 32 + bottomInset),
+      padding: EdgeInsets.fromLTRB(24, 24, 24, 32 + bottomInset),
       decoration: BoxDecoration(
         color: context.palette.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 220),
-        child: child,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          toggle,
+          const SizedBox(height: 24),
+          _AuthHeading(mode: mode),
+          const SizedBox(height: 24),
+          _ResizingSwitcher(key: const ValueKey('auth-form-area'), child: form),
+        ],
       ),
     );
   }
 }
 
-class _AuthLandingContent extends StatelessWidget {
-  const new({required this.onLogin, required this.onRegister});
+class _AuthHeading extends StatelessWidget {
+  const new({required this.mode});
 
-  final VoidCallback onLogin;
-  final VoidCallback onRegister;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      key: const ValueKey('landing'),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          tr('Selamat datang di ReCan', 'Welcome to ReCan'),
-          style: textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w800),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          tr(
-            'Masuk atau daftar untuk mulai setor kaleng dan pantau poinmu.',
-            'Sign in or create an account to start dropping cans and '
-                'tracking your points.',
-          ),
-          style: textTheme.bodyLarge?.copyWith(
-            color: context.palette.textSecondary,
-          ),
-        ),
-        const SizedBox(height: 40),
-        SizedBox(
-          height: 52,
-          child: ElevatedButton(
-            onPressed: onLogin,
-            child: Text(tr('Masuk', 'Login')),
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 52,
-          child: OutlinedButton(
-            onPressed: onRegister,
-            child: Text(tr('Daftar', 'Sign Up')),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _AuthFormSection extends StatelessWidget {
-  const new({
-    required this.onBack,
-    required this.title,
-    required this.subtitle,
-    required this.form,
-  });
-
-  final VoidCallback onBack;
-  final String title;
-  final String subtitle;
-  final Widget form;
+  final AuthMode mode;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final (title, subtitle) = switch (mode) {
+      AuthMode.login => (
+        tr('Selamat datang di ReCan', 'Welcome to ReCan'),
+        tr(
+          'Masuk untuk setor kaleng dan pantau poinmu.',
+          'Sign in to drop cans and track your points.',
+        ),
+      ),
+      AuthMode.register => (
+        tr('Daftar Akun ReCan', 'Create your ReCan account'),
+        tr(
+          'Isi data berikut untuk mulai menyetor kaleng.',
+          'Fill in the details below to start depositing cans.',
+        ),
+      ),
+    };
 
     return Column(
-      key: ValueKey(title),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            IconButton(
-              onPressed: onBack,
-              icon: HugeIcon(
-                icon: AppIcons.back,
-                color: context.palette.textPrimary,
-              ),
-              style: IconButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(40, 40),
-              ),
-            ),
-          ],
-        ),
+        Text(title, style: textTheme.headlineSmall),
         const SizedBox(height: 4),
         Text(
-          title,
-          style: textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w800),
-        ),
-        const SizedBox(height: 8),
-        Text(
           subtitle,
-          style: textTheme.bodyLarge?.copyWith(
+          style: textTheme.bodyMedium?.copyWith(
             color: context.palette.textSecondary,
           ),
         ),
-        const SizedBox(height: 32),
-        form,
       ],
+    );
+  }
+}
+
+/// Crossfades between forms while the height glides from one to the other.
+class _ResizingSwitcher extends StatelessWidget {
+  const new({required this.child, super.key});
+
+  final Widget child;
+
+  static const Duration _swap = Duration(milliseconds: 260);
+
+  // The outgoing form is pinned over the incoming one without a say in the
+  // size, and cannot be touched on its way out.
+  static Widget _stack(Widget? current, List<Widget> previous) => Stack(
+    clipBehavior: Clip.none,
+    children: [
+      for (final old in previous)
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: IgnorePointer(child: ExcludeSemantics(child: old)),
+        ),
+      ?current,
+    ],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    // AnimatedSize cannot run with a zero duration, so reduced motion swaps
+    // the form outright.
+    if (MediaQuery.disableAnimationsOf(context)) return child;
+
+    return AnimatedSize(
+      duration: _swap,
+      curve: Curves.easeInOutCubic,
+      alignment: Alignment.topCenter,
+      child: AnimatedSwitcher(
+        duration: _swap,
+        layoutBuilder: _stack,
+        child: child,
+      ),
     );
   }
 }

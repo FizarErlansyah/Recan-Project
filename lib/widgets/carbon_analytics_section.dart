@@ -9,8 +9,8 @@ import 'package:mobile_apps_recan/services/data_refresh.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/carbon_line_chart.dart';
 import 'package:mobile_apps_recan/widgets/carbon_metric_cards.dart';
+import 'package:mobile_apps_recan/widgets/motion/shimmer.dart';
 import 'package:mobile_apps_recan/widgets/segmented_pills.dart';
-import 'package:mobile_apps_recan/widgets/shimmer.dart';
 
 class CarbonAnalyticsSection extends StatefulWidget {
   const new({required this.onUnauthorized, super.key});

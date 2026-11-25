@@ -85,10 +85,22 @@ class _AsyncViewState<T> extends State<AsyncView<T>> {
       future: _future,
       builder: (context, snapshot) => AnimatedSwitcher(
         duration: reduceMotion ? Duration.zero : _crossfade,
+        layoutBuilder: _layered,
         child: _stateOf(context, snapshot),
       ),
     );
   }
+
+  // The state fading out may hold the same hero tag as the one fading in, so
+  // only the incoming one takes part in route transitions.
+  static Widget _layered(Widget? current, List<Widget> previous) => Stack(
+    alignment: Alignment.center,
+    children: [
+      for (final old in previous)
+        HeroMode(key: old.key, enabled: false, child: old),
+      if (current != null) HeroMode(key: current.key, child: current),
+    ],
+  );
 
   // Each state carries its own key so AnimatedSwitcher crossfades skeleton,
   // error and content; stale data and fresh data share one key, so a silent

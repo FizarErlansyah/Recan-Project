@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/info_section_card.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/segmented_pills.dart';
 
 class LegalPoliciesPage extends StatelessWidget {
@@ -12,7 +11,7 @@ class LegalPoliciesPage extends StatelessWidget {
 
   static Future<void> open(BuildContext context) =>
       Navigator.of(context)
-          .push(FadePageRoute<void>(page: const LegalPoliciesPage()));
+          .push(RecanPageRoute<void>(page: const LegalPoliciesPage()));
 
   @override
   Widget build(BuildContext context) {

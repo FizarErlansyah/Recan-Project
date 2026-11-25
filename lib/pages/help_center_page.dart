@@ -5,15 +5,15 @@ import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/faq_item.dart';
 import 'package:mobile_apps_recan/pages/ai_chat_page.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/faq_tile.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 
 class HelpCenterPage extends StatelessWidget {
   const new({super.key});
 
   static void open(BuildContext context) {
     Navigator.of(context)
-        .push(FadePageRoute<void>(page: const HelpCenterPage()));
+        .push(RecanPageRoute<void>(page: const HelpCenterPage()));
   }
 
   @override

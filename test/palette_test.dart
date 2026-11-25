@@ -97,6 +97,14 @@ void main() {
     );
   });
 
+  test('forest surfaces keep their text readable', () {
+    for (final ground in [AppColors.forest, AppColors.forestDeep]) {
+      for (final text in [AppColors.white, AppColors.primarySoft]) {
+        expect(contrast(text, ground), greaterThanOrEqualTo(4.5));
+      }
+    }
+  });
+
   test('light theme registers the palette and themes scaffold and text', () {
     final theme = AppTheme.light;
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
 import 'package:mobile_apps_recan/pages/drop_session_page.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 
 /// Decides what a successful scan leads to.
 abstract final class StationGate {
@@ -14,7 +14,7 @@ abstract final class StationGate {
   ) async {
     if (station.acceptsDeposits) {
       Navigator.of(context).pushReplacement(
-        FadePageRoute<void>(page: DropSessionPage(station: station)),
+        RecanPageRoute<void>(page: DropSessionPage(station: station)),
       );
       return true;
     }

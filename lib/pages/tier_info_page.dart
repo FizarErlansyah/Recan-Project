@@ -5,8 +5,8 @@ import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/models/member_tier.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/capsule_progress_bar.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/metallic_card.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:mobile_apps_recan/widgets/tier_benefit_card.dart';
 import 'package:mobile_apps_recan/widgets/tier_style.dart';
@@ -18,7 +18,7 @@ class TierInfoPage extends StatelessWidget {
 
   static void open(BuildContext context, int points) {
     Navigator.of(context)
-        .push(FadePageRoute<void>(page: TierInfoPage(points: points)));
+        .push(RecanPageRoute<void>(page: TierInfoPage(points: points)));
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile_apps_recan/main.dart';
 import 'package:mobile_apps_recan/services/mock_store.dart';
@@ -14,15 +15,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Selamat datang di ReCan'), findsOneWidget);
-    expect(find.text('Masuk'), findsOneWidget);
-    expect(find.text('Daftar'), findsOneWidget);
-
-    await tester.tap(find.text('Masuk'));
-    await tester.pumpAndSettle();
-
+    expect(find.byKey(const ValueKey('auth-tab-login')), findsOneWidget);
+    expect(find.byKey(const ValueKey('auth-tab-register')), findsOneWidget);
     expect(find.text('Email'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
-    expect(find.text('Masuk'), findsOneWidget);
+    // The tab and the submit button both say it.
+    expect(find.text('Masuk'), findsNWidgets(2));
   });
 
   testWidgets('First launch lands on onboarding page', (tester) async {
@@ -48,12 +46,12 @@ void main() {
     await tester.pumpWidget(const ReCanApp());
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
-    expect(find.text('Masuk'), findsOneWidget);
+    expect(find.text('Masuk'), findsNWidgets(2));
 
     MockStore.isEnglish.value = true;
     await tester.pumpAndSettle();
 
-    expect(find.text('Login'), findsOneWidget);
+    expect(find.text('Login'), findsNWidgets(2));
     expect(find.text('Masuk'), findsNothing);
   });
 }

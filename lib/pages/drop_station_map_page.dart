@@ -9,8 +9,8 @@ import 'package:mobile_apps_recan/services/station_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/async_view.dart';
 import 'package:mobile_apps_recan/widgets/empty_state.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
-import 'package:mobile_apps_recan/widgets/shimmer.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/shimmer.dart';
 import 'package:mobile_apps_recan/widgets/station_bottom_sheet.dart';
 import 'package:mobile_apps_recan/widgets/station_pin.dart';
 
@@ -22,7 +22,7 @@ class DropStationMapPage extends StatelessWidget {
   static void open(BuildContext context, {required VoidCallback onLogout}) {
     Navigator.of(
       context,
-    ).push(FadePageRoute<void>(page: DropStationMapPage(onLogout: onLogout)));
+    ).push(RecanPageRoute<void>(page: DropStationMapPage(onLogout: onLogout)));
   }
 
   void _handleUnauthorized(BuildContext context) {
@@ -116,7 +116,7 @@ class _StationMap extends StatelessWidget {
                     onDeposit: () {
                       Navigator.of(context).pop();
                       Navigator.of(context)
-                          .push(FadePageRoute<void>(page: const ScanQrPage()));
+                          .push(RecanPageRoute<void>(page: const ScanQrPage()));
                     },
                   ),
                 ),

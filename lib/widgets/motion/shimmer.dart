@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
+/// One light sweep across everything below it. Under reduced motion it holds
+/// still, which also lets a widget test settle.
 class Shimmer extends StatefulWidget {
   const new({required this.child, super.key});
 
@@ -61,6 +63,8 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
   }
 }
 
+/// A skeleton block. Inside a [Shimmer] it shares that sweep; on its own it
+/// brings one with it.
 class ShimmerBox extends StatelessWidget {
   const new({super.key, this.width, this.height = 16, this.radius = 12});
 
@@ -70,7 +74,7 @@ class ShimmerBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final box = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
@@ -78,5 +82,7 @@ class ShimmerBox extends StatelessWidget {
         borderRadius: BorderRadius.circular(radius),
       ),
     );
+    final shared = context.findAncestorWidgetOfExactType<Shimmer>() != null;
+    return shared ? box : Shimmer(child: box);
   }
 }

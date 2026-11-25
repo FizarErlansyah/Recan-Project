@@ -5,7 +5,7 @@ import 'package:mobile_apps_recan/services/gamification_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/daily_checkin_section.dart';
 import 'package:mobile_apps_recan/widgets/daily_quest_section.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 
 class QuestPage extends StatefulWidget {
   const new({required this.onLogout, super.key});
@@ -14,7 +14,7 @@ class QuestPage extends StatefulWidget {
 
   static void open(BuildContext context, {required VoidCallback onLogout}) {
     Navigator.of(context)
-        .push(FadePageRoute<void>(page: QuestPage(onLogout: onLogout)));
+        .push(RecanPageRoute<void>(page: QuestPage(onLogout: onLogout)));
   }
 
   @override

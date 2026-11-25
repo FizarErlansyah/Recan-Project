@@ -39,6 +39,8 @@ class _SlowSignOut implements AppBackend {
     if (invocation.memberName == #isRemote) return false;
     if (invocation.memberName == #cachedArticles) return _data.cachedArticles;
     if (invocation.memberName == #articles) return _data.articles();
+    if (invocation.memberName == #activities) return _data.activities();
+    if (invocation.memberName == #gamification) return _data.gamification();
     if (invocation.memberName == #carbonImpact) {
       return _data.carbonImpact(
         invocation.positionalArguments.first as CarbonRange,

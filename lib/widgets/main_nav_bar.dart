@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/utils/haptics.dart';
+import 'package:mobile_apps_recan/utils/localization.dart';
+import 'package:mobile_apps_recan/widgets/motion/bouncy_tap.dart';
 import 'package:mobile_apps_recan/widgets/pressable.dart';
 
 class MainNavItem {
@@ -23,6 +26,7 @@ class MainNavBar extends StatefulWidget {
     required this.currentIndex,
     required this.onTap,
     super.key,
+    this.onScan,
   });
 
   static const double barHeight = 64;
@@ -39,6 +43,9 @@ class MainNavBar extends StatefulWidget {
   final List<MainNavItem> items;
   final int currentIndex;
   final ValueChanged<int> onTap;
+
+  /// Adds a scan button in the middle of the bar, between the two tab halves.
+  final VoidCallback? onScan;
 
   @override
   State<MainNavBar> createState() => _MainNavBarState();
@@ -89,21 +96,33 @@ class _MainNavBarState extends State<MainNavBar> with TickerProviderStateMixin {
     widget.onTap(index);
   }
 
+  int get _middle => widget.items.length ~/ 2;
+
+  // Where tab position [item] sits once the middle slot is taken by the scan
+  // button. Between the two halves the bubble crosses a double-width gap.
+  double _slotOf(double item) {
+    if (widget.onScan == null || item <= _middle - 1) return item;
+    if (item >= _middle) return item + 1;
+    return _middle - 1 + (item - (_middle - 1)) * 2;
+  }
+
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final count = widget.items.length;
+    final scan = widget.onScan;
 
     return SizedBox(
       height: MainNavBar.barHeight + MainNavBar.overhang + bottomInset,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final itemWidth = constraints.maxWidth / count;
+          final slots = count + (scan == null ? 0 : 1);
+          final itemWidth = constraints.maxWidth / slots;
 
           return AnimatedBuilder(
             animation: Listenable.merge([_slide, _hop]),
             builder: (context, _) {
-              final centerX = _slide.value * itemWidth + itemWidth / 2;
+              final centerX = _slotOf(_slide.value) * itemWidth + itemWidth / 2;
 
               return Stack(
                 clipBehavior: Clip.none,
@@ -131,7 +150,14 @@ class _MainNavBarState extends State<MainNavBar> with TickerProviderStateMixin {
                     height: MainNavBar.barHeight,
                     child: Row(
                       children: [
-                        for (var i = 0; i < count; i++)
+                        for (var i = 0; i < count; i++) ...[
+                          if (scan != null && i == _middle)
+                            Expanded(
+                              child: _ScanSlot(
+                                key: const ValueKey('nav-scan'),
+                                onTap: scan,
+                              ),
+                            ),
                           Expanded(
                             child: _NavButton(
                               item: widget.items[i],
@@ -139,6 +165,7 @@ class _MainNavBarState extends State<MainNavBar> with TickerProviderStateMixin {
                               onTap: () => _select(i),
                             ),
                           ),
+                        ],
                       ],
                     ),
                   ),
@@ -211,6 +238,101 @@ class _SelectorBubble extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ScanSlot extends StatelessWidget {
+  const new({required this.onTap, super.key});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = tr('Pindai', 'Scan');
+
+    return Semantics(
+      button: true,
+      label: tr('Pindai QR', 'Scan QR'),
+      excludeSemantics: true,
+      onTap: onTap,
+      child: BouncyTap(
+        haptic: true,
+        onTap: onTap,
+        child: _ScanColumn(label: label),
+      ),
+    );
+  }
+}
+
+/// Same padding and icon slot as the tabs, so the labels line up while the
+/// button itself rises above the slot.
+class _ScanColumn extends StatelessWidget {
+  const new({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: context.palette.textTertiary,
+      fontWeight: FontWeight.w500,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const _RaisedBadge(),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: style,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RaisedBadge extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      height: 22,
+      child: OverflowBox(
+        maxHeight: _ScanBadge.height,
+        alignment: Alignment.bottomCenter,
+        child: _ScanBadge(),
+      ),
+    );
+  }
+}
+
+class _ScanBadge extends StatelessWidget {
+  const new();
+
+  static const double height = 32;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 48,
+      height: height,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: hugeIcon(HugeIcons.strokeRoundedQrCodeScan)(
+        color: AppColors.white,
+        size: 22,
       ),
     );
   }

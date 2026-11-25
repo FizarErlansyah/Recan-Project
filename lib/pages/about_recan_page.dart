@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/features/demo/presentation/demo_tools_sheet.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/info_section_card.dart';
 import 'package:mobile_apps_recan/widgets/metallic_card.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/recan_logo.dart';
 import 'package:mobile_apps_recan/widgets/settings_sheets.dart';
 import 'package:mobile_apps_recan/widgets/team_member_tile.dart';
@@ -18,7 +17,7 @@ class AboutRecanPage extends StatelessWidget {
 
   static Future<void> open(BuildContext context) =>
       Navigator.of(context)
-          .push(FadePageRoute<void>(page: const AboutRecanPage()));
+          .push(RecanPageRoute<void>(page: const AboutRecanPage()));
 
   @override
   Widget build(BuildContext context) {

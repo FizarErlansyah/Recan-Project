@@ -5,11 +5,9 @@ import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 
 class ReCanLogo extends StatelessWidget {
-  const new({
-    super.key,
-    this.size = 72,
-    this.asset = 'assets/images/recan_brandmak_aqua.png',
-  });
+  const new({super.key, this.size = 72, this.asset = defaultAsset});
+
+  static const String defaultAsset = 'assets/images/recan_mark_aqua.png';
 
   final double size;
   final String asset;

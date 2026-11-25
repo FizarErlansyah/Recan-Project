@@ -8,7 +8,7 @@ import 'package:mobile_apps_recan/pages/checkout_page.dart';
 import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/cover_image.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
+import 'package:mobile_apps_recan/widgets/motion/recan_page_route.dart';
 import 'package:mobile_apps_recan/widgets/parallax_cover_app_bar.dart';
 import 'package:mobile_apps_recan/widgets/points_badge.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
@@ -49,7 +49,7 @@ class ProductDetailPage extends StatelessWidget {
 
   static void open(BuildContext context, UpcycleProduct product) {
     Navigator.of(context)
-        .push(FadePageRoute<void>(page: ProductDetailPage(product: product)));
+        .push(RecanPageRoute<void>(page: ProductDetailPage(product: product)));
   }
 
   final UpcycleProduct product;

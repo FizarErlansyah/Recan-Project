@@ -311,6 +311,7 @@ class MockStore {
       name: currentUsername,
       email: userEmail,
       pointsBalance: points,
+      totalCans: userTotalCans,
       avatar: avatar,
     ),
     dropStations: List.unmodifiable(dropStations),
@@ -430,6 +431,7 @@ class MockStore {
         timestamp: DateTime.now(),
         points: summary.points,
         weightKg: summary.grams / 1000,
+        cans: cans,
       ),
     );
     _advanceQuests(QuestMetric.cans, cans);
