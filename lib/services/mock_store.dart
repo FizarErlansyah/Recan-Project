@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/rewards/domain/wib_calendar.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
@@ -32,14 +34,12 @@ class MockStore {
   static String userPhone = '0812-3456-7890';
   static bool gopayConnected = false;
   static const List<int> checkInRewards = [10, 20, 30, 50, 75, 100, 200];
-  static final Set<int> _claimedCheckInDays = {
-    for (var i = 0; i < DateTime.now().weekday - 1; i++) i,
-  };
+  static DateTime? _lastCheckInDay;
+  static int _lastCheckInIndex = 0;
   static String userEmail = 'guest@recan.id';
   static String? avatarPath;
   static String? avatarUrl;
   static int points = initialPoints;
-  static int streakDays = 5;
   static double depositedKg = 0;
   static int userTotalCans = 0;
   static int userTodayCans = 0;
@@ -94,13 +94,13 @@ class MockStore {
       rewardPoints: 200,
       isClaimed: false,
     ),
-    DailyQuest(
+    const DailyQuest(
       id: 5,
       period: QuestPeriod.weekly,
       metric: QuestMetric.checkIn,
       title: 'Klaim 3 Hadiah Harian',
       titleEn: 'Claim 3 Daily Rewards',
-      progress: _claimedCheckInDays.length,
+      progress: 0,
       target: 3,
       unit: 'Klaim',
       unitEn: 'Claims',
@@ -318,13 +318,15 @@ class MockStore {
   );
 
   static GamificationData get gamification => GamificationData(
-    streakDays: streakDays,
     dailyQuests: List.unmodifiable(quests),
-    checkIn: DailyCheckIn(
-      rewards: checkInRewards,
-      todayIndex: DateTime.now().weekday - 1,
-      claimedDays: Set.unmodifiable(_claimedCheckInDays),
-    ),
+    checkIn: checkInAt(DateTime.now()),
+  );
+
+  static DailyCheckIn checkInAt(DateTime now) => DailyCheckIn.fromHistory(
+    rewards: checkInRewards,
+    now: now,
+    lastClaimDay: _lastCheckInDay,
+    lastIndex: _lastCheckInIndex,
   );
 
   static List<LeaderboardEntry> get leaderboard {
@@ -445,8 +447,8 @@ class MockStore {
     points += demoPointsGrant;
   }
 
-  /// Back to the first-run Zero State: no points, history, owned vouchers or
-  /// deposited cans. Quest progress is left alone; it never leaves zero state
+  /// Back to the first-run Zero State: no points, history, owned vouchers,
+  /// check-ins or deposited cans. Quest progress is left alone; it never leaves zero state
   /// by itself and resetting it would need a second copy of the seed data.
   static void resetDemoState() {
     points = initialPoints;
@@ -455,13 +457,17 @@ class MockStore {
     userTodayCans = 0;
     activities.clear();
     ownedVouchers.clear();
+    _lastCheckInDay = null;
+    _lastCheckInIndex = 0;
   }
 
-  static bool claimCheckIn() {
-    final today = DateTime.now().weekday - 1;
-    if (_claimedCheckInDays.contains(today)) return false;
-    _claimedCheckInDays.add(today);
-    points += checkInRewards[today];
+  static bool claimCheckIn([DateTime? at]) {
+    final now = at ?? DateTime.now();
+    final checkIn = checkInAt(now);
+    if (checkIn.claimedToday) return false;
+    _lastCheckInDay = WibCalendar.dayOf(now);
+    _lastCheckInIndex = checkIn.currentDay;
+    points += checkIn.todayReward;
     _advanceQuests(QuestMetric.checkIn, 1);
     return true;
   }
@@ -496,6 +502,9 @@ class MockStore {
     required String title,
     required String titleEn,
     required int cost,
+    int cashPaid = 0,
+    int? grossIdr,
+    PaymentChannel? channel,
   }) {
     if (points < cost) {
       return (
@@ -515,6 +524,14 @@ class MockStore {
         timestamp: DateTime.now(),
         points: -cost,
         weightKg: 0,
+        payment: PurchaseReceipt(
+          reference: transactionId,
+          pointsUsed: cost,
+          cashPaid: cashPaid,
+          grossIdr: grossIdr,
+          channel: channel,
+          simulated: cashPaid > 0,
+        ),
       ),
     );
     return (failure: null, transactionId: transactionId);
@@ -523,6 +540,8 @@ class MockStore {
   static ({String? failure, String? transactionId}) recordRedeem({
     required int productId,
     required int quantity,
+    required int pointsUsed,
+    PaymentChannel? channel,
   }) {
     final index = products.indexWhere((product) => product.id == productId);
     if (index < 0) {
@@ -541,18 +560,40 @@ class MockStore {
         transactionId: null,
       );
     }
+    final fullPoints = product.pricePoints * quantity;
+    final gross = product.priceIdr * quantity;
+    final cash = channel == null
+        ? 0
+        : gross - PaymentQuote.discountFor(pointsUsed, gross, fullPoints);
+    // Same rules as redeem_reward: points alone must cover the whole price,
+    // and a rupiah payment must leave something to pay.
+    final valid =
+        pointsUsed >= 0 &&
+        pointsUsed <= fullPoints &&
+        (channel == null
+            ? pointsUsed == fullPoints
+            : cash > 0 && (pointsUsed == 0 || cash < gross));
+    if (!valid) {
+      return (
+        failure: tr('Pembayaran tidak valid.', 'Invalid payment.'),
+        transactionId: null,
+      );
+    }
+    final suffix = quantity > 1 ? ' x$quantity' : '';
+    final verbId = channel == null ? 'Tukar' : 'Beli';
+    final verbEn = channel == null ? 'Redeemed' : 'Bought';
     final result = _spend(
-      title: quantity > 1
-          ? 'Tukar ${product.nameId} x$quantity'
-          : 'Tukar ${product.nameId}',
-      titleEn: quantity > 1
-          ? 'Redeemed ${product.nameEn} x$quantity'
-          : 'Redeemed ${product.nameEn}',
-      cost: product.pricePoints * quantity,
+      title: '$verbId ${product.nameId}$suffix',
+      titleEn: '$verbEn ${product.nameEn}$suffix',
+      cost: pointsUsed,
+      cashPaid: cash,
+      grossIdr: gross,
+      channel: channel,
     );
     if (result.failure != null) return result;
     products[index] = product.withStock(product.stock - quantity);
-    _advanceQuests(QuestMetric.product, 1);
+    // Like the server, an order paid purely in rupiah earns no quest.
+    if (pointsUsed > 0) _advanceQuests(QuestMetric.product, 1);
     return result;
   }
 

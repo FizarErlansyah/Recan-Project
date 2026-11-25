@@ -1,4 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
+import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 
 /// Stand-in for a remote backend: it records what the services ask for and
@@ -9,11 +12,21 @@ class RecordingBackend extends Fake implements AppBackend {
     this.remote = false,
     this.editableEmail = true,
     this.signUpSignsIn = true,
+    this.pending,
+    this.dropFailure,
+    this.station,
+    this.checkIn,
   });
 
   final bool remote;
   final bool editableEmail;
   final bool signUpSignsIn;
+
+  /// When set, write calls stay in flight until it completes.
+  final Future<void>? pending;
+  final Exception? dropFailure;
+  final ScannedStation? station;
+  final DailyCheckIn? checkIn;
   final List<String> calls = [];
 
   @override
@@ -43,27 +56,72 @@ class RecordingBackend extends Fake implements AppBackend {
   }
 
   @override
-  Future<void> submitDrop({
-    required int cans,
-    required int? stationId,
-    required bool collective,
-  }) async {
-    calls.add('drop:$cans:$stationId:$collective');
+  Future<void> signOut() async {
+    calls.add('signOut');
+    await pending;
   }
 
   @override
-  Future<String> redeemProduct({
+  Future<ScannedStation?> stationByQr(String code) async {
+    calls.add('station:$code');
+    return station;
+  }
+
+  @override
+  Future<void> submitDrop({
+    required int cans,
+    required int stationId,
+    required String qrCode,
+  }) async {
+    calls.add('drop:$cans:$stationId:$qrCode');
+    await pending;
+    final failure = dropFailure;
+    if (failure != null) throw failure;
+  }
+
+  @override
+  Future<PurchaseReceipt> redeemProduct({
     required int productId,
     required int quantity,
     required String shippingAddress,
+    required int pointsUsed,
+    PaymentChannel? channel,
     String? notes,
   }) async {
-    calls.add('redeem:$productId:$quantity:$shippingAddress');
-    return 'REC-TEST1';
+    calls.add(
+      'redeem:$productId:$quantity:$shippingAddress:$pointsUsed:${channel?.code}',
+    );
+    await pending;
+    return PurchaseReceipt(
+      reference: 'REC-TEST1',
+      pointsUsed: pointsUsed,
+      cashPaid: 0,
+    );
+  }
+
+  @override
+  Future<String> redeemVoucher(Object? voucher) async {
+    calls.add('voucher');
+    await pending;
+    return 'REC-TEST2';
+  }
+
+  @override
+  GamificationData? get cachedGamification => null;
+
+  @override
+  Future<GamificationData> gamification() async =>
+      GamificationData(dailyQuests: const [], checkIn: checkIn!);
+
+  @override
+  Future<void> claimCheckIn() async {
+    calls.add('claimCheckIn');
+    await pending;
   }
 
   @override
   Future<void> claimQuest(int questId) async {
     calls.add('claimQuest:$questId');
+    await pending;
   }
 }

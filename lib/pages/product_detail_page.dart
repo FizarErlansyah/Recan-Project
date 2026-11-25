@@ -244,8 +244,6 @@ class _RedeemBarState extends State<_RedeemBar> {
           child: FutureBuilder<ProfileData>(
             future: _profile,
             builder: (context, snapshot) {
-              // While the balance is unknown the button stays usable; checkout
-              // re-checks affordability before anything is spent.
               final balance = snapshot.data?.points;
               final shortfall = balance == null
                   ? 0
@@ -278,12 +276,9 @@ class _RedeemActions extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final short = shortfall > 0;
-    final enabled = !soldOut && !short;
     final label = soldOut
         ? tr('Stok Habis', 'Out of Stock')
-        : short
-        ? tr('Poin Belum Cukup', 'Not Enough Points')
-        : tr('Tukar Sekarang', 'Redeem Now');
+        : tr('Beli Sekarang', 'Buy Now');
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -300,10 +295,10 @@ class _RedeemActions extends StatelessWidget {
               Expanded(
                 child: Text(
                   tr(
-                    'Butuh ${PointsHeader.formatNumber(shortfall)} poin lagi. '
-                        'Setor kaleng untuk menambah poinmu.',
-                    'You need ${PointsHeader.formatNumber(shortfall)} more '
-                        'points. Drop cans to earn them.',
+                    'Poinmu kurang ${PointsHeader.formatNumber(shortfall)} '
+                        'dari harga penuh. Sisanya bisa dibayar Rupiah.',
+                    'You are ${PointsHeader.formatNumber(shortfall)} points '
+                        'short of the full price. Pay the rest in rupiah.',
                   ),
                   style: textTheme.bodySmall,
                 ),
@@ -313,7 +308,7 @@ class _RedeemActions extends StatelessWidget {
           const SizedBox(height: 12),
         ],
         FilledButton(
-          onPressed: enabled ? onPressed : null,
+          onPressed: soldOut ? null : onPressed,
           style: FilledButton.styleFrom(
             minimumSize: const Size.fromHeight(52),
             disabledBackgroundColor: context.palette.surfaceMuted,

@@ -1,4 +1,6 @@
 import 'package:mobile_apps_recan/services/backend/app_backend.dart';
+import 'package:mobile_apps_recan/services/home_navigation.dart';
+import 'package:mobile_apps_recan/widgets/count_up.dart';
 
 class AuthException implements Exception {
   const new(this.message);
@@ -14,7 +16,12 @@ class AuthService {
 
   static Future<bool> restoreSession() => Backend.current.restoreSession();
 
-  static Future<void> logout() => Backend.current.signOut();
+  /// Ends the session and drops what the next account must not inherit.
+  static Future<void> logout() async {
+    await Backend.current.signOut();
+    HomeNavigation.requestedTab.value = null;
+    CountUp.forgetAll();
+  }
 
   static Future<void> login(String email, String password) =>
       Backend.current.signIn(email: email.trim(), password: password);

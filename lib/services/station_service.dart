@@ -1,5 +1,6 @@
 import 'package:latlong2/latlong.dart';
 
+import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
 import 'package:mobile_apps_recan/services/backend/app_backend.dart';
 
@@ -12,6 +13,6 @@ class StationService {
 
   static Future<List<MapStation>> fetchAll() => Backend.current.stations();
 
-  static Future<MapStation?> findByQr(String code) =>
+  static Future<ScannedStation?> findByQr(String code) =>
       Backend.current.stationByQr(code);
 }

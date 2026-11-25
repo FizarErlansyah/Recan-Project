@@ -83,8 +83,10 @@ class _HeroCard extends StatelessWidget {
               ),
               child: Text(
                 tr(
-                  'Versi ${SettingsSheets.appVersion}',
-                  'Version ${SettingsSheets.appVersion}',
+                  'Versi ${SettingsSheets.appVersion} '
+                      '(build ${SettingsSheets.appBuild})',
+                  'Version ${SettingsSheets.appVersion} '
+                      '(build ${SettingsSheets.appBuild})',
                 ),
                 style: textTheme.labelMedium?.copyWith(color: AppColors.white),
               ),

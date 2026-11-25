@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/points_header.dart';
 
 class PaymentMethodsSection extends StatelessWidget {
   const new({
-    required this.balanceRupiah,
+    required this.points,
     required this.gopayConnected,
     required this.onConnectGoPay,
     super.key,
@@ -16,7 +16,7 @@ class PaymentMethodsSection extends StatelessWidget {
   static const double cardHeight = 144;
   static const double _gap = 12;
 
-  final int balanceRupiah;
+  final int points;
   final bool gopayConnected;
   final VoidCallback onConnectGoPay;
 
@@ -39,8 +39,8 @@ class PaymentMethodsSection extends StatelessWidget {
               Expanded(
                 child: _PaymentCard(
                   icon: hugeIcon(HugeIcons.strokeRoundedWallet01),
-                  title: tr('Saldo', 'Balance'),
-                  footer: _BalanceText(balanceRupiah: balanceRupiah),
+                  title: tr('Saldo Poin', 'Points'),
+                  footer: _BalanceText(points: points),
                 ),
               ),
               const SizedBox(width: _gap),
@@ -122,9 +122,11 @@ class _PaymentCardTitle extends StatelessWidget {
 }
 
 class _BalanceText extends StatelessWidget {
-  const new({required this.balanceRupiah});
+  const new({required this.points});
 
-  final int balanceRupiah;
+  // Points are worth different rupiah amounts per catalog, so a single rupiah
+  // figure here would be wrong for one of them.
+  final int points;
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +134,7 @@ class _BalanceText extends StatelessWidget {
       fit: BoxFit.scaleDown,
       alignment: Alignment.centerLeft,
       child: Text(
-        'Rp ${PointsHeader.formatNumber(balanceRupiah)}',
+        formatPoints(points),
         style: Theme.of(context).textTheme.headlineSmall,
       ),
     );

@@ -30,30 +30,27 @@ void main() {
   tearDown(() => Backend.current = MockBackend());
 
   group('services use the active backend', () {
-    test(
-      'a deposit passes the station and collective flag, then refreshes',
-      () async {
-        final backend = RecordingBackend();
-        Backend.current = backend;
-        final revision = DataRefresh.revision.value;
+    test('a deposit passes the station and QR, then refreshes', () async {
+      final backend = RecordingBackend();
+      Backend.current = backend;
+      final revision = DataRefresh.revision.value;
 
-        await TransactionService.submitDrop(
-          30,
-          stationId: 204,
-          collective: true,
-        );
+      await TransactionService.submitDrop(
+        30,
+        stationId: 204,
+        qrCode: 'RECAN-ABC',
+      );
 
-        expect(backend.calls, ['drop:30:204:true']);
-        expect(DataRefresh.revision.value, revision + 1);
-      },
-    );
+      expect(backend.calls, ['drop:30:204:RECAN-ABC']);
+      expect(DataRefresh.revision.value, revision + 1);
+    });
 
     test('an empty deposit never reaches the backend', () async {
       final backend = RecordingBackend();
       Backend.current = backend;
 
       await expectLater(
-        TransactionService.submitDrop(0, stationId: 204),
+        TransactionService.submitDrop(0, stationId: 204, qrCode: 'x'),
         throwsA(isA<ApiException>()),
       );
 
@@ -64,13 +61,14 @@ void main() {
       Backend.current = RecordingBackend();
       final revision = DataRefresh.revision.value;
 
-      final reference = await TransactionService.redeem(
+      final receipt = await TransactionService.redeem(
         productId: 5,
         quantity: 2,
         shippingAddress: 'Jl. Mawar 1',
+        pointsUsed: 18000,
       );
 
-      expect(reference, 'REC-TEST1');
+      expect(receipt.reference, 'REC-TEST1');
       expect(DataRefresh.revision.value, revision + 1);
     });
 
@@ -128,6 +126,23 @@ void main() {
       );
 
       expect(error.message, 'Hadiah hari ini sudah diklaim.');
+    });
+
+    test('every v2 server code has its own sentence', () {
+      final generic = map(const sb.PostgrestException(message: 'zzz')).message;
+      for (final code in [
+        'invalid_qr_code',
+        'invalid_points',
+        'invalid_payment_method',
+        'invalid_payment_channel',
+        'payment_method_not_allowed',
+      ]) {
+        expect(
+          map(sb.PostgrestException(message: code, code: '22023')).message,
+          isNot(generic),
+          reason: code,
+        );
+      }
     });
 
     test('an expired token asks for a new login', () {

@@ -1,3 +1,4 @@
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
 import 'package:mobile_apps_recan/models/ewallet_option.dart';
 import 'package:mobile_apps_recan/models/voucher.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
@@ -8,11 +9,10 @@ import 'package:mobile_apps_recan/utils/localization.dart';
 class TransactionService {
   const new _();
 
-  /// [collective] marks the community-event drop that may exceed one bin.
   static Future<void> submitDrop(
     int cansCount, {
-    int? stationId,
-    bool collective = false,
+    required int stationId,
+    required String qrCode,
   }) async {
     if (cansCount <= 0) {
       throw ApiException(
@@ -22,21 +22,25 @@ class TransactionService {
     await Backend.current.submitDrop(
       cans: cansCount,
       stationId: stationId,
-      collective: collective,
+      qrCode: qrCode,
     );
     DataRefresh.notifyChanged();
   }
 
-  static Future<String> redeem({
+  static Future<PurchaseReceipt> redeem({
     required int productId,
     required int quantity,
     required String shippingAddress,
+    required int pointsUsed,
+    PaymentChannel? channel,
     String? notes,
   }) => _settle(
     Backend.current.redeemProduct(
       productId: productId,
       quantity: quantity,
       shippingAddress: shippingAddress,
+      pointsUsed: pointsUsed,
+      channel: channel,
       notes: notes,
     ),
   );
@@ -47,9 +51,9 @@ class TransactionService {
   static Future<String> redeemVoucher(Voucher voucher) =>
       _settle(Backend.current.redeemVoucher(voucher));
 
-  static Future<String> _settle(Future<String> redeem) async {
-    final reference = await redeem;
+  static Future<T> _settle<T>(Future<T> redeem) async {
+    final result = await redeem;
     DataRefresh.notifyChanged();
-    return reference;
+    return result;
   }
 }

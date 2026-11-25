@@ -11,7 +11,9 @@ import 'package:mobile_apps_recan/utils/localization.dart';
 class SettingsSheets {
   const new _();
 
-  static const String appVersion = '1.0.0';
+  // Both mirror `version:` in pubspec.yaml; a test fails when they drift.
+  static const String appVersion = '2.0.0';
+  static const String appBuild = '2';
 
   static Future<void> showLanguage(BuildContext context) {
     return showModalBottomSheet<void>(

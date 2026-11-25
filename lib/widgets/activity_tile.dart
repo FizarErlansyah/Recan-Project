@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/simulated_badge.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/widgets/activity_detail_sheet.dart';
@@ -64,23 +65,7 @@ class ActivityTile extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          transaction.amountLabel,
-                          style: textTheme.titleSmall?.copyWith(
-                            color: transaction.amountColor(context),
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          transaction.statusLabel,
-                          style: textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
+                    _AmountColumn(transaction: transaction),
                   ],
                 ),
               ),
@@ -93,6 +78,40 @@ class ActivityTile extends StatelessWidget {
             height: 1,
             indent: 8 + _iconSize + 12,
           ),
+      ],
+    );
+  }
+}
+
+class _AmountColumn extends StatelessWidget {
+  const new({required this.transaction});
+
+  final ActivityTransaction transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final extra = transaction.extraAmountLabel;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          transaction.amountLabel,
+          style: textTheme.titleSmall?.copyWith(
+            color: transaction.amountColor(context),
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        if (extra != null) ...[
+          const SizedBox(height: 4),
+          Text(extra, style: textTheme.bodySmall),
+        ],
+        const SizedBox(height: 4),
+        if (transaction.isSimulated)
+          const SimulatedBadge(key: ValueKey('simulated-badge'))
+        else
+          Text(transaction.statusLabel, style: textTheme.bodySmall),
       ],
     );
   }

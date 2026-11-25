@@ -36,8 +36,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
       titleHighlight: tr('Dasbor', 'Dashboard'),
       titleTail: '',
       description: tr(
-        'Pantau setoran, streak, dan dampak karbonmu dalam satu tempat.',
-        'Track your deposits, streaks and carbon savings, all in one '
+        'Pantau setoran, misi, dan dampak karbonmu dalam satu tempat.',
+        'Track your deposits, missions and carbon savings, all in one '
             'place.',
       ),
       imageAsset: 'assets/images/ilustrasi_2.png',

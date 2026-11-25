@@ -74,11 +74,18 @@ class _HomePageState extends State<HomePage> {
     _selectTab(requested);
   }
 
+  bool _loggingOut = false;
+
+  // Several tabs can report an expired session at once; one sign-out is enough.
   Future<void> _logout() async {
+    if (_loggingOut) return;
+    _loggingOut = true;
     await AuthService.logout();
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
+    // Pushed pages may sit above this one, so the whole stack is dropped.
+    await Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(builder: (_) => const LoginPage()),
+      (_) => false,
     );
   }
 

@@ -4,7 +4,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/map_station.dart';
-import 'package:mobile_apps_recan/pages/drop_session_page.dart';
+import 'package:mobile_apps_recan/pages/scan_qr_page.dart';
 import 'package:mobile_apps_recan/services/station_service.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/async_view.dart';
@@ -111,16 +111,12 @@ class _StationMap extends StatelessWidget {
                   onTap: () => StationBottomSheet.show(
                     context,
                     station: station,
+                    // A deposit needs the code printed on the station, so
+                    // the map leads to the scanner, never past it.
                     onDeposit: () {
                       Navigator.of(context).pop();
-                      Navigator.of(context).push(
-                        FadePageRoute<void>(
-                          page: DropSessionPage(
-                            stationName: station.name,
-                            stationId: station.id,
-                          ),
-                        ),
-                      );
+                      Navigator.of(context)
+                          .push(FadePageRoute<void>(page: const ScanQrPage()));
                     },
                   ),
                 ),

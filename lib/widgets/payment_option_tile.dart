@@ -9,7 +9,6 @@ class PaymentOptionTile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.hint,
     required this.selected,
     required this.enabled,
     required this.onTap,
@@ -19,7 +18,6 @@ class PaymentOptionTile extends StatelessWidget {
   final IconGlyph icon;
   final String title;
   final String subtitle;
-  final String hint;
   final bool selected;
   final bool enabled;
   final VoidCallback onTap;
@@ -68,15 +66,6 @@ class PaymentOptionTile extends StatelessWidget {
                       Text(title, style: textTheme.titleSmall),
                       const SizedBox(height: 2),
                       Text(subtitle, style: textTheme.bodySmall),
-                      const SizedBox(height: 2),
-                      Text(
-                        hint,
-                        style: textTheme.labelMedium?.copyWith(
-                          color: enabled
-                              ? context.palette.accent
-                              : context.palette.textSecondary,
-                        ),
-                      ),
                     ],
                   ),
                 ),

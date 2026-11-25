@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mobile_apps_recan/core/config/supabase_config.dart';
 import 'package:mobile_apps_recan/core/theme/app_theme.dart';
 import 'package:mobile_apps_recan/core/theme/language_extension.dart';
@@ -47,6 +48,11 @@ class ReCanApp extends StatelessWidget {
         builder: (context, isEnglish, _) => MaterialApp(
           title: 'ReCan',
           debugShowCheckedModeBanner: false,
+          // Keeps the framework's own words (back button, dialog scrim, text
+          // menu) in the language chosen inside the app.
+          locale: Locale(isEnglish ? 'en' : 'id'),
+          supportedLocales: const [Locale('id'), Locale('en')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
           themeMode: themeMode,
           theme: _localized(AppTheme.light, isEnglish: isEnglish),
           darkTheme: _localized(AppTheme.dark, isEnglish: isEnglish),

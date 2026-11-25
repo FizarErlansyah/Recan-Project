@@ -14,11 +14,13 @@ class EWalletTile extends StatelessWidget {
     required this.affordable,
     required this.onRedeem,
     super.key,
+    this.busy = false,
   });
 
   final EWalletOption option;
   final bool affordable;
-  final VoidCallback onRedeem;
+  final VoidCallback? onRedeem;
+  final bool busy;
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +77,19 @@ class EWalletTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: Text(
-                tr('Tukar', 'Redeem'),
-                style: textTheme.labelLarge?.copyWith(
-                  color: affordable
-                      ? AppColors.white
-                      : context.palette.textSecondary,
-                ),
-              ),
+              child: busy
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(
+                      tr('Tukar', 'Redeem'),
+                      style: textTheme.labelLarge?.copyWith(
+                        color: affordable
+                            ? AppColors.white
+                            : context.palette.textSecondary,
+                      ),
+                    ),
             ),
           ),
         ],

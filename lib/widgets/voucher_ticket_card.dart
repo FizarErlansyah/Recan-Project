@@ -12,6 +12,7 @@ class VoucherTicketCard extends StatelessWidget {
     required this.affordable,
     required this.onRedeem,
     super.key,
+    this.busy = false,
   });
 
   static const double height = 136;
@@ -20,7 +21,8 @@ class VoucherTicketCard extends StatelessWidget {
 
   final Voucher voucher;
   final bool affordable;
-  final VoidCallback onRedeem;
+  final VoidCallback? onRedeem;
+  final bool busy;
 
   @override
   Widget build(BuildContext context) {
@@ -118,14 +120,21 @@ class VoucherTicketCard extends StatelessWidget {
                                 : context.palette.border,
                             shape: const StadiumBorder(),
                           ),
-                          child: Text(
-                            tr('Tukar', 'Redeem'),
-                            style: textTheme.labelLarge?.copyWith(
-                              color: affordable
-                                  ? AppColors.white
-                                  : context.palette.textSecondary,
-                            ),
-                          ),
+                          child: busy
+                              ? const SizedBox.square(
+                                  dimension: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  tr('Tukar', 'Redeem'),
+                                  style: textTheme.labelLarge?.copyWith(
+                                    color: affordable
+                                        ? AppColors.white
+                                        : context.palette.textSecondary,
+                                  ),
+                                ),
                         ),
                       ),
                     ],

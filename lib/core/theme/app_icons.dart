@@ -16,7 +16,7 @@ abstract final class AppIcons {
   static const IconGlyph remove = HugeIcons.strokeRoundedMinusSign;
   static const IconGlyph refresh = HugeIcons.strokeRoundedRefresh;
   static const IconGlyph offline = HugeIcons.strokeRoundedWifiDisconnected01;
-  static const IconGlyph download = HugeIcons.strokeRoundedDownload01;
+  static const IconGlyph copy = HugeIcons.strokeRoundedCopy01;
   static const IconGlyph share = HugeIcons.strokeRoundedShare01;
   static const IconGlyph bookmark = HugeIcons.strokeRoundedBookmark01;
   static const IconGlyph camera = HugeIcons.strokeRoundedCamera01;

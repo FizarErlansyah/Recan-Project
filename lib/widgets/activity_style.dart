@@ -3,9 +3,9 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/points_header.dart';
 
 extension ActivityStyle on ActivityTransaction {
   bool get isDeposit => type == ActivityType.deposit;
@@ -34,16 +34,25 @@ extension ActivityStyle on ActivityTransaction {
     ActivityType.bonus => tr('Edukasi ReCan', 'ReCan Education'),
   };
 
-  String get statusLabel => tr('Berhasil', 'Success');
+  int get _cash => payment?.cashPaid ?? 0;
+
+  bool get isSimulated => payment?.simulated ?? false;
+
+  String get statusLabel =>
+      isSimulated ? tr('Simulasi', 'Simulated') : tr('Berhasil', 'Success');
 
   Color amountColor(BuildContext context) =>
       isIncome ? context.palette.accent : context.palette.danger;
 
   String get amountLabel {
+    if (points == 0 && _cash > 0) return '-${formatRupiah(_cash)}';
     final sign = isIncome ? '+' : '-';
-    return '$sign${PointsHeader.formatNumber(points.abs())} '
-        '${tr('Poin', 'Points')}';
+    return '$sign${formatPoints(points.abs())}';
   }
+
+  /// The rupiah part of a hybrid order, shown under the points amount.
+  String? get extraAmountLabel =>
+      points != 0 && _cash > 0 ? '+ ${formatRupiah(_cash)}' : null;
 }
 
 class ActivityIconBadge extends StatelessWidget {

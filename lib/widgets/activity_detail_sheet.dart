@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -34,6 +35,7 @@ class ActivityDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final payment = transaction.payment;
 
     return SafeArea(
       child: Padding(
@@ -87,6 +89,9 @@ class ActivityDetailSheet extends StatelessWidget {
                         label: tr('Berat', 'Weight'),
                         value: formatWeight(transaction.weightKg * 1000),
                       ),
+                    if (payment != null)
+                      for (final (label, value) in paymentRows(payment))
+                        _DetailRow(label: label, value: value),
                     Divider(color: context.palette.border, height: 1),
                   ],
                 ),

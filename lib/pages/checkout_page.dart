@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/payment_channel_picker.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/points_usage_card.dart';
 import 'package:mobile_apps_recan/models/dashboard_data.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/checkout_success_page.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
-import 'package:mobile_apps_recan/services/data_refresh.dart';
 import 'package:mobile_apps_recan/services/home_navigation.dart';
 import 'package:mobile_apps_recan/services/profile_service.dart';
 import 'package:mobile_apps_recan/services/transaction_service.dart';
@@ -14,48 +17,10 @@ import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/cover_image.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
-import 'package:mobile_apps_recan/widgets/payment_option_tile.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:mobile_apps_recan/widgets/quantity_stepper.dart';
 import 'package:mobile_apps_recan/widgets/recan_card.dart';
 import 'package:mobile_apps_recan/widgets/recan_text_field.dart';
-
-enum PaymentMethod {
-  points(AppIcons.coins),
-  qris(AppIcons.qr),
-  gopay(AppIcons.wallet),
-  bankTransfer(AppIcons.bank);
-
-  new(this.icon);
-
-  final IconGlyph icon;
-
-  String get title => switch (this) {
-    PaymentMethod.points => 'ReCan Points',
-    PaymentMethod.qris => 'QRIS',
-    PaymentMethod.gopay => 'GoPay',
-    PaymentMethod.bankTransfer => tr('Transfer Bank', 'Bank Transfer'),
-  };
-
-  String get subtitle => switch (this) {
-    PaymentMethod.points => tr(
-      'Tukar langsung dengan poinmu',
-      'Redeem directly with your points',
-    ),
-    PaymentMethod.qris => tr(
-      'Scan & bayar dengan e-wallet apa saja',
-      'Scan & pay with any e-wallet',
-    ),
-    PaymentMethod.gopay => tr(
-      'Bayar lewat aplikasi Gojek',
-      'Pay through the Gojek app',
-    ),
-    PaymentMethod.bankTransfer => tr(
-      'Virtual account semua bank',
-      'Virtual account for all banks',
-    ),
-  };
-}
 
 class CheckoutPage extends StatefulWidget {
   const new({required this.product, super.key});
@@ -72,11 +37,14 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
-  late final Future<ProfileData> _profile = ProfileService.fetchProfile();
+  late Future<ProfileData> _profile = ProfileService.fetchProfile();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
-  PaymentMethod? _selected;
+  // Null until the buyer decides, so the default can follow the balance.
+  bool? _usePoints;
+  int? _requestedPoints;
+  PaymentChannel _channel = PaymentChannel.qris;
   int _quantity = 1;
   bool _isSubmitting = false;
   String? _addressError;
@@ -88,51 +56,39 @@ class _CheckoutPageState extends State<CheckoutPage> {
     super.dispose();
   }
 
-  int get _totalPoints => widget.product.pricePoints * _quantity;
-  int get _totalRupiah => widget.product.priceIdr * _quantity;
+  // Points are spent without asking only when they cover the whole order; a
+  // partial spend is something the buyer switches on.
+  bool _usesPoints(int balance) =>
+      _usePoints ?? balance >= widget.product.pricePoints * _quantity;
 
-  PaymentMethod _resolveMethod(bool affordable) {
-    final chosen = _selected;
-    if (chosen != null && (chosen != PaymentMethod.points || affordable)) {
-      return chosen;
-    }
-    return affordable ? PaymentMethod.points : PaymentMethod.qris;
+  PaymentQuote _quoteFor(int balance) {
+    final product = widget.product;
+    final everything = product.pricePoints * _quantity;
+    return PaymentQuote.of(
+      unitPriceIdr: product.priceIdr,
+      unitPricePoints: product.pricePoints,
+      quantity: _quantity,
+      balance: balance,
+      requestedPoints: _usesPoints(balance)
+          ? _requestedPoints ?? everything
+          : 0,
+    );
   }
 
-  String _pointsHint(AsyncSnapshot<ProfileData> snapshot, bool affordable) {
-    if (snapshot.connectionState != ConnectionState.done) {
-      return tr('Memeriksa saldo...', 'Checking balance...');
-    }
+  String _balanceLabel(AsyncSnapshot<ProfileData> snapshot) {
     final data = snapshot.data;
-    if (data == null) {
-      return tr('Saldo tidak dapat dimuat', 'Balance could not be loaded');
-    }
-    final balance = PointsHeader.formatNumber(data.points);
-    return affordable
-        ? tr('Saldo kamu: $balance poin', 'Your balance: $balance points')
-        : tr(
-            'Poin tidak cukup (saldo $balance poin)',
-            'Not enough points (balance $balance points)',
-          );
-  }
-
-  String _hintFor(
-    PaymentMethod method,
-    AsyncSnapshot<ProfileData> snapshot,
-    bool affordable,
-  ) {
-    if (method == PaymentMethod.points) {
+    if (data != null) {
       return tr(
-        '${PointsHeader.formatNumber(_totalPoints)} Poin • '
-            '${_pointsHint(snapshot, affordable)}',
-        '${PointsHeader.formatNumber(_totalPoints)} Points • '
-            '${_pointsHint(snapshot, affordable)}',
+        'Saldo kamu: ${formatPoints(data.points)}',
+        'Your balance: ${formatPoints(data.points)}',
       );
     }
-    return tr('Belum tersedia', 'Not available yet');
+    return snapshot.hasError
+        ? tr('Saldo poin tidak dapat dimuat', 'Balance could not be loaded')
+        : tr('Memeriksa saldo...', 'Checking balance...');
   }
 
-  Future<void> _confirm(PaymentMethod method) async {
+  Future<void> _confirm(PaymentQuote quote) async {
     if (_isSubmitting) return;
 
     final address = _addressController.text.trim();
@@ -143,6 +99,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           'Shipping address is required',
         );
       });
+      AppSnackBar.show(context, _addressError!);
       return;
     }
 
@@ -150,53 +107,45 @@ class _CheckoutPageState extends State<CheckoutPage> {
       _isSubmitting = true;
     });
 
-    final String reference;
+    final PurchaseReceipt receipt;
     try {
-      reference = await TransactionService.redeem(
+      receipt = await TransactionService.redeem(
         productId: widget.product.id,
         quantity: _quantity,
         shippingAddress: address,
+        pointsUsed: quote.pointsUsed,
+        channel: quote.cashDue > 0 ? _channel : null,
         notes: _notesController.text.trim(),
       );
     } on ApiException catch (error) {
       if (!mounted) return;
       setState(() {
         _isSubmitting = false;
+        _profile = ProfileService.fetchProfile();
       });
       AppSnackBar.show(context, error.message);
       return;
     }
 
-    DataRefresh.notifyChanged();
     HomeNavigation.goTo(0);
     if (!mounted) return;
     CheckoutSuccessPage.show(
       context,
       replaceCurrent: true,
       productName: widget.product.name,
-      totalPoints: _totalPoints,
-      reference: reference,
+      receipt: receipt,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final product = widget.product;
-    final textTheme = Theme.of(context).textTheme;
-
     return FutureBuilder<ProfileData>(
       future: _profile,
       builder: (context, snapshot) {
-        final balance = snapshot.data?.points;
-        final affordable = balance != null && balance >= _totalPoints;
-        final method = _resolveMethod(affordable);
-        final inStock = product.stock > 0;
-        final total = method == PaymentMethod.points
-            ? tr(
-                '${PointsHeader.formatNumber(_totalPoints)} Poin',
-                '${PointsHeader.formatNumber(_totalPoints)} Points',
-              )
-            : 'Rp ${PointsHeader.formatNumber(_totalRupiah)}';
+        final balance = snapshot.data?.points ?? 0;
+        final quote = _quoteFor(balance);
+        final known = snapshot.hasData || snapshot.hasError;
+        final canPay = known && widget.product.stock > 0 && !_isSubmitting;
 
         return Scaffold(
           appBar: AppBar(title: Text(tr('Pembayaran', 'Checkout'))),
@@ -204,13 +153,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.all(24),
             children: [
-              Text(
-                tr('Ringkasan Pesanan', 'Order Summary'),
-                style: textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
+              _SectionTitle(tr('Ringkasan Pesanan', 'Order Summary')),
               _OrderSummary(
-                product: product,
+                product: widget.product,
                 quantity: _quantity,
                 enabled: !_isSubmitting,
                 onQuantityChanged: (value) => setState(() {
@@ -218,75 +163,111 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 }),
               ),
               const SizedBox(height: 32),
-              Text(
-                tr('Detail Pengiriman', 'Shipping Details'),
-                style: textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
-              ReCanTextField(
-                controller: _addressController,
-                label: tr('Alamat Pengiriman', 'Shipping Address'),
-                hint: tr(
-                  'Contoh: Jl. Cendrawasih No. 12, Tangerang Selatan',
-                  'Example: 12 Cendrawasih St., South Tangerang',
-                ),
-                icon: AppIcons.location,
-                maxLines: 3,
+              _SectionTitle(tr('Detail Pengiriman', 'Shipping Details')),
+              _ShippingFields(
+                address: _addressController,
+                notes: _notesController,
                 enabled: !_isSubmitting,
-                errorText: _addressError,
-                onChanged: (_) {
+                addressError: _addressError,
+                onAddressChanged: () {
                   if (_addressError == null) return;
-                  setState(() {
-                    _addressError = null;
-                  });
+                  setState(() => _addressError = null);
                 },
               ),
-              const SizedBox(height: 16),
-              ReCanTextField(
-                controller: _notesController,
-                label: tr('Catatan', 'Notes'),
-                hint: tr(
-                  'Pesan untuk penjual (opsional)',
-                  'Message for the seller (optional)',
-                ),
-                icon: AppIcons.notes,
-                maxLines: 2,
-                enabled: !_isSubmitting,
-              ),
               const SizedBox(height: 32),
-              Text(
-                tr('Pilih Metode Pembayaran', 'Choose Payment Method'),
-                style: textTheme.titleLarge,
+              _SectionTitle(tr('Pembayaran', 'Payment')),
+              PointsUsageCard(
+                quote: quote,
+                balanceLabel: _balanceLabel(snapshot),
+                usePoints: _usesPoints(balance),
+                enabled: !_isSubmitting,
+                onToggle: (value) => setState(() => _usePoints = value),
+                onPointsChanged: (value) => setState(() {
+                  _usePoints = true;
+                  _requestedPoints = value;
+                }),
               ),
-              const SizedBox(height: 12),
-              for (final option in PaymentMethod.values) ...[
-                PaymentOptionTile(
-                  icon: option.icon,
-                  title: option.title,
-                  subtitle: option.subtitle,
-                  hint: _hintFor(option, snapshot, affordable),
-                  selected: method == option,
-                  enabled:
-                      !_isSubmitting &&
-                      option == PaymentMethod.points &&
-                      affordable,
-                  onTap: () => setState(() {
-                    _selected = option;
-                  }),
+              if (quote.cashDue > 0) ...[
+                const SizedBox(height: 24),
+                PaymentChannelPicker(
+                  selected: _channel,
+                  enabled: !_isSubmitting,
+                  onSelected: (value) => setState(() => _channel = value),
                 ),
-                const SizedBox(height: 12),
               ],
             ],
           ),
           bottomNavigationBar: _ConfirmBar(
-            total: total,
-            enabled:
-                inStock && !_isSubmitting && method == PaymentMethod.points,
+            quote: quote,
+            enabled: canPay,
             isSubmitting: _isSubmitting,
-            onPressed: () => _confirm(method),
+            onPressed: () => _confirm(quote),
           ),
         );
       },
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const new(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(text, style: Theme.of(context).textTheme.titleLarge),
+    );
+  }
+}
+
+class _ShippingFields extends StatelessWidget {
+  const new({
+    required this.address,
+    required this.notes,
+    required this.enabled,
+    required this.addressError,
+    required this.onAddressChanged,
+  });
+
+  final TextEditingController address;
+  final TextEditingController notes;
+  final bool enabled;
+  final String? addressError;
+  final VoidCallback onAddressChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ReCanTextField(
+          controller: address,
+          label: tr('Alamat Pengiriman', 'Shipping Address'),
+          hint: tr(
+            'Contoh: Jl. Cendrawasih No. 12, Tangerang Selatan',
+            'Example: 12 Cendrawasih St., South Tangerang',
+          ),
+          icon: AppIcons.location,
+          maxLines: 3,
+          enabled: enabled,
+          errorText: addressError,
+          onChanged: (_) => onAddressChanged(),
+        ),
+        const SizedBox(height: 16),
+        ReCanTextField(
+          controller: notes,
+          label: tr('Catatan', 'Notes'),
+          hint: tr(
+            'Pesan untuk penjual (opsional)',
+            'Message for the seller (optional)',
+          ),
+          icon: AppIcons.notes,
+          maxLines: 2,
+          enabled: enabled,
+        ),
+      ],
     );
   }
 }
@@ -400,20 +381,22 @@ class _OrderSummary extends StatelessWidget {
 
 class _ConfirmBar extends StatelessWidget {
   const new({
-    required this.total,
+    required this.quote,
     required this.enabled,
     required this.isSubmitting,
     required this.onPressed,
   });
 
-  final String total;
+  final PaymentQuote quote;
   final bool enabled;
   final bool isSubmitting;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final label = quote.cashDue > 0
+        ? tr('Bayar (Simulasi)', 'Pay (Simulated)')
+        : tr('Tukar dengan Poin', 'Redeem with Points');
 
     return Container(
       decoration: BoxDecoration(
@@ -427,26 +410,10 @@ class _ConfirmBar extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      tr('Total Pembayaran', 'Total Payment'),
-                      style: textTheme.bodyMedium,
-                    ),
-                  ),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: Text(
-                      total,
-                      key: ValueKey(total),
-                      style: textTheme.titleMedium,
-                    ),
-                  ),
-                ],
-              ),
+              _TotalRow(quote: quote),
               const SizedBox(height: 12),
               FilledButton(
+                key: const ValueKey('checkout-confirm'),
                 onPressed: enabled ? onPressed : null,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(52),
@@ -464,8 +431,8 @@ class _ConfirmBar extends StatelessWidget {
                         ),
                       )
                     : Text(
-                        tr('Konfirmasi Pesanan', 'Confirm Order'),
-                        style: textTheme.labelLarge?.copyWith(
+                        label,
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
                           color: enabled
                               ? AppColors.white
                               : context.palette.textSecondary,
@@ -476,6 +443,43 @@ class _ConfirmBar extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TotalRow extends StatelessWidget {
+  const new({required this.quote});
+
+  final PaymentQuote quote;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            tr('Total Pembayaran', 'Total Payment'),
+            style: textTheme.bodyMedium,
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              formatRupiah(quote.cashDue),
+              key: const ValueKey('checkout-total'),
+              style: textTheme.titleMedium,
+            ),
+            if (quote.pointsUsed > 0)
+              Text(
+                '+ ${formatPoints(quote.pointsUsed)}',
+                style: textTheme.bodySmall,
+              ),
+          ],
+        ),
+      ],
     );
   }
 }

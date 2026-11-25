@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/auth/presentation/widgets/logout_dialog.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/leaderboard_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/payment_methods_section.dart';
 import 'package:mobile_apps_recan/features/profile/presentation/widgets/tier_and_voucher_section.dart';
@@ -20,47 +21,13 @@ import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/account_header.dart';
 import 'package:mobile_apps_recan/widgets/async_view.dart';
 import 'package:mobile_apps_recan/widgets/page_skeletons.dart';
-import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:mobile_apps_recan/widgets/settings_sheets.dart';
 import 'package:mobile_apps_recan/widgets/settings_tile.dart';
 
 class ProfilPage extends StatelessWidget {
   const new({required this.onLogout, super.key});
 
-  final VoidCallback onLogout;
-
-  Future<void> _confirmLogout(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(
-          tr('Keluar dari ReCan?', 'Sign out of ReCan?'),
-          style: Theme.of(dialogContext).textTheme.titleLarge,
-        ),
-        content: Text(
-          tr(
-            'Kamu perlu masuk kembali untuk mengakses akunmu.',
-            'You need to sign in again to access your account.',
-          ),
-          style: Theme.of(dialogContext).textTheme.bodyMedium,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(tr('Batal', 'Cancel')),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(
-              foregroundColor: context.palette.danger,
-            ),
-            child: Text(tr('Keluar', 'Sign Out')),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true) onLogout();
-  }
+  final Future<void> Function() onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +43,14 @@ class ProfilPage extends StatelessWidget {
           backgroundColor: context.palette.surface,
           onRefresh: reload,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
+            // The body runs under the nav bar, so the last row has to clear
+            // the bar plus whatever the system gesture area adds to it.
+            padding: EdgeInsets.fromLTRB(
+              24,
+              24,
+              24,
+              MediaQuery.paddingOf(context).bottom + 24,
+            ),
             children: [
               AccountHeader(profile: overview.profile),
               const SizedBox(height: 24),
@@ -89,8 +63,7 @@ class ProfilPage extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               PaymentMethodsSection(
-                balanceRupiah:
-                    overview.profile.points * PointsHeader.rupiahPerPoint,
+                points: overview.profile.points,
                 gopayConnected: overview.profile.gopayConnected,
                 onConnectGoPay: () {
                   unawaited(ProfileService.connectGoPay());
@@ -115,7 +88,8 @@ class ProfilPage extends StatelessWidget {
                 onAppearance: () => SettingsSheets.showAppearance(context),
                 onAbout: () => AboutRecanPage.open(context),
                 onLegal: () => LegalPoliciesPage.open(context),
-                onLogout: () => _confirmLogout(context),
+                onLogout: () =>
+                    unawaited(LogoutDialog.show(context, onConfirm: onLogout)),
               ),
             ],
           ),

@@ -92,9 +92,7 @@ class StationBottomSheet extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onDeposit,
                 icon: const HugeIcon(icon: AppIcons.recycle, size: 20),
-                label: Text(
-                  tr('Setor di Station Ini', 'Deposit at This Station'),
-                ),
+                label: Text(tr('Pindai QR untuk Setor', 'Scan QR to Deposit')),
               ),
             ),
           ],

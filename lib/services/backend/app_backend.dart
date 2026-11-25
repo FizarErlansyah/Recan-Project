@@ -1,3 +1,5 @@
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
@@ -59,7 +61,7 @@ abstract interface class AppBackend {
   Future<List<MapStation>> stations();
 
   /// The station behind a scanned QR value, or null when it is unknown.
-  Future<MapStation?> stationByQr(String code);
+  Future<ScannedStation?> stationByQr(String code);
 
   Future<List<UpcycleProduct>> products();
 
@@ -71,16 +73,21 @@ abstract interface class AppBackend {
 
   Future<CarbonImpact> carbonImpact(CarbonRange range);
 
+  /// [qrCode] is the scanned value; the server refuses a deposit without it.
   Future<void> submitDrop({
     required int cans,
-    required int? stationId,
-    required bool collective,
+    required int stationId,
+    required String qrCode,
   });
 
-  Future<String> redeemProduct({
+  /// A null [channel] pays with points only, which then must cover the full
+  /// price; otherwise the rupiah left after [pointsUsed] is paid through it.
+  Future<PurchaseReceipt> redeemProduct({
     required int productId,
     required int quantity,
     required String shippingAddress,
+    required int pointsUsed,
+    PaymentChannel? channel,
     String? notes,
   });
 

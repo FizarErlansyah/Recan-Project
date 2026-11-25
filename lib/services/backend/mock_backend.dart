@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
@@ -149,8 +151,22 @@ final class MockBackend implements AppBackend {
       SynchronousFuture(MockStations.mapStations);
 
   @override
-  Future<MapStation?> stationByQr(String code) =>
-      SynchronousFuture(MockStations.mapStations.first);
+  Future<ScannedStation?> stationByQr(String code) {
+    // Offline there is no QR registry, so any code opens the first station.
+    final station = MockStations.dropStations.first;
+    return SynchronousFuture(
+      ScannedStation(
+        id: station.id,
+        name: station.nameId,
+        nameEn: station.nameEn,
+        status: StationStatus.parse(station.status),
+        currentCans:
+            station.capacityPercentage * ScannedStation.defaultCapacity ~/ 100,
+        maxCapacity: ScannedStation.defaultCapacity,
+        qrCode: code,
+      ),
+    );
+  }
 
   @override
   Future<List<UpcycleProduct>> products() =>
@@ -175,21 +191,32 @@ final class MockBackend implements AppBackend {
   @override
   Future<void> submitDrop({
     required int cans,
-    required int? stationId,
-    required bool collective,
+    required int stationId,
+    required String qrCode,
   }) {
     MockStore.recordDeposit(cans);
     return SynchronousFuture(null);
   }
 
   @override
-  Future<String> redeemProduct({
+  Future<PurchaseReceipt> redeemProduct({
     required int productId,
     required int quantity,
     required String shippingAddress,
+    required int pointsUsed,
+    PaymentChannel? channel,
     String? notes,
-  }) =>
-      _settle(MockStore.recordRedeem(productId: productId, quantity: quantity));
+  }) {
+    final result = MockStore.recordRedeem(
+      productId: productId,
+      quantity: quantity,
+      pointsUsed: pointsUsed,
+      channel: channel,
+    );
+    final failure = result.failure;
+    if (failure != null) return Future.error(ApiException(failure));
+    return SynchronousFuture(MockStore.activities.first.payment!);
+  }
 
   @override
   Future<String> redeemEWallet(EWalletOption option) =>

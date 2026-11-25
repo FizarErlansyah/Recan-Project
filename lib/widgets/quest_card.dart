@@ -6,6 +6,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/recan_card.dart';
@@ -19,7 +20,9 @@ class QuestCard extends StatefulWidget {
   });
 
   final DailyQuest quest;
-  final VoidCallback onClaim;
+
+  /// Resolves to true only when the server accepted the claim.
+  final Future<bool> Function() onClaim;
   final bool isClaiming;
 
   @override
@@ -40,12 +43,11 @@ class _QuestCardState extends State<QuestCard> {
 
   DailyQuest get quest => widget.quest;
 
-  @override
-  void didUpdateWidget(covariant QuestCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (!oldWidget.quest.isClaimed && widget.quest.isClaimed) {
-      _confetti.play();
-    }
+  // Confetti answers the tap itself. Watching the quest data instead would
+  // celebrate again on every reload or tab switch.
+  Future<void> _claim() async {
+    final claimed = await widget.onClaim();
+    if (claimed && mounted) _confetti.play();
   }
 
   @override
@@ -125,7 +127,7 @@ class _QuestCardState extends State<QuestCard> {
                 _ClaimButton(
                   claimed: quest.isClaimed,
                   claiming: widget.isClaiming,
-                  onPressed: widget.onClaim,
+                  onPressed: _claim,
                 ),
                 IgnorePointer(
                   child: ConfettiWidget(
@@ -172,7 +174,7 @@ class _RewardChip extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            tr('+$points Poin', '+$points Points'),
+            '+${formatPoints(points)}',
             style: Theme.of(context).textTheme.labelMedium
                 ?.copyWith(color: context.palette.goldText),
           ),

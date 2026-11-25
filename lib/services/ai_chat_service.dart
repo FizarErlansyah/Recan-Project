@@ -31,12 +31,11 @@ class AiChatService {
       question: tr('Berapa poin per kaleng?', 'How many points per can?'),
       answer: tr(
         'Setiap kaleng yang terverifikasi bernilai 25 poin. Contoh: 20 '
-            'kaleng = 500 poin, dan 1000 kaleng kolektif = 25.000 poin. Cek '
+            'kaleng = 500 poin. Satu Drop Station menampung 300 kaleng. Cek '
             'saldo di beranda dan rinciannya di tab Aktivitas.',
         'Every verified can is worth 25 points. For example: 20 cans = 500 '
-            'points, and a 1000-can collective drop = 25,000 points. Check '
-            'your balance on the home page and the details in the Activity '
-            'tab.',
+            'points. One Drop Station holds 300 cans. Check your balance on '
+            'the home page and the details in the Activity tab.',
       ),
       keywords: ['poin per kaleng', 'points per can', 'poin', 'point', 'saldo'],
     ),
@@ -74,12 +73,14 @@ class AiChatService {
         'How to redeem points & E-Wallet',
       ),
       answer: tr(
-        'Buka tab Katalog, pilih produk kriya, voucher, atau saldo e-wallet '
-            '(GoPay, OVO, DANA), lalu konfirmasi dengan ReCan Points. Saldo '
-            'e-wallet bisa ditukar mulai Rp 20.000.',
-        'Open the Catalog tab, pick a craft product, voucher, or e-wallet '
-            'balance (GoPay, OVO, DANA), then confirm with ReCan Points. '
-            'E-wallet balance can be redeemed from Rp 20,000.',
+        'Buka tab Katalog. Produk kriya bisa dibayar dengan poin, Rupiah, '
+            'atau gabungan keduanya (pembayaran Rupiah masih simulasi). '
+            'Voucher dan saldo e-wallet (GoPay, OVO, DANA) ditukar dengan '
+            'poin, mulai Rp 20.000 untuk e-wallet.',
+        'Open the Catalog tab. Craft products can be paid with points, '
+            'rupiah, or both (the rupiah payment is simulated). Vouchers and '
+            'e-wallet balance (GoPay, OVO, DANA) are redeemed with points, '
+            'from Rp 20,000 for e-wallets.',
       ),
       keywords: [
         'tukar',
@@ -137,12 +138,13 @@ class AiChatService {
       answer: tr(
         'Misi terbagi menjadi harian, mingguan, dan bulanan. Setor kaleng '
             'atau lakukan aksi yang diminta sampai target terpenuhi, lalu '
-            'klaim hadiahnya di beranda untuk poin ekstra. Setor tiap hari '
-            'agar streak-mu terus naik.',
+            'klaim hadiahnya di halaman Misi & Hadiah. Misi harian reset '
+            '00:00 WIB, mingguan tiap Senin, bulanan tiap tanggal 1.',
         'Missions come in daily, weekly, and monthly sets. Drop cans or '
             'complete the requested action until the target is met, then '
-            'claim the reward on the home page for extra points. Drop every '
-            'day to keep your streak growing.',
+            'claim the reward on the Quests & Rewards page. Daily missions '
+            'reset at 00:00 WIB, weekly ones on Monday, monthly ones on '
+            'the 1st.',
       ),
       keywords: ['misi', 'quest', 'streak', 'mission', 'harian', 'bulanan'],
     ),

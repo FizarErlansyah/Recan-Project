@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
 import 'package:mobile_apps_recan/models/activity_transaction.dart';
 import 'package:mobile_apps_recan/models/avatar_ref.dart';
 import 'package:mobile_apps_recan/models/carbon_impact.dart';
@@ -35,8 +37,9 @@ class SupabaseBackend implements AppBackend {
   static const String _avatarFile = 'avatar.jpg';
   static const int _activityLimit = 100;
   static const int _leaderboardLimit = 10;
-  // The server counts check-in days on the Jakarta calendar.
-  static const Duration _jakartaOffset = Duration(hours: 7);
+  // The local session is already gone when the server call runs, so a slow
+  // network must not hold the logout screen.
+  static const Duration _signOutTimeout = Duration(seconds: 8);
 
   final SupabaseClient _client;
   final SupabaseRealtime _realtime;
@@ -59,12 +62,16 @@ class SupabaseBackend implements AppBackend {
     if (user != null) {
       _realtime.start(user.id);
     } else {
-      unawaited(_realtime.stop());
-      _gamification = null;
-      _articles = const [];
-      _bookmarks.clear();
-      _bonusClaims.clear();
+      _clearSessionData();
     }
+  }
+
+  void _clearSessionData() {
+    unawaited(_realtime.stop());
+    _gamification = null;
+    _articles = const [];
+    _bookmarks.clear();
+    _bonusClaims.clear();
   }
 
   User get _user {
@@ -145,8 +152,9 @@ class SupabaseBackend implements AppBackend {
 
   @override
   Future<void> signOut() async {
+    _clearSessionData();
     try {
-      await _client.auth.signOut();
+      await _client.auth.signOut().timeout(_signOutTimeout);
     } on Object catch (error) {
       debugPrint('Sign-out request failed: $error');
     }
@@ -315,13 +323,17 @@ class SupabaseBackend implements AppBackend {
   });
 
   @override
-  Future<MapStation?> stationByQr(String code) => _guard(() async {
-    final row = await _client
-        .from('drop_stations')
-        .select('id, name, name_en, lat, lng, capacity_percentage')
-        .eq('qr_code', code.trim())
-        .maybeSingle();
-    return row == null ? null : MapStation.fromJson(row);
+  Future<ScannedStation?> stationByQr(String code) => _guard(() async {
+    final qrCode = code.trim();
+    final rows = _rows(
+      await _client.rpc<dynamic>(
+        'station_by_qr',
+        params: {'p_qr_code': qrCode},
+      ),
+    );
+    return rows.isEmpty
+        ? null
+        : ScannedStation.fromJson(rows.first, qrCode: qrCode);
   });
 
   @override
@@ -371,52 +383,53 @@ class SupabaseBackend implements AppBackend {
   @override
   Future<void> submitDrop({
     required int cans,
-    required int? stationId,
-    required bool collective,
+    required int stationId,
+    required String qrCode,
   }) => _guard(() async {
-    if (stationId == null) {
-      throw ApiException(tr('Station tidak dikenali.', 'Unknown station.'));
-    }
     await _client.rpc<dynamic>(
       'record_can_deposit',
       params: {
         'p_station_id': stationId,
         'p_cans_count': cans,
-        'p_is_collective': collective,
+        'p_qr_code': qrCode,
       },
     );
   });
 
-  Future<String> _redeem(
-    int itemId, {
-    int quantity = 1,
-    String? address,
-    String? notes,
-  }) => _guard(() async {
+  /// Without payment parameters the server charges the full point price.
+  Future<Map<String, dynamic>> _redeem(
+    int itemId, [
+    Map<String, Object?> order = const {},
+  ]) async {
     final data = await _client.rpc<dynamic>(
       'redeem_reward',
-      params: {
-        'p_item_id': itemId,
-        'p_quantity': quantity,
-        'p_shipping_address': address,
-        'p_notes': notes,
-      },
+      params: {'p_item_id': itemId, ...order},
     );
-    return _rows(data).first['reference'] as String;
-  });
+    return _rows(data).first;
+  }
 
   @override
-  Future<String> redeemProduct({
+  Future<PurchaseReceipt> redeemProduct({
     required int productId,
     required int quantity,
     required String shippingAddress,
+    required int pointsUsed,
+    PaymentChannel? channel,
     String? notes,
-  }) => _redeem(
-    productId,
-    quantity: quantity,
-    address: shippingAddress,
-    notes: notes,
-  );
+  }) => _guard(() async {
+    final row = await _redeem(productId, {
+      'p_quantity': quantity,
+      'p_shipping_address': shippingAddress,
+      'p_notes': notes,
+      'p_payment_method': PaymentMode.of(
+        pointsUsed: pointsUsed,
+        paysCash: channel != null,
+      ).name,
+      'p_points_used': pointsUsed,
+      'p_payment_channel': channel?.code,
+    });
+    return PurchaseReceipt.fromRedeemRow(row);
+  });
 
   @override
   Future<String> redeemEWallet(EWalletOption option) => _guard(() async {
@@ -431,44 +444,27 @@ class SupabaseBackend implements AppBackend {
     if (row == null) {
       throw ApiException(tr('Item tidak ditemukan.', 'Item not found.'));
     }
-    final reference = await _redeem(row['id'] as int);
-    return reference;
+    final order = await _redeem(row['id'] as int);
+    return order['reference'] as String;
   });
 
   @override
-  Future<String> redeemVoucher(Voucher voucher) => _redeem(voucher.id);
+  Future<String> redeemVoucher(Voucher voucher) => _guard(() async {
+    final order = await _redeem(voucher.id);
+    return order['reference'] as String;
+  });
 
   @override
   Future<GamificationData> gamification() => _guard(() async {
     final results = await Future.wait<Object?>([
       _client.from('my_quest_status').select().order('id', ascending: true),
-      _client.from('my_checkin_week').select('day_index'),
-      _client.rpc<dynamic>('checkin_streak', params: {'p_user': _user.id}),
-      _client
-          .from('app_settings')
-          .select('value')
-          .eq('key', 'checkin_rewards')
-          .single(),
+      _client.rpc<dynamic>('my_checkin_state'),
     ]);
-    final quests = _rows(results[0]);
-    final week = _rows(results[1]);
-    final streak = (results[2]! as num).toInt();
-    final rewards = results[3]! as Map<String, dynamic>;
-
-    final jakartaNow = DateTime.now().toUtc().add(_jakartaOffset);
     final data = GamificationData(
-      streakDays: streak,
-      dailyQuests: [for (final row in quests) DailyQuest.fromJson(row)],
-      checkIn: DailyCheckIn(
-        rewards: [
-          for (final value in rewards['value'] as List<dynamic>)
-            (value as num).toInt(),
-        ],
-        todayIndex: jakartaNow.weekday - 1,
-        claimedDays: {
-          for (final row in week) (row['day_index'] as num).toInt(),
-        },
-      ),
+      dailyQuests: [
+        for (final row in _rows(results[0])) DailyQuest.fromJson(row),
+      ],
+      checkIn: DailyCheckIn.fromJson(_rows(results[1]).single),
     );
     return _gamification = data;
   });

@@ -11,6 +11,7 @@ import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/animated_check.dart';
+import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 class DropSuccessPage extends StatefulWidget {
@@ -171,7 +172,7 @@ class _Receipt extends StatelessWidget {
                   _DetailRow(
                     icon: AppIcons.coins,
                     label: tr('Poin Didapat', 'Points Earned'),
-                    value: '+${summary.points}',
+                    value: '+${PointsHeader.formatNumber(summary.points)}',
                   ),
                   Divider(color: context.palette.border, height: 24),
                   _DetailRow(

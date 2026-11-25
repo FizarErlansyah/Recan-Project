@@ -17,6 +17,8 @@ class CountUp extends StatefulWidget {
 
   static final Map<String, double> _remembered = {};
 
+  static void forgetAll() => _remembered.clear();
+
   final double value;
   final String Function(double value) format;
   final TextStyle? style;

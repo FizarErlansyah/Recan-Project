@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/widgets/points_header.dart';
 
 class BounceCounter extends StatefulWidget {
   const new({required this.value, required this.label, super.key});
@@ -59,7 +60,7 @@ class _BounceCounterState extends State<BounceCounter>
         ScaleTransition(
           scale: _scale,
           child: Text(
-            '${widget.value}',
+            PointsHeader.formatNumber(widget.value),
             style: textTheme.displayLarge?.copyWith(
               color: AppColors.white,
               fontWeight: FontWeight.w700,

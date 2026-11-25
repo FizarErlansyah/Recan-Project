@@ -4,23 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
-import 'package:mobile_apps_recan/utils/localization.dart';
 
 class CanPresetChips extends StatelessWidget {
-  const new({required this.onPreset, super.key, this.enabled = true});
+  const new({
+    required this.onPreset,
+    required this.room,
+    super.key,
+    this.enabled = true,
+  });
 
   final ValueChanged<int> onPreset;
+
+  /// Cans that still fit; larger presets are disabled.
+  final int room;
   final bool enabled;
 
-  static const int collectiveAmount = 1000;
-  static const List<int> amounts = [5, 20, 100, collectiveAmount];
-
-  static String labelFor(int amount) => amount == collectiveAmount
-      ? tr(
-          '+1000 (Kolektif Komunitas / Event)',
-          '+1000 (Community Collective / Event)',
-        )
-      : '+$amount';
+  static const List<int> amounts = [1, 5, 10, 50];
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +30,8 @@ class CanPresetChips extends StatelessWidget {
       children: [
         for (final amount in amounts)
           _PresetChip(
-            label: labelFor(amount),
-            onTap: enabled
+            label: '+$amount',
+            onTap: enabled && amount <= room
                 ? () {
                     unawaited(HapticFeedback.selectionClick());
                     onPreset(amount);
@@ -53,12 +52,15 @@ class _PresetChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final color = AppColors.primarySoft.withValues(
+      alpha: onTap == null ? 0.35 : 1,
+    );
 
     return Material(
       color: AppColors.white.withValues(alpha: 0.08),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppColors.primarySoft.withValues(alpha: 0.6)),
+        side: BorderSide(color: color.withValues(alpha: color.a * 0.6)),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -72,9 +74,7 @@ class _PresetChip extends StatelessWidget {
               widthFactor: 1,
               child: Text(
                 label,
-                style: textTheme.labelLarge?.copyWith(
-                  color: AppColors.primarySoft,
-                ),
+                style: textTheme.labelLarge?.copyWith(color: color),
               ),
             ),
           ),

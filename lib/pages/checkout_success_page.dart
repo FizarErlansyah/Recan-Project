@@ -7,35 +7,27 @@ import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_decorations.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/payment_summary.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/simulated_badge.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/indonesian_date.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/animated_check.dart';
 import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
-import 'package:mobile_apps_recan/widgets/points_header.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class CheckoutSuccessPage extends StatefulWidget {
-  const new({
-    required this.productName,
-    required this.totalPoints,
-    required this.reference,
-    super.key,
-  });
+  const new({required this.productName, required this.receipt, super.key});
 
   static void show(
     BuildContext context, {
     required String productName,
-    required int totalPoints,
-    required String reference,
+    required PurchaseReceipt receipt,
     bool replaceCurrent = false,
   }) {
     final route = FadePageRoute<void>(
-      page: CheckoutSuccessPage(
-        productName: productName,
-        totalPoints: totalPoints,
-        reference: reference,
-      ),
+      page: CheckoutSuccessPage(productName: productName, receipt: receipt),
     );
     final navigator = Navigator.of(context);
     if (replaceCurrent) {
@@ -46,8 +38,7 @@ class CheckoutSuccessPage extends StatefulWidget {
   }
 
   final String productName;
-  final int totalPoints;
-  final String reference;
+  final PurchaseReceipt receipt;
 
   @override
   State<CheckoutSuccessPage> createState() => _CheckoutSuccessPageState();
@@ -62,13 +53,16 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage> {
     unawaited(HapticFeedback.mediumImpact());
   }
 
-  void _saveReceipt() {
+  Future<void> _copyReference() async {
+    final reference = widget.receipt.reference;
+    await Clipboard.setData(ClipboardData(text: reference));
+    if (!mounted) return;
     unawaited(HapticFeedback.lightImpact());
     AppSnackBar.show(
       context,
       tr(
-        'Struk berhasil disimpan ke perangkat',
-        'Receipt saved to your device',
+        'Kode transaksi $reference disalin',
+        'Transaction code $reference copied',
       ),
     );
   }
@@ -96,9 +90,8 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage> {
                     child: SingleChildScrollView(
                       child: _ReceiptPaper(
                         productName: widget.productName,
-                        totalPoints: widget.totalPoints,
+                        receipt: widget.receipt,
                         redeemedAt: _redeemedAt,
-                        reference: widget.reference,
                       ),
                     ),
                   ),
@@ -106,7 +99,7 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage> {
                 const SizedBox(height: 24),
                 _ActionButtons(
                   onBackToHome: _backToHome,
-                  onSaveReceipt: _saveReceipt,
+                  onCopyCode: () => unawaited(_copyReference()),
                 ),
               ],
             ),
@@ -120,19 +113,25 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage> {
 class _ReceiptPaper extends StatelessWidget {
   const new({
     required this.productName,
-    required this.totalPoints,
+    required this.receipt,
     required this.redeemedAt,
-    required this.reference,
   });
 
   final String productName;
-  final int totalPoints;
+  final PurchaseReceipt receipt;
   final DateTime redeemedAt;
-  final String reference;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final reference = receipt.reference;
+    final simulated = receipt.simulated;
+    final details = [
+      (tr('Produk', 'Product'), productName),
+      ...paymentRows(receipt),
+      (tr('Tanggal', 'Date'), IndonesianDate.dateTime(redeemedAt)),
+      (tr('ID Transaksi', 'Transaction ID'), reference),
+    ];
 
     return Container(
       width: double.infinity,
@@ -143,37 +142,32 @@ class _ReceiptPaper extends StatelessWidget {
           const AnimatedCheck(),
           const SizedBox(height: 16),
           Text(
-            tr('Penukaran Berhasil!', 'Redemption Successful!'),
+            simulated
+                ? tr('Pesanan Dicatat!', 'Order Recorded!')
+                : tr('Penukaran Berhasil!', 'Redemption Successful!'),
             style: textTheme.titleLarge,
           ),
           const SizedBox(height: 4),
           Text(
-            tr('Simpan struk ini sebagai bukti', 'Keep this receipt as proof'),
+            simulated
+                ? tr(
+                    'Pembayaran Rupiah masih simulasi',
+                    'The rupiah payment is simulated',
+                  )
+                : tr(
+                    'Salin kode transaksi sebagai bukti',
+                    'Copy the transaction code as proof',
+                  ),
             style: textTheme.bodySmall,
           ),
           const SizedBox(height: 16),
-          const _StatusPill(),
+          if (simulated) const SimulatedBadge() else const _StatusPill(),
           const SizedBox(height: 24),
-          _DetailRow(label: tr('Produk', 'Product'), value: productName),
-          const SizedBox(height: 12),
-          _DetailRow(
-            label: tr('Poin Dipotong', 'Points Deducted'),
-            value: tr(
-              '-${PointsHeader.formatNumber(totalPoints)} Poin',
-              '-${PointsHeader.formatNumber(totalPoints)} Points',
-            ),
-          ),
-          const SizedBox(height: 12),
-          _DetailRow(
-            label: tr('Tanggal', 'Date'),
-            value: IndonesianDate.dateTime(redeemedAt),
-          ),
-          const SizedBox(height: 12),
-          _DetailRow(
-            label: tr('ID Transaksi', 'Transaction ID'),
-            value: reference,
-          ),
-          const SizedBox(height: 16),
+          for (final (label, value) in details) ...[
+            _DetailRow(label: label, value: value),
+            const SizedBox(height: 12),
+          ],
+          const SizedBox(height: 4),
           const _DashedDivider(),
           const SizedBox(height: 24),
           // Scanners need dark modules on a light plate, so the code keeps a
@@ -280,10 +274,10 @@ class _DashedDivider extends StatelessWidget {
 }
 
 class _ActionButtons extends StatelessWidget {
-  const new({required this.onBackToHome, required this.onSaveReceipt});
+  const new({required this.onBackToHome, required this.onCopyCode});
 
   final VoidCallback onBackToHome;
-  final VoidCallback onSaveReceipt;
+  final VoidCallback onCopyCode;
 
   @override
   Widget build(BuildContext context) {
@@ -312,9 +306,9 @@ class _ActionButtons extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
-            onPressed: onSaveReceipt,
+            onPressed: onCopyCode,
             icon: HugeIcon(
-              icon: AppIcons.download,
+              icon: AppIcons.copy,
               color: context.palette.accent,
               size: 20,
             ),
@@ -327,7 +321,7 @@ class _ActionButtons extends StatelessWidget {
               ),
             ),
             label: Text(
-              tr('Simpan Struk', 'Save Receipt'),
+              tr('Salin Kode Transaksi', 'Copy Transaction Code'),
               style: textTheme.labelLarge?.copyWith(
                 color: context.palette.accent,
               ),

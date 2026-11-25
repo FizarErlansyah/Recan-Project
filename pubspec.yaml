@@ -2,7 +2,7 @@ name: mobile_apps_recan
 description: "ReCan - circular economy platform for can collection and drop stations."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 2.0.0+2
 
 environment:
   sdk: ^3.13.5
@@ -12,6 +12,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   fl_chart: ^1.2.0
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
   flutter_map: ^8.3.2
   hugeicons: ^4.4.0
@@ -32,7 +34,10 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/
+    # Listed one by one: the other files in assets/images are design sources
+    # (about 30 MB) that the app never loads.
+    - assets/images/recan_brandmak_aqua.png
+    - assets/images/recan_brandmak_white.png
   fonts:
     - family: PlusJakartaSans
       fonts:

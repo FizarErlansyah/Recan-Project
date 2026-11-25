@@ -4,8 +4,6 @@
 class PointsHeader {
   const new _();
 
-  static const int rupiahPerPoint = 1;
-
   static String formatNumber(int value) {
     final digits = value.toString();
     final buffer = StringBuffer();

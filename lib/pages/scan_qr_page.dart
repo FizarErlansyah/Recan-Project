@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
 import 'package:mobile_apps_recan/core/theme/app_icon.dart';
-import 'package:mobile_apps_recan/models/map_station.dart';
-import 'package:mobile_apps_recan/pages/drop_session_page.dart';
+import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
+import 'package:mobile_apps_recan/features/station/presentation/station_gate.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
 import 'package:mobile_apps_recan/services/camera_permission_service.dart';
 import 'package:mobile_apps_recan/services/station_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
-import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/frosted_glass.dart';
 import 'package:mobile_apps_recan/widgets/scanner_overlay.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
@@ -29,6 +28,7 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
     formats: const [BarcodeFormat.qrCode],
   );
   CameraAccess? _access;
+  bool _requesting = false;
   bool _handled = false;
 
   @override
@@ -41,15 +41,31 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && _access != CameraAccess.granted) {
-      unawaited(_requestAccess());
+      unawaited(_pickUpGrant());
     }
   }
 
   Future<void> _requestAccess() async {
+    if (_requesting) return;
+    _requesting = true;
     final access = await CameraPermissionService.request();
+    _requesting = false;
     if (!mounted) return;
     setState(() {
       _access = access;
+    });
+  }
+
+  // Back from the system settings. This must never request: the permission
+  // screen covers the app, so its closing is a resume as well, and asking
+  // again from here loops until Android removes the activity. A refusal keeps
+  // the last answer, which still knows whether it was permanent.
+  Future<void> _pickUpGrant() async {
+    if (_requesting) return;
+    final granted = await CameraPermissionService.isGranted();
+    if (!granted || !mounted) return;
+    setState(() {
+      _access = CameraAccess.granted;
     });
   }
 
@@ -62,7 +78,7 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
     if (code == null) return;
     _handled = true;
     await _scanner.stop();
-    final MapStation? station;
+    final ScannedStation? station;
     try {
       station = await StationService.findByQr(code);
     } on ApiException catch (error) {
@@ -79,16 +95,18 @@ class _ScanQrPageState extends State<ScanQrPage> with WidgetsBindingObserver {
       return;
     }
     if (!mounted) return;
-    await Navigator.of(context).pushReplacement(
-      FadePageRoute<void>(
-        page: DropSessionPage(stationName: station.name, stationId: station.id),
-      ),
-    );
+    final entered = await StationGate.enter(context, station);
+    if (entered || !mounted) return;
+    await _resumeScanning();
   }
 
   Future<void> _rejectScan(String message) async {
     if (!mounted) return;
     AppSnackBar.show(context, message);
+    await _resumeScanning();
+  }
+
+  Future<void> _resumeScanning() async {
     _handled = false;
     await _scanner.start();
   }
@@ -362,11 +380,19 @@ class _PermissionDenied extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              tr(
-                'ReCan butuh kamera untuk memindai QR Code di Drop Station.',
-                'ReCan needs the camera to scan the QR Code on the Drop '
-                    'Station.',
-              ),
+              permanent
+                  ? tr(
+                      'Izin kamera sedang dimatikan. Buka Pengaturan, pilih '
+                          'Izin, aktifkan Kamera, lalu kembali ke sini.',
+                      'Camera access is turned off. Open Settings, choose '
+                          'Permissions, allow Camera, then come back here.',
+                    )
+                  : tr(
+                      'ReCan butuh kamera untuk memindai QR Code di Drop '
+                          'Station.',
+                      'ReCan needs the camera to scan the QR Code on the Drop '
+                          'Station.',
+                    ),
               textAlign: TextAlign.center,
               style: textTheme.bodyMedium?.copyWith(
                 color: AppColors.primarySoft,

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/redeem_confirm.dart';
 
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/models/voucher.dart';
@@ -16,6 +18,7 @@ import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 import 'package:mobile_apps_recan/widgets/async_view.dart';
 import 'package:mobile_apps_recan/widgets/page_skeletons.dart';
+import 'package:mobile_apps_recan/widgets/single_flight.dart';
 import 'package:mobile_apps_recan/widgets/voucher_ticket_card.dart';
 
 class VoucherCatalogView extends StatelessWidget {
@@ -38,8 +41,11 @@ class VoucherCatalogView extends StatelessWidget {
     CheckoutSuccessPage.show(
       context,
       productName: voucher.title,
-      totalPoints: voucher.pointsCost,
-      reference: reference,
+      receipt: PurchaseReceipt(
+        reference: reference,
+        pointsUsed: voucher.pointsCost,
+        cashPaid: 0,
+      ),
     );
   }
 
@@ -66,10 +72,21 @@ class VoucherCatalogView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               for (final voucher in vouchers) ...[
-                VoucherTicketCard(
-                  voucher: voucher,
-                  affordable: profile.points >= voucher.pointsCost,
-                  onRedeem: () => _redeem(context, voucher),
+                SingleFlight(
+                  key: ValueKey(voucher.id),
+                  confirm: () => RedeemConfirm.show(
+                    context,
+                    itemName: voucher.title,
+                    cost: voucher.pointsCost,
+                    balance: profile.points,
+                  ),
+                  action: () => _redeem(context, voucher),
+                  builder: (_, redeem) => VoucherTicketCard(
+                    voucher: voucher,
+                    affordable: profile.points >= voucher.pointsCost,
+                    busy: redeem == null,
+                    onRedeem: redeem,
+                  ),
                 ),
                 const SizedBox(height: 16),
               ],

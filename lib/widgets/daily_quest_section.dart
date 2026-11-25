@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
 import 'package:mobile_apps_recan/models/gamification_data.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
-import 'package:mobile_apps_recan/services/data_refresh.dart';
 import 'package:mobile_apps_recan/services/gamification_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -37,15 +36,15 @@ class _DailyQuestSectionState extends State<DailyQuestSection> {
   final Set<int> _claimingIds = {};
   QuestPeriod _period = QuestPeriod.daily;
 
-  Future<void> _claim(DailyQuest quest) async {
-    if (_claimingIds.contains(quest.id)) return;
+  Future<bool> _claim(DailyQuest quest) async {
+    if (_claimingIds.contains(quest.id)) return false;
     setState(() {
       _claimingIds.add(quest.id);
     });
 
     try {
       await GamificationService.claim(quest.id);
-      if (!mounted) return;
+      if (!mounted) return false;
       setState(() {
         _claimingIds.remove(quest.id);
         _claimedIds.add(quest.id);
@@ -55,17 +54,18 @@ class _DailyQuestSectionState extends State<DailyQuestSection> {
         context,
         tr('Misi berhasil diklaim!', 'Mission claimed successfully!'),
       );
-      DataRefresh.notifyChanged();
+      return true;
     } on ApiException catch (error) {
-      if (!mounted) return;
+      if (!mounted) return false;
       setState(() {
         _claimingIds.remove(quest.id);
       });
       if (error.unauthorized) {
         widget.onUnauthorized();
-        return;
+        return false;
       }
       AppSnackBar.show(context, error.message);
+      return false;
     }
   }
 
@@ -131,9 +131,17 @@ class _DailyQuestSectionState extends State<DailyQuestSection> {
                     labelOf: (period) => period.label,
                     onSelected: (value) => setState(() => _period = value),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
+                  Text(
+                    _period.resetLabel,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 12),
                   for (final quest in quests) ...[
                     QuestCard(
+                      // Without a key a tab switch would hand one quest's
+                      // card state to another quest.
+                      key: ValueKey(quest.id),
                       quest: _claimedIds.contains(quest.id)
                           ? quest.claimed()
                           : quest,

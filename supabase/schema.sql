@@ -14,6 +14,9 @@
 --    replaced, policies are dropped and recreated, seed rows use
 --    ON CONFLICT DO NOTHING. Requires PostgreSQL 15+ (every current Supabase
 --    project). Changing an existing column type needs a manual ALTER TABLE.
+--    This file is the v1 base. After running it, run every file in
+--    supabase/migrations/ in order. Re-running it restores v1 functions, grants
+--    and policies, so the migrations must be run again afterwards.
 --
 --  CONTENTS
 --    1. Tables (ERD)                       7. Row Level Security policies

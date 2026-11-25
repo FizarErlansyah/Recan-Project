@@ -1,3 +1,4 @@
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
 
 enum ActivityType {
@@ -22,6 +23,7 @@ class ActivityTransaction {
     required this.timestamp,
     required this.points,
     required this.weightKg,
+    this.payment,
   });
 
   /// Reads a `transactions` row.
@@ -33,6 +35,9 @@ class ActivityTransaction {
     timestamp: DateTime.parse(json['created_at'] as String).toLocal(),
     points: (json['points_delta'] as num).toInt(),
     weightKg: (json['weight_kg'] as num).toDouble(),
+    payment: json['payment_method'] == null
+        ? null
+        : PurchaseReceipt.fromTransactionRow(json),
   );
 
   final String transactionId;
@@ -42,6 +47,9 @@ class ActivityTransaction {
   final DateTime timestamp;
   final int points;
   final double weightKg;
+
+  /// How a catalog order was settled; null for every other kind of row.
+  final PurchaseReceipt? payment;
 
   String get title => tr(_title, _titleEn);
 

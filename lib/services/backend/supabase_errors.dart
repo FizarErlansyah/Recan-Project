@@ -131,6 +131,27 @@ class SupabaseErrors {
           'Station sudah penuh. Coba station lain.',
           'This station is full. Try another one.',
         );
+      case 'invalid_qr_code':
+        return tr(
+          'Kode QR sudah tidak berlaku. Pindai ulang QR di station.',
+          'This QR code is no longer valid. Scan the station QR again.',
+        );
+      case 'invalid_points':
+        return tr(
+          'Jumlah poin yang dipakai tidak valid.',
+          'The number of points to use is not valid.',
+        );
+      case 'invalid_payment_method':
+      case 'invalid_payment_channel':
+        return tr(
+          'Pilih metode pembayaran yang tersedia.',
+          'Choose an available payment method.',
+        );
+      case 'payment_method_not_allowed':
+        return tr(
+          'Item ini hanya bisa ditukar dengan poin.',
+          'This item can only be redeemed with points.',
+        );
       case 'item_not_found':
         return tr('Item tidak ditemukan.', 'Item not found.');
       case 'out_of_stock':

@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mobile_apps_recan/core/theme/app_icons.dart';
 import 'package:mobile_apps_recan/core/theme/app_palette.dart';
+import 'package:mobile_apps_recan/features/catalog/domain/payment_quote.dart';
+import 'package:mobile_apps_recan/features/catalog/presentation/redeem_confirm.dart';
 import 'package:mobile_apps_recan/models/ewallet_option.dart';
 import 'package:mobile_apps_recan/models/profile_data.dart';
 import 'package:mobile_apps_recan/pages/checkout_success_page.dart';
@@ -19,6 +21,7 @@ import 'package:mobile_apps_recan/widgets/async_view.dart';
 import 'package:mobile_apps_recan/widgets/ewallet_tile.dart';
 import 'package:mobile_apps_recan/widgets/page_skeletons.dart';
 import 'package:mobile_apps_recan/widgets/points_header.dart';
+import 'package:mobile_apps_recan/widgets/single_flight.dart';
 
 class EWalletCatalogView extends StatelessWidget {
   const new({required this.onLogout, super.key});
@@ -40,8 +43,11 @@ class EWalletCatalogView extends StatelessWidget {
     CheckoutSuccessPage.show(
       context,
       productName: option.title,
-      totalPoints: option.pointsCost,
-      reference: reference,
+      receipt: PurchaseReceipt(
+        reference: reference,
+        pointsUsed: option.pointsCost,
+        cashPaid: 0,
+      ),
     );
   }
 
@@ -63,10 +69,21 @@ class EWalletCatalogView extends StatelessWidget {
             Text(provider, style: textTheme.titleLarge),
             const SizedBox(height: 12),
             for (final option in EWalletOption.forProvider(provider)) ...[
-              EWalletTile(
-                option: option,
-                affordable: profile.points >= option.pointsCost,
-                onRedeem: () => _redeem(context, option),
+              SingleFlight(
+                key: ValueKey(option.titleId),
+                confirm: () => RedeemConfirm.show(
+                  context,
+                  itemName: option.title,
+                  cost: option.pointsCost,
+                  balance: profile.points,
+                ),
+                action: () => _redeem(context, option),
+                builder: (_, redeem) => EWalletTile(
+                  option: option,
+                  affordable: profile.points >= option.pointsCost,
+                  busy: redeem == null,
+                  onRedeem: redeem,
+                ),
               ),
               const SizedBox(height: 12),
             ],

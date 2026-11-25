@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_apps_recan/core/theme/app_colors.dart';
+import 'package:mobile_apps_recan/features/station/domain/scanned_station.dart';
+import 'package:mobile_apps_recan/features/station/presentation/capacity_card.dart';
 import 'package:mobile_apps_recan/models/drop_session_summary.dart';
 import 'package:mobile_apps_recan/pages/drop_success_page.dart';
 import 'package:mobile_apps_recan/services/api_client.dart';
-import 'package:mobile_apps_recan/services/data_refresh.dart';
+import 'package:mobile_apps_recan/services/station_service.dart';
 import 'package:mobile_apps_recan/services/transaction_service.dart';
 import 'package:mobile_apps_recan/utils/app_snack_bar.dart';
 import 'package:mobile_apps_recan/utils/localization.dart';
@@ -17,29 +19,25 @@ import 'package:mobile_apps_recan/widgets/fade_page_route.dart';
 import 'package:mobile_apps_recan/widgets/status_bar_icons.dart';
 
 class DropSessionPage extends StatefulWidget {
-  const new({required this.stationName, required this.stationId, super.key});
+  const new({required this.station, super.key});
 
-  final String stationName;
-  final int stationId;
+  final ScannedStation station;
 
   @override
   State<DropSessionPage> createState() => _DropSessionPageState();
 }
 
 class _DropSessionPageState extends State<DropSessionPage> {
+  late ScannedStation _station = widget.station;
   int _cans = 0;
-  bool _collective = false;
   bool _isSubmitting = false;
 
   DropSessionSummary get _summary => DropSessionSummary(cans: _cans);
 
-  void _addPreset(int amount) {
-    if (amount >= CanPresetChips.collectiveAmount) _collective = true;
-    _addCans(amount);
-  }
+  int get _room => _station.acceptsDeposits ? _station.remaining - _cans : 0;
 
   void _addCans(int amount) {
-    if (_isSubmitting) return;
+    if (_isSubmitting || amount > _room) return;
     setState(() {
       _cans += amount;
     });
@@ -70,28 +68,39 @@ class _DropSessionPageState extends State<DropSessionPage> {
     try {
       await TransactionService.submitDrop(
         _cans,
-        stationId: widget.stationId,
-        collective: _collective,
+        stationId: _station.id,
+        qrCode: _station.qrCode,
       );
     } on ApiException catch (error) {
       if (!mounted) return;
-      setState(() {
-        _isSubmitting = false;
-      });
       AppSnackBar.show(context, error.message);
+      await _reloadStation();
       return;
     }
 
-    DataRefresh.notifyChanged();
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       FadePageRoute<void>(
-        page: DropSuccessPage(
-          stationName: widget.stationName,
-          summary: _summary,
-        ),
+        page: DropSuccessPage(stationName: _station.name, summary: _summary),
       ),
     );
+  }
+
+  // Someone else may have filled the station since the scan.
+  Future<void> _reloadStation() async {
+    ScannedStation? latest;
+    try {
+      latest = await StationService.findByQr(_station.qrCode);
+    } on ApiException catch (error) {
+      debugPrint('Station reload failed: ${error.message}');
+    }
+    if (!mounted) return;
+    setState(() {
+      _station = latest ?? _station;
+      final room = _station.acceptsDeposits ? _station.remaining : 0;
+      _cans = _cans.clamp(0, room);
+      _isSubmitting = false;
+    });
   }
 
   @override
@@ -129,7 +138,7 @@ class _DropSessionPageState extends State<DropSessionPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  widget.stationName,
+                  _station.name,
                   style: textTheme.headlineSmall?.copyWith(
                     color: AppColors.white,
                   ),
@@ -168,8 +177,11 @@ class _DropSessionPageState extends State<DropSessionPage> {
                           const SizedBox(height: 24),
                           DropEstimateCard(summary: _summary),
                           const SizedBox(height: 16),
+                          CapacityCard(station: _station, sessionCans: _cans),
+                          const SizedBox(height: 16),
                           CanPresetChips(
-                            onPreset: _addPreset,
+                            onPreset: _addCans,
+                            room: _room,
                             enabled: !_isSubmitting,
                           ),
                         ],
@@ -179,7 +191,7 @@ class _DropSessionPageState extends State<DropSessionPage> {
                 ),
                 const SizedBox(height: 16),
                 OutlinedButton(
-                  onPressed: _insertCan,
+                  onPressed: _isSubmitting || _room <= 0 ? null : _insertCan,
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(52),
                     foregroundColor: AppColors.primarySoft,
